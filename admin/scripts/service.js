@@ -57,6 +57,10 @@ $(document).ready(function () {
         renderServices();
     };
 
+    function normalizeString(str) {
+        return (str || '').toString().toLowerCase().replace(/[\s_\-\/]/g, '');
+    }
+
     function renderServices() {
         const container = $('#servicesGrid');
         container.empty();
@@ -66,10 +70,20 @@ $(document).ready(function () {
         // 1. Filter by Category
         if (currentFilter !== 'All') {
             if (currentFilter === 'Move-In/Out') {
-                filteredServices = services.filter(s =>
-                    (s.title && (s.title.includes('Move-In/Out') || s.title.includes('Move-Out'))) ||
-                    (s.category && s.category === 'Move-In/Out')
-                );
+                const target = 'moveinout';
+                filteredServices = services.filter(s => {
+                    const catNorm = normalizeString(s.category);
+                    const titleNorm = normalizeString(s.title);
+                    const titleRaw = (s.title || '').toLowerCase();
+                    const hasMovePair = titleRaw.includes('move-in') || titleRaw.includes('move out');
+                    return (
+                        catNorm.includes(target) ||
+                        catNorm.includes('movein') ||
+                        catNorm.includes('moveout') ||
+                        titleNorm.includes(target) ||
+                        hasMovePair
+                    );
+                });
             } else {
                 const categoryKeywords = {
                     'Standard Clean': ['Standard', 'Standard Clean'],
@@ -77,10 +91,12 @@ $(document).ready(function () {
                     'Specialty': ['Specialty']
                 };
                 const validCategories = categoryKeywords[currentFilter] || [currentFilter];
+                const validNorms = validCategories.map(c => normalizeString(c));
 
-                filteredServices = services.filter(s =>
-                    s.category && validCategories.includes(s.category.trim())
-                );
+                filteredServices = services.filter(s => {
+                    const cat = s.category ? s.category.trim() : '';
+                    return cat && (validCategories.includes(cat) || validNorms.includes(normalizeString(cat)));
+                });
             }
         }
 

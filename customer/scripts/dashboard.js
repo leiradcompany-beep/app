@@ -505,6 +505,10 @@ function loadMoreServices() {
     renderServices();
 }
 
+function normalizeString(str) {
+    return (str || '').toString().toLowerCase().replace(/[\s_\-\/]/g, '');
+}
+
 function renderServices() {
     // 1. Filter by Category
     let filtered = servicesData;
@@ -512,10 +516,20 @@ function renderServices() {
     if (currentCategory === 'All') {
         filtered = servicesData;
     } else if (currentCategory === 'Move-In/Out') {
-        filtered = servicesData.filter(s =>
-            (s.title && (s.title.includes('Move-In/Out') || s.title.includes('Move-Out'))) ||
-            (s.category && s.category === 'Move-In/Out')
-        );
+        const target = 'moveinout';
+        filtered = servicesData.filter(s => {
+            const catNorm = normalizeString(s.category);
+            const titleNorm = normalizeString(s.title);
+            const titleRaw = (s.title || '').toLowerCase();
+            const hasMovePair = titleRaw.includes('move-in') || titleRaw.includes('move out');
+            return (
+                catNorm.includes(target) ||
+                catNorm.includes('movein') ||
+                catNorm.includes('moveout') ||
+                titleNorm.includes(target) ||
+                hasMovePair
+            );
+        });
     } else {
         const categoryKeywords = {
             'Standard Clean': ['Standard', 'Standard Clean'],
@@ -523,10 +537,12 @@ function renderServices() {
             'Specialty': ['Specialty']
         };
         const validCategories = categoryKeywords[currentCategory] || [currentCategory];
+        const validNorms = validCategories.map(c => normalizeString(c));
 
-        filtered = servicesData.filter(s =>
-            s.category && validCategories.includes(s.category.trim())
-        );
+        filtered = servicesData.filter(s => {
+            const cat = s.category ? s.category.trim() : '';
+            return cat && (validCategories.includes(cat) || validNorms.includes(normalizeString(cat)));
+        });
     }
 
     // 2. Filter by Search Query
@@ -1037,6 +1053,7 @@ function openRatingModal(id, cleanerName, serviceName) {
     // Store ID if needed for API, here just for simulation
     $('#rate-cleaner-name').text(cleanerName);
     $('#rate-service-name').text(serviceName);
+    currentRatingBookingId = id;
 
     // Reset Rating State
     $('.cleaner-rating i').attr('class', 'ri-star-line').css('color', '#CBD5E0');
@@ -1067,10 +1084,15 @@ function setRating(type, value) {
 }
 
 function submitRating() {
-    const cVal = $('#cleaner-rating-value').val();
-    const sVal = $('#service-rating-value').val();
+    const cVal = parseInt($('#cleaner-rating-value').val(), 10);
+    const sVal = parseInt($('#service-rating-value').val(), 10);
 
-    if (cVal == 0 || sVal == 0) {
+    if (!currentRatingBookingId) {
+        UiUtils.showToast('No booking selected for rating.', 'error');
+        return;
+    }
+
+    if (!cVal || !sVal) {
         UiUtils.showToast('Please provide a rating for both cleaner and service.', 'error');
         return;
     }
@@ -1080,13 +1102,38 @@ function submitRating() {
         UiUtils.setBtnLoading(btn, true, 'Submitting...');
     }
 
-    setTimeout(() => {
-        UiUtils.showToast('Thank you for your feedback!', 'success');
-        closeRatingModal();
-        if (btn.length) UiUtils.setBtnLoading(btn, false, 'Submit Review');
-        // Update mock data to show rated (optional)
-        initBookingTable();
-    }, 1000);
+    const payload = {
+        rating: cVal,
+        service_rating: sVal,
+        comment: ($('#rating-comment').val() || '').toString().trim()
+    };
+
+    ApiClient.post(`/customer/bookings/${currentRatingBookingId}/rate`, payload)
+        .then(function (response) {
+            if (response.success) {
+                UiUtils.showToast('Thank you for your feedback!', 'success');
+                closeRatingModal();
+                currentRatingBookingId = null;
+                loadDashboardData();
+            } else {
+                UiUtils.showToast(response.message || 'Failed to submit rating.', 'error');
+            }
+        })
+        .catch(function (xhr) {
+            let msg = 'Error submitting rating';
+            if (xhr.responseJSON) {
+                if (xhr.responseJSON.errors) {
+                    const errors = Object.values(xhr.responseJSON.errors).flat();
+                    msg = errors.join('\n');
+                } else if (xhr.responseJSON.message) {
+                    msg = xhr.responseJSON.message;
+                }
+            }
+            UiUtils.showToast(msg, 'error');
+        })
+        .finally(function () {
+            if (btn.length) UiUtils.setBtnLoading(btn, false, 'Submit Review');
+        });
 }
 
 function updateProfileImage(event) {

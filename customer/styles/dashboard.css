@@ -146,10 +146,15 @@ ul {
         display: flex;
         align-items: center;
         gap: 10px;
+        flex-wrap: nowrap;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
     }
 
     .welcome-text h1 {
         margin-bottom: 0;
+        text-align: center;
     }
 
     .welcome-text .icon-btn.mobile-logout-btn {
@@ -159,6 +164,13 @@ ul {
         width: 35px;
         height: 35px;
         font-size: 1rem;
+        order: 3;
+    }
+
+    #current-date {
+        order: 2;
+        margin-left: 8px;
+        text-align: center;
     }
 }
 
@@ -2700,6 +2712,26 @@ table.dataTable tbody td {
         font-size: 1.5rem;
         line-height: 1.3;
         letter-spacing: -0.02em;
+    }
+
+    /* Swap date and logout button order on mobile */
+    .welcome-text {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+    }
+
+    #current-date {
+        order: 2;
+        margin-left: 8px;
+        text-align: center;
+    }
+
+    .icon-btn.mobile-logout-btn {
+        order: 3;
     }
 
     .section-title {

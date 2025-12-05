@@ -20,6 +20,43 @@ let displayedCount = 0;
 const ITEMS_PER_PAGE = 6;
 let filteredData = [];
 
+function normalizeString(str) {
+    return (str || '').toString().toLowerCase().replace(/[\s_\-\/]/g, '');
+}
+
+function isLikelyImageUrl(url) {
+    if (!url) return false;
+    const u = String(url).toLowerCase();
+    const exts = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+    return exts.some(e => u.includes(e)) || u.startsWith('/storage/') || u.startsWith('storage/');
+}
+
+function avoidMixedContent(url) {
+    if (!url) return DEFAULT_CLEANER_IMG;
+    if (window.location.protocol === 'https:' && url.startsWith('http://')) return DEFAULT_CLEANER_IMG;
+    return url;
+}
+
+function getCleanerAvatar(cleaner) {
+    let src = null;
+    if (typeof ImageUtils !== 'undefined') {
+        src = ImageUtils.getAvatarUrl(cleaner);
+    } else {
+        const raw = cleaner && (cleaner.avatar || cleaner.img || cleaner.profile_photo_path);
+        const s = raw ? String(raw).trim() : '';
+        if (!s || s === 'null' || s === 'undefined') {
+            src = DEFAULT_CLEANER_IMG;
+        } else if (s.startsWith('http')) {
+            src = s;
+        } else {
+            src = `${BACKEND_URL}${s.startsWith('/') ? '' : '/'}${s}`;
+        }
+    }
+    src = avoidMixedContent(src);
+    if (!isLikelyImageUrl(src)) src = DEFAULT_CLEANER_IMG;
+    return src;
+}
+
 // Helper function to get proper service image URL
 function getServiceImageUrl(imagePath) {
     // Use ImageUtils if available, otherwise fallback to manual logic
@@ -104,7 +141,7 @@ async function fetchServices() {
     }
 }
 
-const DEFAULT_CLEANER_IMG = "../asset/default-avatar.png";
+const DEFAULT_CLEANER_IMG = "../../assets/images/default-avatar.png";
 
 // Fetch Cleaners (New Function)
 async function fetchCleaners() {
@@ -116,9 +153,7 @@ async function fetchCleaners() {
             cleanersData = result.data.map(cleaner => ({
                 name: cleaner.name,
                 role: cleaner.job_title || 'Cleaning Specialist',
-                img: cleaner.img
-                    ? (cleaner.img.startsWith('http') ? cleaner.img : `${BACKEND_URL}${cleaner.img}`)
-                    : DEFAULT_CLEANER_IMG,
+                img: getCleanerAvatar(cleaner),
                 desc: `Experience: ${cleaner.experience_years} years. Skills: ${Array.isArray(cleaner.skills) ? cleaner.skills.join(', ') : (cleaner.skills ? JSON.parse(cleaner.skills).join(', ') : 'General Cleaning')}`
             }));
             renderCleaners();
@@ -160,7 +195,7 @@ function renderCleaners() {
         const card = document.createElement('div');
         card.className = 'team-card';
         card.innerHTML = `
-            <img src="${cleaner.img}" alt="${cleaner.name}">
+            <img src="${cleaner.img}" alt="${cleaner.name}" loading="lazy" decoding="async" onerror="this.src='../../assets/images/default-avatar.png'; this.style.objectFit='cover'; this.style.backgroundColor='#f8fafc';">
             <div class="team-info">
                 <h3 style="font-size:1.4rem; margin-bottom:5px;">${cleaner.name}</h3>
                 <p style="color:var(--accent); font-weight:600; font-size:0.9rem; text-transform:uppercase;">${cleaner.role}</p>
@@ -195,12 +230,20 @@ function applyFilters() {
     if (currentFilter === 'all') {
         data = servicesData;
     } else if (currentFilter === 'Move-In/Out') {
-        // Special handling: Check both title and category for "Move-In/Out"
-        data = servicesData.filter(s =>
-            s.title.includes('Move-In/Out') ||
-            s.title.includes('Move-Out') ||
-            s.category === 'Move-In/Out'
-        );
+        const target = 'moveinout';
+        data = servicesData.filter(s => {
+            const catNorm = normalizeString(s.category);
+            const titleNorm = normalizeString(s.title);
+            const titleRaw = (s.title || '').toLowerCase();
+            const hasMovePair = titleRaw.includes('move-in') || titleRaw.includes('move out');
+            return (
+                catNorm.includes(target) ||
+                catNorm.includes('moveout') ||
+                catNorm.includes('movein') ||
+                titleNorm.includes(target) ||
+                hasMovePair
+            );
+        });
     } else {
         // Robust filtering:
         // Allow matching against the exact filter name (e.g., "Standard Clean")
@@ -244,7 +287,7 @@ function loadMore() {
         card.className = 'service-card';
         card.innerHTML = `
             <div class="service-img-wrapper">
-                <img src="${service.img}" alt="${service.title}" onerror="this.src='../asset/default-service.png'; this.style.objectFit='contain'; this.style.backgroundColor='#f8fafc';">
+                <img src="${service.img}" alt="${service.title}" loading="lazy" decoding="async" onerror="this.src='../asset/default-service.png'; this.style.objectFit='contain'; this.style.backgroundColor='#f8fafc';">
                 <span class="category-tag">${service.category}</span>
             </div>
             <div class="service-content">
@@ -372,7 +415,7 @@ function toggleMenu() {
 
 // Close mobile menu when clicking on a link
 document.addEventListener('DOMContentLoaded', () => {
-    const mobileNavLinks = document.querySelectorAll('#mobileNav a');
+    const mobileNavLinks = document.querySelectorAll('#mobileNav a:not(.btn-primary)');
     mobileNavLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             // Allow the navigation to happen, then close the menu
@@ -380,6 +423,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleMenu();
             }, 100);
         });
+    });
+    const mobileNav = document.getElementById('mobileNav');
+    const toggle = document.querySelector('.mobile-toggle');
+    document.addEventListener('click', (e) => {
+        if (!mobileNav) return;
+        const isOpen = mobileNav.classList.contains('active');
+        const clickedInside = mobileNav.contains(e.target);
+        const clickedToggle = toggle && toggle.contains(e.target);
+        if (isOpen && !clickedInside && !clickedToggle) {
+            toggleMenu();
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (mobileNav && mobileNav.classList.contains('active')) {
+                toggleMenu();
+            }
+        }
     });
 });
 

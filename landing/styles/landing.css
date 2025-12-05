@@ -1820,6 +1820,25 @@
         }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+        .hero-slide img {
+            animation: none !important;
+        }
+        .brand-track {
+            animation: none !important;
+        }
+        .service-card,
+        .feature-item,
+        .book-service-btn,
+        .social-icon,
+        .team-card img,
+        .team-info,
+        .nav-links a,
+        .mobile-nav a {
+            transition: none !important;
+        }
+    }
+
     /* === PRINT STYLES === */
     @media print {
 
