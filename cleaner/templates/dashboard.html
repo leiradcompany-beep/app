@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cleaner Portal | LEIRAD</title>
+    
+    <!-- Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons: Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS (Grid Only) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <!-- Custom Dashboard CSS -->
+    <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+
+<!-- Mobile Overlay -->
+<div class="drawer-overlay" id="mobileOverlay"></div>
+
+<div class="dashboard-wrapper" id="dashboard">
+    
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="brand">
+                <i class="ri-sparkling-2-fill"></i>
+                <span>LEIRAD</span>
+            </div>
+            <!-- Close Button for Mobile -->
+            <button class="d-lg-none" id="closeSidebarBtn" style="font-size: 1.5rem; color: var(--text-muted);">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item active">
+                <i class="ri-dashboard-fill"></i>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="schedule.html" class="nav-item">
+                <i class="ri-calendar-check-fill"></i>
+                <span class="nav-text">My Schedule</span>
+            </a>
+            <a href="setting.html" class="nav-item">
+                <i class="ri-user-settings-fill"></i>
+                <span class="nav-text">Settings</span>
+            </a>
+            <div class="nav-spacer"></div>
+            <a href="#" class="nav-item logout-link" id="logoutSidebarBtn">
+                <i class="ri-logout-box-r-line"></i>
+                <span class="nav-text">Logout</span>
+            </a>
+        </nav>
+
+        <div class="user-profile">
+            <div class="avatar-container">
+                <img src="" alt="Cleaner" class="user-img" id="userAvatar" onerror="this.src='https://ui-avatars.com/api/?name=User&background=0EA5E9&color=fff'">
+                <span class="status-indicator"></span>
+            </div>
+            <div class="user-info nav-text">
+                <h4 id="userNameDisplay">Loading...</h4>
+                <p id="userRoleDisplay">Cleaner</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content" id="mainContent">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <button class="toggle-btn" id="sidebarToggle">
+                    <i class="ri-menu-2-line"></i>
+                </button>
+                <div class="welcome-text">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p id="current-date" class="text-muted mb-0">Loading date...</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTENT -->
+        <section id="overview" class="content-body">
+            
+            <!-- 1. Assignment Requests (Dynamic) -->
+            <div id="assignmentRequestsArea" class="alert-section">
+                <div class="section-label">
+                    <i class="ri-notification-badge-line"></i> New Opportunities
+                </div>
+                <div id="assignmentRequestsList" class="requests-grid">
+                    <!-- JS Injected Here -->
+                </div>
+            </div>
+
+            <!-- 2. Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon-box blue">
+                        <i class="ri-loader-2-line"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="statPending">0</h3>
+                        <p>Pending Jobs</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-box green">
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="statCompleted">0</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-box yellow">
+                        <i class="ri-star-fill"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3 id="statRating">0.0</h3>
+                        <p>Rating</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Active Job Hero -->
+            <div class="job-hero" id="jobHeroCard">
+                <div class="hero-bg-image" id="nextJobServiceImg"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-decoration"></div>
+                
+                <div class="hero-content">
+                    <div class="hero-header">
+                        <span class="badge-pill">UP NEXT</span>
+                        <span class="hero-time" id="nextJobTime">00:00 AM</span>
+                    </div>
+                    <h2 class="hero-title" id="nextJobService">Service Name</h2>
+                    
+                    <div class="hero-meta-grid">
+                        <!-- Address Section -->
+                        <div class="meta-item">
+                            <div class="meta-icon-box">
+                                <i class="ri-map-pin-user-fill"></i>
+                            </div>
+                            <div class="meta-text">
+                                <span class="meta-label">Location</span>
+                                <span class="meta-value" id="nextJobAddress">Address Loading...</span>
+                            </div>
+                        </div>
+
+                        <!-- Customer Section -->
+                        <div class="meta-item">
+                            <img src="../../assets/images/default-avatar.png" id="nextJobCustomerImg" class="hero-customer-img" alt="Customer" onerror="this.src='../../assets/images/default-avatar.png'">
+                            <div class="meta-text">
+                                <span class="meta-label">Customer</span>
+                                <span class="meta-value" id="nextJobCustomer">Customer Name</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Pending Jobs Table -->
+            <div class="table-section">
+                <div class="section-header">
+                    <h3>Upcoming Schedule</h3>
+                    <a href="schedule.html" class="btn-link">View Full Schedule <i class="ri-arrow-right-line"></i></a>
+                </div>
+                
+                <div class="custom-table-responsive">
+                    <table class="table custom-table" id="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Service Type</th>
+                                <th>Customer</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingJobsBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- MODALS -->
+
+<!-- Accept Modal -->
+<div class="custom-modal" id="accept-modal">
+    <div class="modal-card">
+        <div class="modal-icon success"><i class="ri-check-line"></i></div>
+        <h3>Accept Job?</h3>
+        <p>You are about to accept this assignment. It will be added to your schedule.</p>
+        <div class="modal-actions">
+            <button onclick="closeAcceptModal()" class="btn-ghost">Cancel</button>
+            <button id="confirmAcceptBtn" class="btn-confirm success">Confirm Accept</button>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="custom-modal" id="reject-modal">
+    <div class="modal-card">
+        <div class="modal-icon danger"><i class="ri-close-line"></i></div>
+        <h3>Decline Job?</h3>
+        <p>Are you sure? This job will be removed from your list and offered to others.</p>
+        <div class="modal-actions">
+            <button onclick="closeRejectModal()" class="btn-ghost">Cancel</button>
+            <button id="confirmRejectBtn" class="btn-confirm danger">Decline Job</button>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Modal -->
+<div class="custom-modal" id="logout-modal">
+    <div class="modal-card">
+        <div class="modal-icon warning"><i class="ri-logout-box-r-line"></i></div>
+        <h3>Sign Out</h3>
+        <p>Are you sure you want to log out of your account?</p>
+        <div class="modal-actions">
+            <button onclick="closeLogoutModal()" class="btn-ghost">Stay Logged In</button>
+            <button id="confirmLogoutBtn" class="btn-confirm warning">Logout</button>
+        </div>
+    </div>
+</div>
+
+<!-- JQUERY & BOOTSTRAP -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>`r`n    <!-- Avatar Mixin -->`r`n    <script src="../../common/scripts/avatar-mixin.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- ORIGINAL DASHBOARD SCRIPTS -->
+<script src="../../common/scripts/api-client.js"></script>
+<script src="../../common/scripts/ui-utils.js"></script>
+<script src="../scripts/cleaner-sidebar.js?v=2.1"></script>
+<script src="../scripts/dashboard.js?v=2.1"></script>
+
+<script>
+    $(document).ready(function() {
+        // Modal Helpers matching sample.html
+        window.toggleModal = (modalId, show) => {
+            const el = document.getElementById(modalId);
+            if(show) {
+                el.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            } else {
+                el.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        };
+
+        window.openAcceptModal = (id) => { window.currentJobId = id; toggleModal('accept-modal', true); };
+        window.openRejectModal = (id) => { window.currentJobId = id; toggleModal('reject-modal', true); };
+        window.closeAcceptModal = () => { window.currentJobId = null; toggleModal('accept-modal', false); };
+        window.closeRejectModal = () => { window.currentJobId = null; toggleModal('reject-modal', false); };
+        window.closeLogoutModal = () => toggleModal('logout-modal', false);
+        
+        // Note: Sidebar and Logout logic are now handled by cleaner-sidebar.js
+        // because we restored the ID="dashboard" and included the script.
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Register | LEIRAD Services</title>
+
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../auth/styles/auth.css">
+</head>
+
+<body>
+
+    <div class="auth-container">
+
+        <!-- LEFT: VISUAL SIDE -->
+        <div class="visual-side">
+            <!-- Background Image -->
+            <img src="../asset/register.png" alt="Clean Kitchen" class="bg-image">
+
+            <div class="visual-content">
+                <a href="index.html" class="brand-logo">
+                    <i class="ri-sparkling-2-fill" style="color: var(--accent);"></i> LEIRAD
+                </a>
+            </div>
+
+            <div class="visual-content">
+                <div class="testimonial-card">
+                    <i class="ri-double-quotes-l quote-icon"></i>
+                    <p class="quote-text">"Joining LEIRAD as a cleaner was the best career move I've made. The platform
+                        is easy to use and the clients are wonderful."</p>
+                    <div class="profile">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"
+                            class="profile-img" alt="User">
+                        <div style="line-height: 1.2;">
+                            <div style="font-weight: 700; font-size: 0.95rem;">Sarah Jenkins</div>
+                            <div style="font-size: 0.8rem; opacity: 0.8;">Top Rated Cleaner</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: FORM SIDE -->
+        <div class="form-side">
+            <div class="form-content">
+
+                <div class="form-header">
+                    <h1 class="form-title">Create Account</h1>
+                    <p class="form-subtitle">Already have an account? <a href="login.html" class="link">Sign In</a></p>
+                </div>
+
+                <div class="role-selector">
+                    <div class="role-card active" data-role="customer">
+                        <i class="ri-calendar-check-line"></i>
+                        <span>I want to book</span>
+                    </div>
+                    <div class="role-card" data-role="cleaner">
+                        <i class="ri-briefcase-4-line"></i>
+                        <span>I want to work</span>
+                    </div>
+                </div>
+
+                <div id="customerFormContainer">
+                    <form id="customerRegisterForm">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label class="label">First Name <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="input" name="first_name" placeholder="John" required
+                                        autocomplete="given-name">
+                                    <i class="ri-user-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label">Middle Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="input" name="middle_name" placeholder="Middle"
+                                        autocomplete="additional-name">
+                                    <i class="ri-user-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label class="label">Last Name <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="input" name="last_name" placeholder="Doe" required
+                                        autocomplete="family-name">
+                                    <i class="ri-user-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label class="label">Email Address <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="email" class="input" name="email" placeholder="john@example.com"
+                                        required autocomplete="email">
+                                    <i class="ri-mail-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label">Password <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" class="input" name="password" id="cleanerPassword"
+                                        placeholder="Min. 8 chars" required autocomplete="new-password">
+                                    <i class="ri-lock-password-line icon"></i>
+                                    <i class="ri-eye-off-line password-toggle" id="cleanerToggleIcon"
+                                        onclick="togglePw('cleanerPassword', 'cleanerToggleIcon')"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label">Confirm Password <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" class="input" name="password_confirmation"
+                                        id="cleanerConfirmPassword" placeholder="Repeat password" required
+                                        autocomplete="new-password">
+                                    <i class="ri-lock-password-line icon"></i>
+                                    <i class="ri-eye-off-line password-toggle" id="cleanerConfirmToggleIcon"
+                                        onclick="togglePw('cleanerConfirmPassword', 'cleanerConfirmToggleIcon')"></i>
+                                </div>
+                            </div>
+
+                            <label class="terms">
+                                <input type="checkbox" name="terms" required>
+                                <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#"
+                                        class="link">Privacy Policy</a></span>
+                            </label>
+
+                            <button type="submit" class="btn-submit full-width btn-enhanced">
+                                Create Customer Account <i class="ri-arrow-right-line"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="cleanerFormContainer" style="display: none;">
+                    <form id="cleanerRegisterForm">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label class="label">First Name <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="input" name="first_name" placeholder="Jane" required
+                                        autocomplete="given-name">
+                                    <i class="ri-user-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label">Middle Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="input" name="middle_name" placeholder="Middle"
+                                        autocomplete="additional-name">
+                                    <i class="ri-user-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label class="label">Last Name <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="text" class="input" name="last_name" placeholder="Smith" required
+                                        autocomplete="family-name">
+                                    <i class="ri-user-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group full-width">
+                                <label class="label">Email Address <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="email" class="input" name="email" placeholder="jane@example.com"
+                                        required autocomplete="email">
+                                    <i class="ri-mail-line icon"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label">Password <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" class="input" name="password" id="customerPassword"
+                                        placeholder="Min. 8 chars" required autocomplete="new-password">
+                                    <i class="ri-lock-password-line icon"></i>
+                                    <i class="ri-eye-off-line password-toggle" id="customerToggleIcon"
+                                        onclick="togglePw('customerPassword', 'customerToggleIcon')"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label class="label">Confirm Password <span class="required">*</span></label>
+                                <div class="input-wrapper">
+                                    <input type="password" class="input" name="password_confirmation"
+                                        id="customerConfirmPassword" placeholder="Repeat password" required
+                                        autocomplete="new-password">
+                                    <i class="ri-lock-password-line icon"></i>
+                                    <i class="ri-eye-off-line password-toggle" id="customerConfirmToggleIcon"
+                                        onclick="togglePw('customerConfirmPassword', 'customerConfirmToggleIcon')"></i>
+                                </div>
+                            </div>
+
+                            <!-- CLEANER SPECIFIC FIELDS -->
+                            <div class="cleaner-fields full-width form-grid"
+                                style="margin: 0; padding: 0; width: 100%;">
+
+                                <div class="input-group">
+                                    <label class="label">Experience (Years) <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <input type="number" class="input" name="experience" placeholder="e.g. 3"
+                                            min="0" required>
+                                        <i class="ri-history-line icon"></i>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label class="label">Specialization <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <select class="input" name="specialization" required>
+                                            <option value="" disabled selected>Select Type</option>
+                                            <option value="residential">Residential</option>
+                                            <option value="commercial">Commercial</option>
+                                            <option value="deep_cleaning">Deep Cleaning</option>
+                                            <option value="move_in_out">Move-In / Move-Out</option>
+                                        </select>
+                                        <i class="ri-arrow-down-s-line icon" style="pointer-events: none;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label class="label">Skills (Comma separated)</label>
+                                    <div class="input-wrapper">
+                                        <input type="text" class="input" name="skills"
+                                            placeholder="e.g. Ironing, Windows, Eco-friendly">
+                                        <i class="ri-list-check icon"></i>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label class="label">Primary Valid ID <span class="required">*</span></label>
+                                    <div class="input-wrapper">
+                                        <select class="input" name="valid_id_type" required>
+                                            <option value="" disabled selected>Select ID Type</option>
+                                            <option value="passport">Philippine Passport</option>
+                                            <option value="drivers_license">Driver’s License</option>
+                                            <option value="sss_umid">SSS UMID Card</option>
+                                            <option value="philhealth">PhilHealth ID</option>
+                                            <option value="tin">TIN Card</option>
+                                            <option value="postal">Postal ID</option>
+                                            <option value="voters">Voter’s ID</option>
+                                            <option value="prc">PRC ID</option>
+                                            <option value="senior_citizen">Senior Citizen ID</option>
+                                            <option value="ofw">OFW ID</option>
+                                            <option value="national_id">National ID (PhilSys ID)</option>
+                                            <option value="gsis">GSIS ID</option>
+                                            <option value="ibp">IBP ID</option>
+                                            <option value="diplomat">Diplomat ID</option>
+                                            <option value="alien_cr">Alien Certificate of Registration (ACR I-Card)
+                                            </option>
+                                            <option value="gocc">GOCC/Government Office ID</option>
+                                            <option value="other">Other Valid Government ID</option>
+                                        </select>
+                                        <i class="ri-arrow-down-s-line icon" style="pointer-events: none;"></i>
+                                    </div>
+                                </div>
+
+                                <div class="full-width file-upload-container">
+                                    <label class="file-label" id="idFrontLabel">
+                                        <i class="ri-id-card-line"></i>
+                                        <span>Front ID Photo</span>
+                                        <input type="file" name="id_front" id="idFrontInput" class="file-input-hidden"
+                                            accept="image/*" required
+                                            onchange="previewImage(this, 'idFrontPreview', 'idFrontLabel')">
+                                        <img id="idFrontPreview" src="" alt="Front ID Preview"
+                                            style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; border-radius: 12px;">
+                                    </label>
+                                    <label class="file-label" id="idBackLabel">
+                                        <i class="ri-id-card-fill"></i>
+                                        <span>Back ID Photo</span>
+                                        <input type="file" name="id_back" id="idBackInput" class="file-input-hidden"
+                                            accept="image/*" required
+                                            onchange="previewImage(this, 'idBackPreview', 'idBackLabel')">
+                                        <img id="idBackPreview" src="" alt="Back ID Preview"
+                                            style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; border-radius: 12px;">
+                                    </label>
+                                </div>
+
+                                <div class="approval-notice">
+                                    <i class="ri-information-fill"></i>
+                                    <div>
+                                        <strong>Approval Required:</strong> Your account will be reviewed by our team
+                                        before you can start accepting jobs. This usually takes 24-48 hours.
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <label class="terms">
+                                <input type="checkbox" name="terms" required>
+                                <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#"
+                                        class="link">Privacy Policy</a></span>
+                            </label>
+
+                            <button type="submit" class="btn-submit full-width btn-enhanced">
+                                Apply as Cleaner <i class="ri-arrow-right-line"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="back-container">
+                    <a href="../../index.html" class="back-link">
+                        <i class="ri-arrow-left-line"></i> Back to Home
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div id="otpModal" class="modal"
+        style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-content"
+            style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px; border-radius: 8px; text-align: center; position: relative;">
+            <button id="otpCloseBtn" aria-label="Close"
+                style="position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 1.5rem; color: #718096; cursor: pointer;">
+                <i class="ri-close-line"></i>
+            </button>
+            <h2>Verify Your Email</h2>
+            <p>We have sent a 6-digit code to your email. Please enter it below to verify your account.</p>
+            <div class="input-group" style="margin: 20px 0;">
+                <input type="tel" id="otpInput" class="input" placeholder="• • • • • •" maxlength="6" inputmode="numeric" pattern="[0-9]*"
+                    style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;">
+            </div>
+            <button id="verifyOtpBtn" class="btn-submit" style="margin-top: 15px;">Verify OTP</button>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Didn't receive code? <a href="#" id="resendOtpLink"
+                    class="link">Resend</a></p>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- UI Utils -->
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Auth Script -->
+    <script src="../scripts/auth.js"></script>
+
+    <script>
+        // Form Submission
+        document.getElementById('customerRegisterForm').addEventListener('submit', handleRegister);
+        document.getElementById('cleanerRegisterForm').addEventListener('submit', handleRegister);
+    </script>
+</body>
+
+</html>

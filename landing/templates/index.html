@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="description"
+        content="Professional Home Cleaning Services. Trusted, Eco-friendly, and Efficient. Book today and experience the joy of pristine living.">
+    <meta name="theme-color" content="#2C7A7B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=yes">
+    <title>LEIRAD | Pristine Home Cleaning Services</title>
+
+    <!-- Google Fonts: Manrope (Modern/Clean) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons (Modern Vector Icons) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="../styles/landing.css">
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <header id="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="ri-sparkling-2-fill"></i> LEIRAD
+            </a>
+
+            <nav class="nav-links">
+                <a href="#home" class="active">Home</a>
+                <a href="#services">Services</a>
+                <a href="#process">How it Works</a>
+                <a href="#reviews">Reviews</a>
+            </nav>
+
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <a href="../../auth/templates/login.html" class="btn-primary header-cta"
+                    aria-label="Book cleaning service now">
+                    <span>Book Now</span> <i class="ri-arrow-right-line"></i>
+                </a>
+                <button class="mobile-toggle" onclick="toggleMenu()" aria-label="Toggle navigation menu"
+                    aria-expanded="false">
+                    <i class="ri-menu-4-line"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="close-modal" style="top:30px; right:30px; font-size:2rem;"
+            onclick="toggleMenu()">&times;</button>
+        <a href="#home" onclick="toggleMenu()">Home</a>
+        <a href="#services" onclick="toggleMenu()">Services</a>
+        <a href="#process" onclick="toggleMenu()">Process</a>
+        <a href="#reviews" onclick="toggleMenu()">Reviews</a>
+        <a href="../../auth/templates/login.html" class="btn-primary" onclick="toggleMenu()">Book Now</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-slide active">
+            <img src="../asset/Clean Bright Living Room.png" alt="Clean Bright Living Room">
+        </div>
+        <div class="hero-slide">
+            <img src="../asset/Clean Bright Living Room.png" alt="Modern Kitchen Cleaning">
+        </div>
+
+        <div class="overlay"></div>
+
+        <div class="hero-content">
+            <h1>Experience the Joy of <br> <span style="color:var(--accent);">Pristine Living</span></h1>
+            <p>We provide top-tier, eco-friendly home cleaning services tailored to your lifestyle. Relax, recharge, and
+                let us handle the mess.</p>
+
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <a href="../../auth/templates/login.html" class="btn-primary"
+                    style="padding: 16px 32px; font-size: 1.1rem; text-decoration: none; display: inline-block;">Book a
+                    Clean</a>
+                <button class="btn-primary"
+                    style="background: white; color: var(--primary); padding: 16px 32px; font-size: 1.1rem;"
+                    onclick="document.getElementById('services').scrollIntoView()">View Services</button>
+            </div>
+
+            <div class="hero-badges">
+                <div class="hero-badge"><i class="ri-shield-check-line"></i> Fully Insured</div>
+                <div class="hero-badge"><i class="ri-leaf-line"></i> Eco-Friendly</div>
+                <div class="hero-badge"><i class="ri-star-smile-line"></i> Top Rated</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES / TRUST INDICATORS -->
+    <section class="container">
+        <div class="features-section">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="ri-user-star-line"></i></div>
+                        <h3 class="feature-title">Vetted Professionals</h3>
+                        <p class="feature-desc">Every cleaner undergoes a strict background check and rigorous training.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="ri-plant-line"></i></div>
+                        <h3 class="feature-title">Non-Toxic Products</h3>
+                        <p class="feature-desc">Safe for your children and pets. We use organic, plant-based solutions.
+                        </p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="ri-time-line"></i></div>
+                        <h3 class="feature-title">Reliable & Punctual</h3>
+                        <p class="feature-desc">We value your time. Our team arrives on schedule, every single time.</p>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="ri-customer-service-2-line"></i></div>
+                        <h3 class="feature-title">Satisfaction Guarantee</h3>
+                        <p class="feature-desc">Not happy? We'll come back and re-clean for free within 24 hours.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BRANDS / PARTNERS SCROLLING SECTION -->
+    <section class="brand-section">
+        <div class="container">
+            <p class="brand-subtitle">Trusted by Industry Leaders</p>
+            <div class="brand-slider">
+                <div class="brand-track">
+                    <!-- Original Set -->
+                    <div class="brand-item"><i class="ri-home-smile-fill"></i> CleanCo</div>
+                    <div class="brand-item"><i class="ri-sparkling-fill"></i> SparkleLife</div>
+                    <div class="brand-item"><i class="ri-leaf-fill"></i> EcoFresh</div>
+                    <div class="brand-item"><i class="ri-drop-fill"></i> PureHome</div>
+                    <div class="brand-item"><i class="ri-hand-heart-fill"></i> CareKeepers</div>
+                    <div class="brand-item"><i class="ri-brush-fill"></i> TidyUp</div>
+                    <div class="brand-item"><i class="ri-building-fill"></i> OfficeGlow</div>
+
+                    <!-- Duplicate Set for Infinite Scroll -->
+                    <div class="brand-item"><i class="ri-home-smile-fill"></i> CleanCo</div>
+                    <div class="brand-item"><i class="ri-sparkling-fill"></i> SparkleLife</div>
+                    <div class="brand-item"><i class="ri-leaf-fill"></i> EcoFresh</div>
+                    <div class="brand-item"><i class="ri-drop-fill"></i> PureHome</div>
+                    <div class="brand-item"><i class="ri-hand-heart-fill"></i> CareKeepers</div>
+                    <div class="brand-item"><i class="ri-brush-fill"></i> TidyUp</div>
+                    <div class="brand-item"><i class="ri-building-fill"></i> OfficeGlow</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section class="section-padding" id="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Our Expertise</span>
+                <h2 class="section-title">Cleaning Packages Tailored to You</h2>
+                <p class="section-desc">From routine maintenance to deep detailing, choose the perfect service for your
+                    home's needs.</p>
+            </div>
+
+            <!-- Services Toolbar (Search & Filter) -->
+            <div class="services-toolbar">
+                <!-- Search Bar -->
+                <div class="search-wrapper">
+                    <i class="ri-search-line search-icon"></i>
+                    <input type="text" id="serviceSearch" class="search-input" placeholder="Find your perfect clean..."
+                        onkeyup="searchServices(this.value)">
+                </div>
+
+                <!-- Filter Buttons -->
+                <div class="filter-container">
+                    <button class="filter-btn active" onclick="filterServices('all', this)">All</button>
+                    <button class="filter-btn" onclick="filterServices('Standard Clean', this)">Standard</button>
+                    <button class="filter-btn" onclick="filterServices('Deep Clean', this)">Deep Clean</button>
+                    <button class="filter-btn" onclick="filterServices('Move-In/Out', this)">Move-In/Out</button>
+                    <button class="filter-btn" onclick="filterServices('Specialty', this)">Specialty</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Services Grid -->
+            <div class="services-grid" id="servicesGrid">
+                <!-- Services injected via JS -->
+            </div>
+
+            <!-- Load More Button -->
+            <div class="load-more-container">
+                <button id="loadMoreBtn" class="load-more-btn hidden" onclick="loadMore()">
+                    Load More <i class="ri-arrow-down-s-line"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section-padding steps-section" id="process">
+        <div class="container">
+            <div class="section-header text-center" style="max-width: 100%; margin: 0 auto 60px;">
+                <span class="section-subtitle">Simple Process</span>
+                <h2 class="section-title">How It Works</h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <i class="ri-calendar-check-line"
+                        style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3>Book Online</h3>
+                    <p style="color:var(--text-body);">Select your service, choose a date & time, and get pricing
+                        instantly.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <i class="ri-magic-line" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3>We Clean</h3>
+                    <p style="color:var(--text-body);">Our fully equipped professional team arrives and makes your home
+                        sparkle.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <i class="ri-cup-line" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3>You Relax</h3>
+                    <p style="color:var(--text-body);">Enjoy your free time and come home to a beautifully fresh space.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM SECTION -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Meet the Team</span>
+                <h2 class="section-title">Our Cleaning Specialists</h2>
+                <p class="section-desc">Dedicated professionals committed to excellence.</p>
+            </div>
+            <div class="team-grid" id="teamGrid">
+                <!-- Cleaners injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="section-padding reviews-section" id="reviews">
+        <div class="container">
+            <div class="section-header text-center" style="max-width: 100%;">
+                <span class="section-subtitle">Client Stories</span>
+                <h2 class="section-title">Loved by Locals</h2>
+            </div>
+            <div class="services-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="review-card">
+                    <div class="stars"><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i
+                            class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i></div>
+                    <p class="review-text">"I've never seen my kitchen this clean! The team was professional, polite,
+                        and they even got stains out of the carpet that I thought were permanent. Highly recommend!"</p>
+                    <div class="reviewer">
+                        <div class="reviewer-avatar"></div>
+                        <span class="reviewer-name">Emily Watson</span>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="stars"><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i
+                            class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i></div>
+                    <p class="review-text">"Booking was super easy. They arrived right on time with all their own
+                        supplies. The eco-friendly products smell amazing, not chemical-like at all."</p>
+                    <div class="reviewer">
+                        <div class="reviewer-avatar"></div>
+                        <span class="reviewer-name">Michael Chang</span>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="stars"><i class="ri-star-fill"></i><i class="ri-star-fill"></i><i
+                            class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-half-fill"></i></div>
+                    <p class="review-text">"LEIRAD is a lifesaver for working parents. Coming home to a spotless house
+                        on Fridays is the best feeling. Worth every penny."</p>
+                    <div class="reviewer">
+                        <div class="reviewer-avatar"></div>
+                        <span class="reviewer-name">Jessica Davis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h4><i class="ri-sparkling-2-fill"></i> LEIRAD.</h4>
+                    <p class="footer-text">Elevating home hygiene standards with sustainable practices and expert care.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-icon"><i class="ri-instagram-line"></i></a>
+                        <a href="#" class="social-icon"><i class="ri-facebook-fill"></i></a>
+                        <a href="#" class="social-icon"><i class="ri-twitter-x-line"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h5>Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="#home">About Us</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Support</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5>Contact</h5>
+                    <ul class="footer-links">
+                        <li><i class="ri-map-pin-line"></i> 123 Sparkle Ave, NY</li>
+                        <li><i class="ri-phone-line"></i> +1 (555) 123-4567</li>
+                        <li><i class="ri-mail-line"></i> hello@leirad.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 LEIRAD Home Services. All Rights Reserved. Designed for Excellence.
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOOKING MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()"><i class="ri-close-line"></i></button>
+            <div style="text-align:center; margin-bottom:25px;">
+                <h3 style="font-size:1.8rem; font-weight:800; color:var(--text-dark);">Book Your Clean</h3>
+                <p style="color:var(--text-body);">Fill out the details below and we will confirm shortly.</p>
+            </div>
+            <form onsubmit="event.preventDefault(); alert('Request sent! We will contact you shortly.'); closeModal();">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service Type</label>
+                    <select class="form-input" id="modalServiceSelect">
+                        <option>Standard Clean</option>
+                        <option>Deep Clean</option>
+                        <option>Move-In / Move-Out</option>
+                    </select>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time</label>
+                        <input type="time" class="form-input" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary submit-btn">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- External JS -->
+    <script src="../scripts/landing.js"></script>
+</body>
+
+</html>

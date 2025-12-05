@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEIRAD | Services Management</title>
+    
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Remix Icons (Matching System Theme) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- External Styles -->
+    <link rel="stylesheet" href="../styles/service.css">
+</head>
+<body>
+
+    <!-- Overlay -->
+    <div class="drawer-overlay" id="mobileOverlay"></div>
+    <div class="drawer-overlay" id="overlay"></div>
+
+    <div class="dashboard-container" id="dashboard">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <i class="ri-sparkling-2-fill"></i>
+                <span class="nav-text">LEIRAD. Admin</span>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="ri-dashboard-line"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="booking.html" class="nav-item">
+                    <i class="ri-calendar-check-line"></i>
+                    <span class="nav-text">Bookings</span>
+                </a>
+                <a href="cleaner.html" class="nav-item">
+                    <i class="ri-group-line"></i>
+                    <span class="nav-text">Cleaners</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <i class="ri-user-settings-line"></i>
+                    <span class="nav-text">Users</span>
+                </a>
+                <a href="service.html" class="nav-item active">
+                    <i class="ri-service-line"></i>
+                    <span class="nav-text">Services</span>
+                </a>
+                <a href="analytic.html" class="nav-item">
+                    <i class="ri-bar-chart-box-line"></i>
+                    <span class="nav-text">Analytics</span>
+                </a>
+                <a href="setting.html" class="nav-item">
+                    <i class="ri-settings-4-line"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <a href="#" class="nav-item" id="logoutSidebarBtn" style="color: #E53E3E;">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <img src="../../assets/images/default-avatar.png" alt="Admin" class="user-img" id="userAvatar">
+                <div class="user-info nav-text">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-dark);" id="userName">Loading...</div>
+                    <div style="font-size: 0.75rem; color: var(--text-light);" id="userRole">...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            
+            <!-- Header -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="toggle-btn">
+                        <i class="ri-menu-2-line"></i>
+                    </button>
+                    <h2 style="font-size: 1.4rem; font-weight: 700; color: var(--primary-dark);">Services</h2>
+                </div>
+                <button class="btn-primary" onclick="toggleDrawer()">
+                    <i class="ri-add-line"></i> Add Service
+                </button>
+            </header>
+
+            <!-- Services Toolbar (Search & Filter) -->
+            <div class="services-toolbar">
+                <!-- Search Bar -->
+                <div class="search-wrapper">
+                    <i class="ri-search-line search-icon"></i>
+                    <input type="text" id="service-search" class="search-input" placeholder="Find service...">
+                </div>
+
+                <!-- Filter Buttons -->
+                <div class="filter-container">
+                    <button class="filter-btn active" data-category="All" onclick="filterServices('All', this)">All</button>
+                    <button class="filter-btn" data-category="Standard Clean" onclick="filterServices('Standard Clean', this)">Standard</button>
+                    <button class="filter-btn" data-category="Deep Clean" onclick="filterServices('Deep Clean', this)">Deep Clean</button>
+                    <button class="filter-btn" data-category="Move-In/Out" onclick="filterServices('Move-In/Out', this)">Move-In/Out</button>
+                    <button class="filter-btn" data-category="Specialty" onclick="filterServices('Specialty', this)">Specialty</button>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="services-grid" id="servicesGrid">
+                <!-- Content will be loaded dynamically via JS -->
+            </div>
+
+            <!-- See More Button -->
+            <div id="see-more-container" style="text-align: center; margin-top: 30px; display: none; width: 100%;">
+                <button class="btn-primary" onclick="loadMoreServices()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); margin: 0 auto;">
+                    ------------- See More -------------
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- RIGHT DRAWER: Add Service -->
+    <div class="drawer" id="serviceDrawer">
+        <div class="drawer-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <h3 style="font-size:1.5rem; color:var(--primary-dark); font-weight:700;">Add New Service</h3>
+            <button onclick="toggleDrawer()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-light); transition:0.2s;"><i class="ri-close-line"></i></button>
+        </div>
+        <form>
+            <div class="form-group">
+                <label>Service Name</label>
+                <input type="text" placeholder="e.g. Carpet Steam Clean">
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select>
+                    <option>Standard Clean</option>
+                    <option>Deep Clean</option>
+                    <option>Specialty</option>
+                    <option>Move-In / Move-Out</option>
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Price (₱)</label>
+                    <input type="number" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                    <label>Avg. Duration</label>
+                    <select>
+                        <option value="30 mins">30 mins</option>
+                        <option value="1 hr">1 hr</option>
+                        <option value="1.5 hrs">1.5 hrs</option>
+                        <option value="2 hrs">2 hrs</option>
+                        <option value="2.5 hrs">2.5 hrs</option>
+                        <option value="3 hrs">3 hrs</option>
+                        <option value="3.5 hrs">3.5 hrs</option>
+                        <option value="4 hrs">4 hrs</option>
+                        <option value="4.5 hrs">4.5 hrs</option>
+                        <option value="5 hrs">5 hrs</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea rows="4" style="resize: none;" placeholder="Brief details about the service..."></textarea>
+            </div>
+            <div class="form-group file-upload-group">
+                <label>Service Image</label>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="serviceImageInput" accept="image/*" hidden onchange="previewImage(this)">
+                    <label for="serviceImageInput" class="file-upload-label" id="uploadLabel">
+                        <i class="ri-upload-cloud-2-line"></i>
+                        <span>Click to upload image</span>
+                    </label>
+                </div>
+                <div class="image-preview" id="imagePreviewContainer" style="margin-top: 15px; display: none; position: relative;">
+                    <img id="imagePreview" src="" alt="Preview" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px;">
+                    <button type="button" class="remove-image" onclick="removeImage()" style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            </div>
+            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+                <span style="font-weight: 600; font-size: 0.95rem; color:var(--text-dark);">Active immediately</span>
+            </div>
+            <button type="button" class="btn-primary" style="width: 100%; justify-content: center;">
+                Save Service
+            </button>
+        </form>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModalOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 2000; justify-content: center; align-items: center;">
+        <div class="modal-content" style="background: white; padding: 30px; border-radius: 16px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <div style="width: 60px; height: 60px; background: #FEE2E2; color: #DC2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px;">
+                <i class="ri-delete-bin-line"></i>
+            </div>
+            <h3 style="font-size: 1.5rem; color: var(--text-dark); margin-bottom: 10px; font-weight: 700;">Delete Service?</h3>
+            <p style="color: var(--text-body); margin-bottom: 25px; line-height: 1.5;">Are you sure you want to delete this service? This action cannot be undone.</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="cancelDeleteBtn" style="padding: 12px 24px; border-radius: 8px; border: 1px solid var(--border); background: white; color: var(--text-dark); font-weight: 600; cursor: pointer; transition: 0.2s;">Cancel</button>
+                <button id="confirmDeleteBtn" style="padding: 12px 24px; border-radius: 8px; border: none; background: #DC2626; color: white; font-weight: 600; cursor: pointer; transition: 0.2s;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- API Client -->
+    <script src="../../common/scripts/api-client.js"></script>
+    <!-- UI Utils -->
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Sidebar Logic -->
+    <script src="../scripts/admin-sidebar.js"></script>
+    <!-- Custom Script -->
+    <script src="../scripts/service.js"></script>
+
+</body>
+</html>

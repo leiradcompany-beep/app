@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEIRAD | Admin Dashboard</title>
+    
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Remix Icons (Matching System Theme) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="../styles/dashboard.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="mobileOverlay"></div>
+
+    <div class="dashboard-container" id="dashboard">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <i class="ri-sparkling-2-fill"></i>
+                <span class="nav-text">LEIRAD. Admin</span>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active">
+                    <i class="ri-dashboard-line"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="booking.html" class="nav-item">
+                    <i class="ri-calendar-check-line"></i>
+                    <span class="nav-text">Bookings</span>
+                </a>
+                <a href="cleaner.html" class="nav-item">
+                    <i class="ri-group-line"></i>
+                    <span class="nav-text">Cleaners</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <i class="ri-user-settings-line"></i>
+                    <span class="nav-text">Users</span>
+                </a>
+                <a href="service.html" class="nav-item">
+                    <i class="ri-service-line"></i>
+                    <span class="nav-text">Services</span>
+                </a>
+                <a href="analytic.html" class="nav-item">
+                    <i class="ri-bar-chart-box-line"></i>
+                    <span class="nav-text">Analytics</span>
+                </a>
+                <a href="setting.html" class="nav-item">
+                    <i class="ri-settings-4-line"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <a href="#" class="nav-item" id="logoutSidebarBtn" style="color: #E53E3E;">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <img src="../../assets/images/default-avatar.png" alt="Admin" class="user-img" id="userAvatar">
+                <div class="user-info nav-text">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-dark);" id="userName">Loading...</div>
+                    <div style="font-size: 0.75rem; color: var(--text-light);" id="userRole">...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            
+            <!-- HEADER -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="toggle-btn">
+                        <i class="ri-menu-2-line"></i>
+                    </button>
+                    <h2 class="header-title">Overview</h2>
+                </div>
+
+                <div class="header-actions">
+                    
+                    <!-- NOTIFICATION BELL -->
+                    <div class="icon-btn" id="notifBtn">
+                        <i class="ri-notification-3-line"></i>
+                        <span class="badge" id="notifCount">0</span>
+                        
+                        <!-- NOTIFICATION DROPDOWN -->
+                        <div class="notification-dropdown" id="notifDropdown">
+                            <div class="dropdown-header">
+                                <h6>Notifications</h6>
+                                <span class="mark-read">Mark all read</span>
+                            </div>
+                            <div class="dropdown-list" id="notifList">
+                                <!-- Notifications will be loaded here -->
+                                <div style="padding: 20px; text-align: center; color: var(--text-light);">No notifications</div>
+                            </div>
+                            <div class="dropdown-footer">
+                                <a href="#">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- STATS CARDS -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- Card 1 -->
+                <div class="stat-card" title="Includes all booking statuses (Pending, Confirmed, Completed, Cancelled)">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="ri-calendar-check-fill"></i></div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="statBookings">--</div>
+                        <div class="stat-label">Bookings Today</div>
+                    </div>
+                    <div class="trend" id="trendBookings">...</div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="stat-card" title="Based on completed bookings only">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="ri-money-dollar-circle-fill"></i></div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="statRevenue">--</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="trend" id="trendRevenue">...</div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="ri-user-heart-fill"></i></div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="statClients">--</div>
+                        <div class="stat-label">Active Clients</div>
+                    </div>
+                    <div class="trend" id="trendClients">...</div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="ri-time-fill"></i></div>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="statAvailability">--</div>
+                        <div class="stat-label">Availability Rate</div>
+                    </div>
+                    <div class="trend" id="trendAvailability">...</div>
+                </div>
+            </div>
+
+            <!-- TABLE SECTION -->
+            <div class="table-section">
+                <div class="section-header">
+                    <h3>Recent Bookings</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="search-box" style="margin-right: 0;">
+                            <i class="ri-search-line"></i>
+                            <input type="text" id="bookingSearchInput" placeholder="Search bookings...">
+                        </div>
+                        <button class="btn-sm" id="viewAllBookingsBtn">View All</button>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="custom-table" id="recentBookingsTable">
+                        <thead>
+                            <tr>
+                                <th>Booking Number</th>
+                                <th>Client</th>
+                                <th>Service</th>
+                                <th>Cleaner</th>
+                                <th>Date & Time</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows will be loaded here -->
+                             <tr><td colspan="7" style="text-align:center;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>`r`n    <!-- Avatar Mixin -->`r`n    <script src="../../common/scripts/avatar-mixin.js"></script>
+    <!-- API Client -->
+    <script src="../../common/scripts/api-client.js"></script>
+    <!-- UI Utils -->
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Sidebar Logic -->
+    <script src="../scripts/admin-sidebar.js"></script>
+    <!-- Dashboard Logic -->
+    <script src="../scripts/dashboard.js"></script>
+</body>
+</html>

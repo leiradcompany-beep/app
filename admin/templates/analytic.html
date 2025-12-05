@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEIRAD | Analytics & Reports</title>
+    
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Remix Icons (Matching Landing Page) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- External Styles -->
+    <link rel="stylesheet" href="../styles/analytic.css">
+</head>
+<body>
+
+    <!-- Mobile Overlay -->
+    <div class="drawer-overlay" id="mobileOverlay"></div>
+    <div class="drawer-overlay" id="overlay"></div>
+
+    <div class="dashboard-container" id="dashboard">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <i class="ri-sparkling-2-fill"></i>
+                <span class="nav-text">LEIRAD. Admin</span>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="ri-dashboard-line"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="booking.html" class="nav-item">
+                    <i class="ri-calendar-check-line"></i>
+                    <span class="nav-text">Bookings</span>
+                </a>
+                <a href="cleaner.html" class="nav-item">
+                    <i class="ri-group-line"></i>
+                    <span class="nav-text">Cleaners</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <i class="ri-user-settings-line"></i>
+                    <span class="nav-text">Users</span>
+                </a>
+                <a href="service.html" class="nav-item">
+                    <i class="ri-service-line"></i>
+                    <span class="nav-text">Services</span>
+                </a>
+                <a href="analytic.html" class="nav-item active">
+                    <i class="ri-bar-chart-box-line"></i>
+                    <span class="nav-text">Analytics</span>
+                </a>
+                <a href="setting.html" class="nav-item">
+                    <i class="ri-settings-4-line"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <a href="#" class="nav-item" id="logoutSidebarBtn" style="color: #E53E3E;">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <img src="../../assets/images/default-avatar.png" alt="Admin" class="user-img" id="userAvatar">
+                <div class="user-info nav-text">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-dark);" id="userName">Loading...</div>
+                    <div style="font-size: 0.75rem; color: var(--text-light);" id="userRole">...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            
+            <!-- Header -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="toggle-btn">
+                        <i class="ri-menu-2-line"></i>
+                    </button>
+                    <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--primary-dark);">Analytics Overview</h2>
+                </div>
+                
+                <div class="date-range" style="display: none;">
+                    <i class="ri-calendar-event-line"></i>
+                    <span>This Month: Oct 2023</span>
+                    <i class="ri-arrow-down-s-line"></i>
+                </div>
+            </header>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-title">Total Revenue</div>
+                    <div class="kpi-value" id="totalRevenue">₱0</div>
+                    <div class="kpi-trend" id="revenueTrend">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Jobs Completed</div>
+                    <div class="kpi-value" id="totalJobs">0</div>
+                    <div class="kpi-trend" id="jobsTrend">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Avg. Order Value</div>
+                    <div class="kpi-value" id="avgOrder">₱0.00</div>
+                    <div class="kpi-trend" id="orderTrend">--</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-title">Cleaner Availability</div>
+                    <div class="kpi-value" id="cleanerAvail">0%</div>
+                    <div class="kpi-trend" id="availTrend">--</div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1 -->
+            <div class="charts-container">
+                <!-- Large Line Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Revenue Trends</h3>
+                        <button class="chart-action"><i class="ri-more-fill"></i></button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Doughnut Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Service Distribution</h3>
+                        <button class="chart-action"><i class="ri-more-fill"></i></button>
+                    </div>
+                    <div class="chart-wrapper-sm">
+                        <div class="chart-scroll-inner">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2 -->
+            <div class="charts-container" style="grid-template-columns: 1fr 1fr;">
+                <!-- Bar Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Top Performing Cleaners</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="cleanerChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bar Chart -->
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Client Retention</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="clientChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- API Client -->
+    <script src="../../common/scripts/api-client.js"></script>
+    <!-- UI Utils -->
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Sidebar Logic -->
+    <script src="../scripts/admin-sidebar.js"></script>
+    <!-- Custom Script -->
+    <script src="../scripts/analytic.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Schedule | LEIRAD</title>
+    
+    <!-- Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons: Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS (Grid Only) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    
+    <!-- DataTables CSS (Required for Schedule) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+    <!-- Custom Dashboard CSS -->
+    <link rel="stylesheet" href="../styles/dashboard.css">
+</head>
+<body>
+
+<!-- Mobile Overlay -->
+<div class="drawer-overlay" id="mobileOverlay"></div>
+
+    <div class="dashboard-wrapper" id="dashboard">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="ri-sparkling-2-fill"></i>
+                    <span>LEIRAD</span>
+                </div>
+                <button class="d-lg-none" id="closeSidebarBtn" style="font-size: 1.5rem; color: var(--text-muted);">
+                    <i class="ri-close-line"></i>
+                </button>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="ri-dashboard-fill"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="schedule.html" class="nav-item active">
+                    <i class="ri-calendar-check-fill"></i>
+                    <span class="nav-text">My Schedule</span>
+                </a>
+                <a href="setting.html" class="nav-item">
+                    <i class="ri-user-settings-fill"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <div class="nav-spacer"></div>
+                <a href="#" class="nav-item logout-link" id="logoutSidebarBtn">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar-container">
+                    <img src="" alt="Cleaner" class="user-img" id="userAvatar" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-avatar.png')">
+                    <span class="status-indicator"></span>
+                </div>
+                <div class="user-info nav-text">
+                    <h4 id="userNameDisplay">Loading...</h4>
+                    <p id="userRoleDisplay">Cleaner</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content" id="mainContent">
+            
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="toggle-btn" id="sidebarToggle">
+                        <i class="ri-menu-2-line"></i>
+                    </button>
+                    <div class="welcome-text">
+                        <h1 id="page-title">My Schedule</h1>
+                        <p class="text-muted mb-0">Manage your assignments</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn btn-primary d-flex align-items-center gap-2" onclick="toggleBookingDrawer(true)" style="background-color: var(--primary); border: none; padding: 10px 20px; border-radius: 8px; color: white; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2); transition: all 0.2s;">
+                        <i class="ri-add-line"></i> Add Booking
+                    </button>
+                </div>
+            </header>
+
+            <!-- SCHEDULE CONTENT -->
+            <section class="content-body">
+                
+                <!-- Filters -->
+                <div class="filters-container">
+                    <div class="status-tabs">
+                        <div class="filter-tab active" data-filter="all">All</div>
+                        <div class="filter-tab" data-filter="assigned">Assigned</div>
+                        <div class="filter-tab" data-filter="confirmed">Confirmed</div>
+                        <div class="filter-tab" data-filter="completed">Completed</div>
+                    </div>
+                </div>
+
+                <!-- Schedule Table -->
+                <div class="table-section">
+                    <div class="custom-table-responsive">
+                        <table id="schedule-table" class="table custom-table" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Booking Number</th>
+                                    <th>Service</th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- DRAWER OVERLAY -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleBookingDrawer(false)" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1050; opacity: 0; transition: opacity 0.3s;"></div>
+
+    <!-- ADD BOOKING DRAWER -->
+    <div id="bookingDrawer" class="booking-drawer">
+        <div class="drawer-header">
+            <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text-main);">New Booking</h3>
+            <button onclick="toggleBookingDrawer(false)" style="background: none; border: none; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;"><i class="ri-close-line"></i></button>
+        </div>
+        
+        <div class="drawer-body">
+            <form id="cleanerBookingForm">
+                <!-- Customer Details -->
+                <h4 style="font-size: 0.85rem; color: var(--primary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 1px solid var(--primary-light); padding-bottom: 8px;">Customer Details</h4>
+                
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">First Name</label>
+                        <input type="text" class="form-control" id="custFirstName" placeholder="Jane" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #F8FAFC;" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Middle</label>
+                        <input type="text" class="form-control" id="custMiddleName" placeholder="M." style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #F8FAFC;">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Last Name</label>
+                        <input type="text" class="form-control" id="custLastName" placeholder="Doe" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #F8FAFC;" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Email Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="background: white; border-right: none;"><i class="ri-mail-line" style="color: var(--text-muted);"></i></span>
+                        <input type="email" class="form-control" id="custEmail" placeholder="jane@example.com" style="padding: 10px; border-left: none; border-radius: 0 8px 8px 0; border: 1px solid var(--border-color); background: #F8FAFC;" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Phone Number</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="background: white; border-right: none;"><i class="ri-phone-line" style="color: var(--text-muted);"></i></span>
+                        <input type="tel" class="form-control" id="custPhone" placeholder="0912 345 6789" style="padding: 10px; border-left: none; border-radius: 0 8px 8px 0; border: 1px solid var(--border-color); background: #F8FAFC;" required>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Full Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text" style="background: white; border-right: none;"><i class="ri-map-pin-line" style="color: var(--text-muted);"></i></span>
+                        <input type="text" class="form-control" id="custAddress" placeholder="Street, Barangay, City" style="padding: 10px; border-left: none; border-radius: 0 8px 8px 0; border: 1px solid var(--border-color); background: #F8FAFC;" required>
+                    </div>
+                </div>
+
+                <!-- Service & Schedule -->
+                <h4 style="font-size: 0.85rem; color: var(--primary); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; border-bottom: 1px solid var(--primary-light); padding-bottom: 8px;">Service & Schedule</h4>
+
+                <div class="mb-3">
+                    <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Select Service</label>
+                    <select id="bookingService" class="form-select" required>
+                        <option value="">Select Service</option>
+                    </select>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Date</label>
+                        <input type="date" class="form-control" id="bookingDate" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #F8FAFC;" required>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label" style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">Time</label>
+                        <input type="time" class="form-control" id="bookingTime" style="padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); background: #F8FAFC;" required>
+                    </div>
+                </div>
+                <!-- Add spacer at the bottom to prevent content from being hidden behind footer -->
+                <div style="height: 20px;"></div>
+            </form>
+        </div>
+
+        <div class="drawer-footer">
+            <button onclick="submitCleanerBooking()" class="btn btn-primary w-100" style="background-color: var(--primary); border: none; padding: 14px; border-radius: 10px; color: white; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 6px rgba(14, 165, 233, 0.2); transition: transform 0.2s;">
+                <i class="ri-check-double-line"></i> Confirm Booking
+            </button>
+        </div>
+    </div>
+
+<!-- MODALS -->
+
+<!-- Accept Modal -->
+<div class="custom-modal" id="accept-modal">
+    <div class="modal-card">
+        <div class="modal-icon success"><i class="ri-check-line"></i></div>
+        <h3>Accept Job?</h3>
+        <p>You are about to accept this assignment. It will be added to your schedule.</p>
+        <div class="modal-actions">
+            <button onclick="closeAcceptModal()" class="btn-ghost">Cancel</button>
+            <button id="confirmAcceptBtn" class="btn-confirm success">Confirm Accept</button>
+        </div>
+    </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="custom-modal" id="reject-modal">
+    <div class="modal-card">
+        <div class="modal-icon danger"><i class="ri-close-line"></i></div>
+        <h3>Decline Job?</h3>
+        <p>Are you sure? This job will be removed from your list and offered to others.</p>
+        <div class="modal-actions">
+            <button onclick="closeRejectModal()" class="btn-ghost">Cancel</button>
+            <button id="confirmRejectBtn" class="btn-confirm danger">Decline Job</button>
+        </div>
+    </div>
+</div>
+
+<!-- Complete Job Modal (Specific to Schedule) -->
+<div class="custom-modal" id="complete-modal">
+    <div class="modal-card">
+        <div class="modal-icon teal"><i class="ri-check-double-line"></i></div>
+        <h3>Complete Job?</h3>
+        <p>Mark this job as fully completed?</p>
+        <div class="modal-actions">
+            <button onclick="closeCompleteModal()" class="btn-ghost">Cancel</button>
+            <button id="confirmCompleteBtn" class="btn-confirm teal">Complete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Modal -->
+<div class="custom-modal" id="logout-modal">
+    <div class="modal-card">
+        <div class="modal-icon warning"><i class="ri-logout-box-r-line"></i></div>
+        <h3>Sign Out</h3>
+        <p>Are you sure you want to log out of your account?</p>
+        <div class="modal-actions">
+            <button onclick="closeLogoutModal()" class="btn-ghost">Stay Logged In</button>
+            <button id="confirmLogoutBtn" class="btn-confirm warning">Logout</button>
+        </div>
+    </div>
+</div>
+
+<!-- JQUERY & BOOTSTRAP -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+<!-- SCRIPTS -->
+<script src="../../common/scripts/api-client.js"></script>
+<script src="../../common/scripts/ui-utils.js"></script>
+<script src="../scripts/cleaner-sidebar.js?v=2.1"></script>
+<script src="../scripts/schedule.js?v=2.1"></script>
+
+<script>
+    $(document).ready(function() {
+        // Sidebar and Logout logic are now handled by cleaner-sidebar.js
+        // Schedule logic is in schedule.js
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login | LEIRAD Services</title>
+
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../auth/styles/auth.css">
+</head>
+
+<body>
+
+    <div class="auth-container">
+
+        <!-- LEFT: VISUAL SIDE -->
+        <div class="visual-side">
+            <!-- Background Image -->
+            <img src="../asset/login.png" alt="Clean Kitchen" class="bg-image">
+
+            <div class="visual-content">
+                <a href="index.html" class="brand-logo">
+                    <i class="ri-sparkling-2-fill" style="color: var(--accent);"></i> LEIRAD
+                </a>
+            </div>
+
+            <div class="visual-content">
+                <div class="testimonial-card">
+                    <i class="ri-double-quotes-l quote-icon"></i>
+                    <p class="quote-text">"I love coming home to a spotless apartment. LEIRAD makes managing my cleaning
+                        schedule incredibly easy."</p>
+                    <div class="profile">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"
+                            class="profile-img" alt="User">
+                        <div style="line-height: 1.2;">
+                            <div style="font-weight: 700; font-size: 0.95rem;">Michael Chen</div>
+                            <div style="font-size: 0.8rem; opacity: 0.8;">Verified Client</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: LOGIN FORM -->
+        <div class="form-side">
+            <div class="form-content">
+
+                <div class="form-header">
+                    <h1 class="form-title">Welcome Back</h1>
+                    <p class="form-subtitle">Don't have an account? <a href="register.html" class="link">Sign Up</a></p>
+                </div>
+
+                <form id="loginForm">
+
+                    <div class="input-group">
+                        <label class="label">Email Address</label>
+                        <div class="input-wrapper">
+                            <input type="email" class="input" placeholder="john@example.com" required
+                                autocomplete="email">
+                            <i class="ri-mail-line icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="label">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" class="input" id="password" placeholder="Enter your password"
+                                required autocomplete="current-password">
+                            <i class="ri-lock-line icon"></i>
+                            <i class="ri-eye-off-line password-toggle" id="toggleIcon"
+                                onclick="togglePw('password', 'toggleIcon')"></i>
+                        </div>
+                    </div>
+
+                    <div class="login-options">
+                        <label class="remember-me">
+                            <input type="checkbox">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="forgot.html" class="forgot-link">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">
+                        Sign In <i class="ri-arrow-right-line"></i>
+                    </button>
+
+                    <div class="divider">
+                        <span>Or continue with</span>
+                    </div>
+
+                    <div class="social-btns">
+                        <button type="button" class="social-btn">
+                            <i class="ri-google-fill" style="color: #DB4437;"></i> Google
+                        </button>
+                        <button type="button" class="social-btn">
+                            <i class="ri-facebook-circle-fill" style="color: #4267B2;"></i> Facebook
+                        </button>
+                    </div>
+
+                </form>
+
+                <div class="back-container">
+                    <a href="../../index.html" class="back-link">
+                        <i class="ri-arrow-left-line"></i> Back to Home
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <script src="../../auth/scripts/auth.js"></script>
+    <script>
+        // Attach event listener here to avoid inline handler issues
+        $('#loginForm').on('submit', handleLogin);
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Customer Portal | LEIRAD</title>
+
+    <!-- Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons: Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- DataTables & Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../styles/dashboard.css">
+    <link rel="stylesheet" href="../styles/drawer.css"> <!-- Added Drawer CSS -->
+</head>
+
+<body>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="ri-sparkling-2-fill"></i> LEIRAD
+        </div>
+
+        <nav class="nav-menu">
+            <a onclick="navigate('overview')" class="nav-item active" id="nav-overview">
+                <i class="ri-layout-grid-fill"></i> Overview
+            </a>
+            <a onclick="navigate('services')" class="nav-item" id="nav-services">
+                <i class="ri-service-fill"></i> Services
+            </a>
+            <a onclick="navigate('cleaners')" class="nav-item" id="nav-cleaners">
+                <i class="ri-team-fill"></i> Cleaners
+            </a>
+            <a onclick="navigate('history')" class="nav-item" id="nav-history">
+                <i class="ri-history-line"></i> Booking History
+            </a>
+            <a onclick="navigate('profile')" class="nav-item" id="nav-profile">
+                <i class="ri-user-settings-fill"></i> Settings
+            </a>
+        </nav>
+
+        <div class="user-mini-profile">
+            <div class="user-avatar-sm">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"
+                    alt="User" id="sidebar-img">
+            </div>
+            <div class="user-info">
+                <h4 id="sidebar-name">Alex Johnson</h4>
+                <p>alex.j@example.com</p>
+            </div>
+            <button class="sidebar-logout-desktop" onclick="openLogoutModal()" title="Logout">
+                <i class="ri-logout-box-r-line"></i>
+            </button>
+            <!-- Logout Button: Hidden on Desktop/Tablet, Visible on Mobile (max-width: 900px) via CSS -->
+            <button class="sidebar-logout-mobile" onclick="openLogoutModal()" title="Logout">
+                <i class="ri-logout-box-r-line"></i>
+            </button>
+        </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="top-header">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <div class="mobile-toggle" onclick="toggleSidebar()"><i class="ri-menu-2-line"></i></div>
+                <div class="welcome-text">
+                    <h1 id="page-title">Welcome back, Alex!</h1>
+                    <!-- Mobile Logout Button (visible only on mobile) -->
+                    <button class="icon-btn mobile-logout-btn" onclick="openLogoutModal()" title="Logout">
+                        <i class="ri-logout-box-r-line"></i>
+                    </button>
+                    <p id="current-date">Sunday, Nov 30</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <!-- Desktop notification button (hidden) -->
+                <button class="icon-btn" style="display: none;">
+                    <i class="ri-notification-3-line"></i>
+                    <span class="badge-dot"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 1. OVERVIEW SECTION -->
+        <section id="overview" class="section-view active">
+            <!-- Hero Banner -->
+            <div class="dashboard-hero">
+                <div class="hero-pattern"></div>
+                <div class="hero-text">
+                    <h2>Your home deserves <br>the best shine.</h2>
+                    <p>You have 120 loyalty points. Redeem them for your next deep clean.</p>
+                    <button class="btn-primary" onclick="navigate('services')">
+                        Book a Service <i class="ri-arrow-right-line"></i>
+                    </button>
+                </div>
+                <img src="../asset/Booking Calender.gif" alt="Cleaning Illustration"
+                    style="width: 200px; height: auto; position: relative; z-index: 2;">
+            </div>
+
+            <div class="content-grid">
+                <!-- Left: Services -->
+                <div>
+                    <!-- TRENDING SECTION (NEW) -->
+                    <div class="section-header">
+                        <h3 class="section-title"><i class="ri-fire-fill" style="color:var(--warning)"></i> Trending Now
+                        </h3>
+                    </div>
+                    <!-- JS injects top used services here -->
+                    <div id="trending-services" class="trending-row"></div>
+
+                    <!-- STANDARD SERVICES -->
+                    <div class="section-header">
+                        <h3 class="section-title">Explore Services</h3>
+                        <a onclick="navigate('services')" class="see-all">See All</a>
+                    </div>
+                    <div class="services-scroll" id="featured-services">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Right: Upcoming & Stats -->
+                <div>
+                    <div class="section-header">
+                        <h3 class="section-title">Your Next Book Clean</h3>
+                    </div>
+
+                    <div class="upcoming-card" id="upcoming-widget">
+                        <div class="upcoming-header">
+                            <div class="date-badge">
+                                <span class="date-day">15</span>
+                                <span class="date-month">Dec</span>
+                            </div>
+                            <div>
+                                <h4 style="font-weight: 700;">Standard Maintenance</h4>
+                                <span class="status upcoming">Upcoming</span>
+                            </div>
+                        </div>
+                        <div class="info-row"><i class="ri-time-line"></i> 10:00 AM - 12:30 PM</div>
+                        <div class="info-row"><i class="ri-map-pin-line"></i> 123 Maple Street, NY</div>
+                        <div class="info-row"><i class="ri-wallet-3-line"></i> ₱120.00 (Pending)</div>
+
+                        <div class="cleaner-preview">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=100&q=80"
+                                class="cleaner-avatar">
+                            <div>
+                                <p style="font-size:0.85rem; color:var(--text-light);">Cleaner</p>
+                                <h5 style="font-size:0.95rem; font-weight:700;">Maria Sanchez</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <h3 class="section-title" style="margin-bottom: 15px;">Recent History</h3>
+                        <div class="table-wrapper" style="padding: 0;">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td style="padding: 18px 24px;">Deep Clean</td>
+                                        <td style="text-align: right; padding: 18px 24px;"><span
+                                                class="status completed">Done</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 18px 24px;">Window Wash</td>
+                                        <td style="text-align: right; padding: 18px 24px;"><span
+                                                class="status cancelled">Cancelled</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SERVICES SECTION -->
+        <section id="services" class="section-view">
+            <div class="section-header">
+                <h3 class="section-title">All Services</h3>
+            </div>
+
+            <!-- Services Toolbar (Search & Filter) -->
+            <div class="services-toolbar">
+                <!-- Search Bar -->
+                <div class="search-wrapper">
+                    <i class="ri-search-line search-icon"></i>
+                    <input type="text" id="service-search" class="search-input"
+                        placeholder="Find your perfect clean...">
+                </div>
+
+                <!-- Filter Button -->
+                <button class="icon-btn" onclick="openFilterDrawer()">
+                    <i class="ri-filter-3-line"></i>
+                </button>
+            </div>
+
+            <div class="services-scroll" id="all-services-grid">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- See More Button -->
+            <div id="see-more-container">
+                <button class="btn-primary" onclick="loadMoreServices()">
+                    ------------- See More -------------
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. CLEANERS SECTION -->
+        <section id="cleaners" class="section-view">
+            <div class="section-header">
+                <h3 class="section-title">Our Top Professionals</h3>
+            </div>
+            <div class="cleaners-grid" id="cleaners-grid">
+                <!-- Injected via JS -->
+            </div>
+        </section>
+
+        <!-- 4. HISTORY SECTION -->
+        <section id="history" class="section-view">
+            <div class="section-header">
+                <h3 class="section-title">Booking History</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary dark btn-sm" onclick="navigate('services')">
+                        <i class="ri-add-line"></i> Book New
+                    </button>
+                    <button class="icon-btn" onclick="openBookingFilterDrawer()"
+                        style="width: 50px; height: 50px; background: white; border: 1px solid var(--border-light);">
+                        <i class="ri-filter-3-line"></i>
+                    </button>
+                    <button class="btn-secondary btn-sm export-btn-desktop" onclick="exportBookingHistory()">
+                        <i class="ri-download-line"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <div class="export-btn-mobile-container" style="text-align: right; margin-bottom: 15px; display: none;">
+                    <button class="btn btn-outline" onclick="exportBookingHistory()">
+                        <i class="ri-download-line"></i> Export
+                    </button>
+                </div>
+                <table id="history-table" class="table table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Booking Number</th>
+                            <th>Service</th> <!-- Image & Name -->
+                            <th>Date</th>
+                            <th>Cleaner</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTables will inject rows here -->
+                    </tbody>
+                </table>
+                <!-- Timeline view for mobile devices -->
+                <div id="booking-timeline" class="mobile-timeline" style="display: none;"></div>
+            </div>
+        </section>
+
+        <!-- 5. PROFILE SECTION -->
+        <section id="profile" class="section-view">
+            <div class="settings-container">
+                <div class="profile-header">
+                    <div class="profile-pic-area">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80"
+                            id="main-profile-img" class="profile-pic-big">
+                        <label for="upload-file" class="edit-pic-btn"><i class="ri-camera-fill"></i></label>
+                        <input type="file" id="upload-file" hidden accept="image/*">
+                    </div>
+                    <div>
+                        <h2 id="profile-name-display" style="font-weight: 800; font-size: 1.5rem;">Alex Johnson</h2>
+                        <p id="profile-email-display" style="color: var(--text-light);">alex.j@example.com</p>
+                    </div>
+                </div>
+
+                <form onsubmit="saveProfile(event)">
+                    <h3
+                        style="margin-bottom: 20px; font-size: 1.1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 10px;">
+                        Personal Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" class="form-input" id="inp-fname" value="Alex">
+                        </div>
+                        <div class="form-group">
+                            <label>Middle Name</label>
+                            <input type="text" class="form-input" id="inp-mname" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" class="form-input" id="inp-lname" value="Johnson">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" class="form-input" id="inp-email" value="alex.j@example.com" readonly
+                                style="background-color: #f8fafc; cursor: not-allowed; opacity: 0.7;">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" class="form-input" id="inp-phone" value="+1 (555) 123-4567">
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <input type="text" class="form-input" id="inp-address"
+                                placeholder="Enter your home address">
+                        </div>
+                    </div>
+
+                    <h3
+                        style="margin-bottom: 20px; font-size: 1.1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 10px;">
+                        Security</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" class="form-input" placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" class="form-input">
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button type="submit" class="btn-primary dark" style="padding: 12px 30px;">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MOBILE BOTTOM NAVIGATION (Shown only on mobile devices) -->
+    <nav class="mobile-bottom-nav">
+        <a onclick="navigate('overview')" class="nav-item active" id="mobile-nav-overview">
+            <i class="ri-layout-grid-fill"></i>
+            <span>Overview</span>
+        </a>
+        <a onclick="navigate('services')" class="nav-item" id="mobile-nav-services">
+            <i class="ri-service-fill"></i>
+            <span>Services</span>
+        </a>
+        <a onclick="navigate('cleaners')" class="nav-item" id="mobile-nav-cleaners">
+            <i class="ri-team-fill"></i>
+            <span>Cleaners</span>
+        </a>
+        <a onclick="navigate('history')" class="nav-item" id="mobile-nav-history">
+            <i class="ri-history-line"></i>
+            <span>History</span>
+        </a>
+        <a onclick="navigate('profile')" class="nav-item" id="mobile-nav-profile">
+            <i class="ri-user-settings-fill"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+
+
+    <!-- BOOKING MODAL -->
+    <div class="modal" id="booking-modal">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3 style="font-size:1.4rem; font-weight:800;">Confirm Booking</h3>
+                <button class="modal-close-btn" onclick="closeModal()"><i class="ri-close-line"
+                        style="font-size:1.5rem;"></i></button>
+            </div>
+            <p id="modal-service-name" style="margin-bottom:20px; color:var(--text-body);">Booking Standard Clean...</p>
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>Select Date</label>
+                <input type="date" class="form-input" id="date-picker">
+            </div>
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>Select Time (8:00 AM - 5:00 PM)</label>
+                <input type="time" class="form-input" id="time-picker" min="08:00" max="17:00">
+            </div>
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label>Phone Number</label>
+                <input type="text" class="form-input" id="phone-picker" placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>Service Address</label>
+                <input type="text" class="form-input" id="address-picker" placeholder="Enter your address">
+            </div>
+
+            <button class="btn-primary dark" style="width:100%; justify-content:center;" onclick="confirmBooking()"
+                id="confirmBookingBtn">
+                Confirm & Pay <span id="modal-price"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- CLEANER PROFILE DRAWER -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeCleanerDrawer()"></div>
+    <div class="drawer" id="cleaner-drawer">
+        <div class="drawer-header">
+            <h3 class="drawer-title">Cleaner Profile</h3>
+            <button onclick="closeCleanerDrawer()" class="close-btn"><i class="ri-close-line"></i></button>
+        </div>
+
+        <div class="drawer-body">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <img src="" id="drawer-cleaner-img" class="drawer-cleaner-img"
+                    onerror="this.src='../../assets/images/default-avatar.png'">
+                <h3 id="drawer-cleaner-name" class="drawer-cleaner-name">Cleaner Name</h3>
+                <p id="drawer-cleaner-role" class="drawer-cleaner-role">Role</p>
+                <div class="rating" id="drawer-cleaner-rating"
+                    style="justify-content: center; color: #D69E2E; font-weight: 700; font-size: 1rem;">
+                    <i class="ri-star-fill"></i> 5.0
+                </div>
+            </div>
+
+            <div class="drawer-stats-grid">
+                <div class="drawer-stat-card">
+                    <div class="stat-val" id="drawer-cleaner-jobs">0</div>
+                    <div class="stat-label">Jobs Completed</div>
+                </div>
+                <div class="drawer-stat-card">
+                    <div class="stat-val" id="drawer-cleaner-exp">0 Years</div>
+                    <div class="stat-label">Experience</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <h4 class="drawer-section-title">Specialization</h4>
+                <p id="drawer-cleaner-spec" style="color: var(--text-body); font-size: 0.95rem; line-height: 1.6;">
+                    General</p>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <h4 class="drawer-section-title">Skills</h4>
+                <div id="drawer-cleaner-skills" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <!-- Skills injected here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-footer">
+            <button class="btn-primary dark" style="width:100%; justify-content:center;" onclick="closeCleanerDrawer()">
+                Close Profile
+            </button>
+        </div>
+    </div>
+
+    <!-- BOOKING FILTER DRAWER -->
+    <div class="drawer" id="booking-filter-drawer">
+        <div class="drawer-header">
+            <h3 class="drawer-title">Filter Bookings</h3>
+            <button onclick="closeBookingFilterDrawer()" class="close-btn"><i class="ri-close-line"></i></button>
+        </div>
+
+        <div class="drawer-body">
+            <div style="margin-bottom: 25px;">
+                <h4 class="drawer-section-title">Status</h4>
+                <div class="filter-options">
+                    <label class="filter-radio">
+                        <input type="radio" name="booking-status" value="All" checked
+                            onchange="filterBookingsByStatus('All')">
+                        <span>All Bookings</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="booking-status" value="pending"
+                            onchange="filterBookingsByStatus('pending')">
+                        <span>Pending</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="booking-status" value="assigned"
+                            onchange="filterBookingsByStatus('assigned')">
+                        <span>Assigned</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="booking-status" value="confirmed"
+                            onchange="filterBookingsByStatus('confirmed')">
+                        <span>Confirmed</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="booking-status" value="completed"
+                            onchange="filterBookingsByStatus('completed')">
+                        <span>Completed</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="booking-status" value="cancelled"
+                            onchange="filterBookingsByStatus('cancelled')">
+                        <span>Cancelled</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="booking-status" value="declined"
+                            onchange="filterBookingsByStatus('declined')">
+                        <span>Declined</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-footer">
+            <button class="btn-primary dark" style="width:100%; justify-content:center;"
+                onclick="closeBookingFilterDrawer()">
+                Show Results
+            </button>
+        </div>
+    </div>
+
+    <!-- RATING MODAL -->
+    <div class="modal" id="rating-modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h3 style="font-size:1.4rem; font-weight:800;">Rate Your Service</h3>
+                <button class="modal-close-btn" onclick="closeRatingModal()"><i class="ri-close-line"
+                        style="font-size:1.5rem;"></i></button>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p style="color:var(--text-light); margin-bottom: 10px; font-size: 0.95rem;">How was <span
+                        id="rate-cleaner-name" style="font-weight:700; color:var(--text-dark);">Cleaner</span>?</p>
+                <div class="star-rating cleaner-rating"
+                    style="display: flex; justify-content: center; gap: 10px; font-size: 1.8rem; color: #CBD5E0; cursor: pointer; margin-bottom: 20px;">
+                    <i class="ri-star-fill" onclick="setRating('cleaner', 1)"></i>
+                    <i class="ri-star-fill" onclick="setRating('cleaner', 2)"></i>
+                    <i class="ri-star-fill" onclick="setRating('cleaner', 3)"></i>
+                    <i class="ri-star-fill" onclick="setRating('cleaner', 4)"></i>
+                    <i class="ri-star-fill" onclick="setRating('cleaner', 5)"></i>
+                </div>
+                <input type="hidden" id="cleaner-rating-value" value="0">
+
+                <p style="color:var(--text-light); margin-bottom: 10px; font-size: 0.95rem;">Rate the Service (<span
+                        id="rate-service-name" style="font-weight:700; color:var(--text-dark);">Service</span>)</p>
+                <div class="star-rating service-rating"
+                    style="display: flex; justify-content: center; gap: 10px; font-size: 1.8rem; color: #CBD5E0; cursor: pointer;">
+                    <i class="ri-star-fill" onclick="setRating('service', 1)"></i>
+                    <i class="ri-star-fill" onclick="setRating('service', 2)"></i>
+                    <i class="ri-star-fill" onclick="setRating('service', 3)"></i>
+                    <i class="ri-star-fill" onclick="setRating('service', 4)"></i>
+                    <i class="ri-star-fill" onclick="setRating('service', 5)"></i>
+                </div>
+                <input type="hidden" id="service-rating-value" value="0">
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px;">
+                <label>Comments (Optional)</label>
+                <textarea class="form-input" id="rating-comment" rows="4"
+                    placeholder="Share your feedback..."></textarea>
+            </div>
+
+            <button class="btn-primary dark" style="width:100%; justify-content:center;" onclick="submitRating()"
+                id="submitRatingBtn">
+                Submit Review
+            </button>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content"
+            style="max-width: 400px; text-align: center; padding: 40px 30px; position: relative;">
+            <button onclick="closeDeleteModal()"
+                style="position: absolute; top: 20px; right: 20px; background: #F7FAFC; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
+                <i class="ri-close-line" style="font-size: 1.5rem; color: var(--text-light);"></i>
+            </button>
+
+            <div
+                style="width: 80px; height: 80px; background: #FEF2F2; color: #DC2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 25px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);">
+                <i class="ri-error-warning-line"></i>
+            </div>
+            <h3 style="font-size: 1.6rem; color: var(--text-dark); margin-bottom: 12px; font-weight: 800;">Cancel
+                Booking?</h3>
+            <p style="color: var(--text-body); margin-bottom: 30px; line-height: 1.6; font-size: 1rem;">
+                Are you sure you want to cancel this booking? <br>
+                <span style="color: #DC2626; font-weight: 600; font-size: 0.9rem;">This action cannot be undone.</span>
+            </p>
+            <div class="modal-actions-row">
+                <button onclick="closeDeleteModal()"
+                    style="padding: 14px 24px; border-radius: 12px; border: 1px solid var(--border-light); background: white; color: var(--text-dark); font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s;">
+                    No, Keep it
+                </button>
+                <button id="confirmDeleteBtn" onclick="confirmDeleteBooking()"
+                    style="padding: 14px 24px; border-radius: 12px; border: none; background: #DC2626; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
+                    Yes, Cancel Booking
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGOUT CONFIRMATION MODAL -->
+    <div class="modal" id="logout-modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 30px;">
+            <div
+                style="width: 60px; height: 60px; background: #FED7D7; color: #E53E3E; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 20px;">
+                <i class="ri-logout-box-r-line"></i>
+            </div>
+            <h3 style="font-size: 1.5rem; color: var(--text-dark); margin-bottom: 10px; font-weight: 700;">Confirm
+                Logout</h3>
+            <p style="color: var(--text-body); margin-bottom: 25px; line-height: 1.5;">Are you sure you want to sign out
+                of your account?</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="closeLogoutModal()"
+                    style="padding: 12px 24px; border-radius: 8px; border: 1px solid var(--border-light); background: white; color: var(--text-dark); font-weight: 600; cursor: pointer; transition: 0.2s;">Cancel</button>
+                <button id="confirmLogoutBtn" onclick="confirmLogout()"
+                    style="padding: 12px 24px; border-radius: 8px; border: none; background: #E53E3E; color: white; font-weight: 600; cursor: pointer; transition: 0.2s;">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTER DRAWER -->
+    <div class="drawer" id="filter-drawer">
+        <div class="drawer-header">
+            <h3 class="drawer-title">Filter Services</h3>
+            <button onclick="closeFilterDrawer()" class="close-btn"><i class="ri-close-line"></i></button>
+        </div>
+
+        <div class="drawer-body">
+            <div style="margin-bottom: 25px;">
+                <h4 class="drawer-section-title">Category</h4>
+                <div class="filter-options">
+                    <label class="filter-radio">
+                        <input type="radio" name="category" value="All" checked onchange="filterServices('All')">
+                        <span>All Services</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="category" value="Standard Clean"
+                            onchange="filterServices('Standard Clean')">
+                        <span>Standard Cleaning</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="category" value="Deep Clean" onchange="filterServices('Deep Clean')">
+                        <span>Deep Cleaning</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="category" value="Move-In/Out"
+                            onchange="filterServices('Move-In/Out')">
+                        <span>Move-In / Move-Out</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="category" value="Specialty" onchange="filterServices('Specialty')">
+                        <span>Specialty Services</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <h4 class="drawer-section-title">Sort By</h4>
+                <div class="filter-options">
+                    <label class="filter-radio">
+                        <input type="radio" name="sort" value="newest" checked onchange="applySort('newest')">
+                        <span>Newest First</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="sort" value="price_asc" onchange="applySort('price_asc')">
+                        <span>Price: Low to High</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="sort" value="price_desc" onchange="applySort('price_desc')">
+                        <span>Price: High to Low</span>
+                    </label>
+                    <label class="filter-radio">
+                        <input type="radio" name="sort" value="popular" onchange="applySort('popular')">
+                        <span>Most Popular</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="drawer-footer">
+            <button class="btn-primary dark" style="width:100%; justify-content:center;" onclick="closeFilterDrawer()">
+                Show Results
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- Avatar Mixin -->
+    <script src="../../common/scripts/avatar-mixin.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="../../common/scripts/api-client.js"></script>
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- PDF Generation Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="../scripts/dashboard.js"></script>
+</body>
+
+</html>

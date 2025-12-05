@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Forgot Password | LEIRAD Services</title>
+
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../auth/styles/auth.css">
+</head>
+
+<body>
+
+    <div class="auth-container">
+
+        <!-- LEFT: VISUAL SIDE -->
+        <div class="visual-side">
+            <!-- Background Image -->
+            <img src="../asset/forgot.png" alt="Support" class="bg-image">
+
+            <div class="visual-content">
+                <a href="index.html" class="brand-logo">
+                    <i class="ri-sparkling-2-fill" style="color: var(--accent);"></i> LEIRAD
+                </a>
+            </div>
+
+            <div class="visual-content">
+                <div class="testimonial-card">
+                    <i class="ri-double-quotes-l quote-icon"></i>
+                    <p class="quote-text">"I forgot my credentials right before a big booking, but the recovery process
+                        was instant. Great support system!"</p>
+                    <div class="profile">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"
+                            class="profile-img" alt="User">
+                        <div style="line-height: 1.2;">
+                            <div style="font-weight: 700; font-size: 0.95rem;">Sarah Jenkins</div>
+                            <div style="font-size: 0.8rem; opacity: 0.8;">Loyal Customer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: FORM SIDE -->
+        <div class="form-side">
+            <div class="form-content">
+
+                <!-- STATE 1: EMAIL FORM -->
+                <div id="resetFormWrapper">
+                    <div class="form-header">
+                        <h1 class="form-title">Forgot Password?</h1>
+                        <p class="form-subtitle">Don't worry, it happens. Please enter the email address associated with
+                            your account.</p>
+                    </div>
+
+                    <form id="forgotForm">
+                        <div class="input-group">
+                            <label class="label">Email Address</label>
+                            <div class="input-wrapper">
+                                <input type="email" class="input" id="emailInput" placeholder="john@example.com"
+                                    required>
+                                <i class="ri-mail-line icon"></i>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="submitBtn">
+                            Send Verification Code <i class="ri-send-plane-fill"></i>
+                        </button>
+                    </form>
+
+                    <div class="back-container">
+                        <a href="login.html" class="back-link">
+                            <i class="ri-arrow-left-line"></i> Back to Login
+                        </a>
+                    </div>
+                </div>
+
+                <!-- STATE 2: OTP VERIFICATION (Hidden by default) -->
+                <div id="otpWrapper" style="display: none;">
+                    <div style="text-align: right; margin-bottom: 8px;">
+                        <button id="otpCloseForgot" aria-label="Close" style="background: none; border: none; font-size: 1.5rem; color: var(--text-light); cursor: pointer;">
+                            <i class="ri-close-line"></i>
+                        </button>
+                    </div>
+                    <div class="form-header">
+                        <h1 class="form-title">Verify OTP</h1>
+                        <p class="form-subtitle">Enter the 6-digit code sent to your email.</p>
+                    </div>
+
+                    <form id="otpForm">
+                        <div class="input-group">
+                            <label class="label">OTP Code</label>
+                            <div class="input-wrapper">
+                                <input type="tel" class="input" id="otpInput" placeholder="• • • • • •" maxlength="6" inputmode="numeric" pattern="[0-9]*"
+                                    style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="verifyBtn">
+                            Verify Code <i class="ri-check-line"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- STATE 3: NEW PASSWORD (Hidden by default) -->
+                <div id="newPasswordWrapper" style="display: none;">
+                    <div class="form-header">
+                        <h1 class="form-title">Reset Password</h1>
+                        <p class="form-subtitle">Enter your new password below.</p>
+                    </div>
+
+                    <form id="newPasswordForm">
+                        <div class="input-group">
+                            <label class="label">New Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" class="input" id="newPassword" placeholder="Min. 8 characters"
+                                    required>
+                                <i class="ri-lock-line icon"></i>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="label">Confirm Password</label>
+                            <div class="input-wrapper">
+                                <input type="password" class="input" id="confirmNewPassword"
+                                    placeholder="Repeat password" required>
+                                <i class="ri-lock-check-line icon"></i>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="resetBtn">
+                            Reset Password <i class="ri-refresh-line"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- UI Utils -->
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Auth Script -->
+    <script src="../scripts/auth.js"></script>
+    <script>
+        document.getElementById('forgotForm').addEventListener('submit', handleResetRequest);
+        document.getElementById('otpForm').addEventListener('submit', handleVerifyResetOtp);
+        document.getElementById('newPasswordForm').addEventListener('submit', handleNewPassword);
+    </script>
+</body>
+
+</html>
