@@ -295,6 +295,9 @@ function renderRecentHistory(bookings) {
         if (b.raw_status === 'confirmed') {
             statusClass = 'confirmed';
             displayStatus = 'Confirmed';
+        } else if (b.raw_status === 'in_progress') {
+            statusClass = 'confirmed';
+            displayStatus = 'In Progress';
         } else if (b.raw_status === 'assigned') {
             statusClass = 'assigned';
             displayStatus = 'Assigned';
@@ -307,9 +310,17 @@ function renderRecentHistory(bookings) {
             displayStatus = 'Reassigning';
         }
 
+        const imgUrl = ImageUtils.getServiceImageUrl(b.service_img);
+        const fallbackUrl = '../../assets/images/default-service.png';
+
         const row = `
             <tr>
-                <td style="padding: 18px 24px;">${b.service}</td>
+                <td style="padding: 18px 24px;">
+                    <div class="table-service-info">
+                        <img src="${imgUrl}" class="table-service-img" onerror="this.src='${fallbackUrl}'; this.style.objectFit='cover'; this.style.backgroundColor='#f8fafc';">
+                        <span style="font-weight:600;">${b.service}</span>
+                    </div>
+                </td>
                 <td style="text-align: right; padding: 18px 24px;" title="${b.raw_status === 'declined' ? 'Cleaner declined, admin is finding a new match' : ''}">
                     <span class="status ${statusClass}">${displayStatus}</span>
                 </td>
@@ -754,7 +765,7 @@ function initBookingTable() {
     }
 
     filteredBookings = [...filteredBookings].sort((a, b) => {
-        const statusOrder = { pending: 0, assigned: 1, confirmed: 2, declined: 3, cancelled: 4, completed: 5 };
+        const statusOrder = { pending: 0, assigned: 1, confirmed: 2, in_progress: 3, declined: 4, cancelled: 5, completed: 6 };
         const pa = statusOrder[a.raw_status] !== undefined ? statusOrder[a.raw_status] : 999;
         const pb = statusOrder[b.raw_status] !== undefined ? statusOrder[b.raw_status] : 999;
         if (pa !== pb) return pa - pb;
@@ -827,6 +838,9 @@ function initBookingTable() {
                     } else if (row.raw_status === 'confirmed') {
                         statusClass = 'confirmed';
                         displayStatus = 'Confirmed';
+                    } else if (row.raw_status === 'in_progress') {
+                        statusClass = 'confirmed';
+                        displayStatus = 'In Progress';
                     }
 
                     return `<span class="status ${statusClass}">${displayStatus}</span>`;
@@ -1199,6 +1213,7 @@ function exportBookingHistory() {
         if (b.raw_status === 'assigned') displayStatus = 'Assigned';
         else if (b.raw_status === 'declined') displayStatus = 'Reassigning';
         else if (b.raw_status === 'confirmed') displayStatus = 'Confirmed';
+        else if (b.raw_status === 'in_progress') displayStatus = 'In Progress';
 
         return [
             b.display_id,
@@ -1374,7 +1389,7 @@ function renderBookingTimeline(bookings) {
     }
 
     const sortedBookings = [...bookings].sort((a, b) => {
-        const statusOrder = { pending: 0, assigned: 1, confirmed: 2, declined: 3, cancelled: 4, completed: 5 };
+        const statusOrder = { pending: 0, assigned: 1, confirmed: 2, in_progress: 3, declined: 4, cancelled: 5, completed: 6 };
         const pa = statusOrder[a.raw_status] !== undefined ? statusOrder[a.raw_status] : 999;
         const pb = statusOrder[b.raw_status] !== undefined ? statusOrder[b.raw_status] : 999;
         if (pa !== pb) return pa - pb;
@@ -1423,6 +1438,9 @@ function renderBookingTimeline(bookings) {
             statusClass = 'status-reassigning';
         } else if (booking.raw_status === 'confirmed') {
             statusDisplay = 'Confirmed';
+            statusClass = 'status-confirmed';
+        } else if (booking.raw_status === 'in_progress') {
+            statusDisplay = 'In Progress';
             statusClass = 'status-confirmed';
         } else if (booking.raw_status === 'pending') {
             statusDisplay = 'Pending';

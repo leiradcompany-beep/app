@@ -135,19 +135,19 @@ $(document).ready(function () {
             if (type === 'service') {
                 imgUrl = ImageUtils.getServiceImageUrl(item[imgKey]);
             } else {
-                // For clients and cleaners (avatars)
-                imgUrl = ImageUtils.getAvatarUrl(item[imgKey]);
+                // For clients and cleaners: pass whole object to allow multiple key fallbacks
+                const avatarSource = (item[imgKey] !== undefined && item[imgKey] !== null) ? item[imgKey] : item;
+                imgUrl = ImageUtils.getAvatarUrl(avatarSource);
             }
 
             // Add cache-busting
             imgUrl = ImageUtils.withCacheBust(imgUrl);
 
-
             const priceHtml = priceKey && item[priceKey] ? `<span class="opt-price">₱${String(item[priceKey]).replace(/^[₱$]+/, '')}</span>` : '';
 
             const optionHtml = `
                 <div class="custom-option" data-value="${item[valueKey]}">
-                    <img src="${imgUrl}" class="opt-img" alt="${item[textKey]}">
+                    <img src="${imgUrl}" class="opt-img" alt="${item[textKey]}" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-avatar.png')">
                     <div class="opt-info">
                         <div class="opt-title">${item[textKey]}</div>
                         ${priceHtml}
@@ -236,10 +236,11 @@ $(document).ready(function () {
             'pending': 1,
             'assigned': 2,
             'confirmed': 3,
-            'declined': 4,
-            'cancelled': 5,
-            'completed': 6,
-            'done': 6
+            'in_progress': 4,
+            'declined': 5,
+            'cancelled': 6,
+            'completed': 7,
+            'done': 7
         };
 
         filteredBookings.sort((a, b) => {
@@ -259,11 +260,12 @@ $(document).ready(function () {
 
         filteredBookings.forEach(booking => {
             const statusClass = getStatusClass(booking.status);
-            const statusLabel = capitalize(booking.status);
+            const statusLabel = booking.status && booking.status.toLowerCase() === 'in_progress' ? 'In Progress' : capitalize(booking.status);
             const isCancelled = booking.status.toLowerCase() === 'cancelled';
             const isCompleted = booking.status.toLowerCase() === 'completed';
             const isDeclined = booking.status.toLowerCase() === 'declined';
             const isAssigned = booking.status.toLowerCase() === 'assigned';
+            const isInProgress = booking.status.toLowerCase() === 'in_progress';
 
             const isPending = booking.status.toLowerCase() === 'pending';
 
@@ -373,6 +375,7 @@ $(document).ready(function () {
             case 'pending': return 'status-pending';
             case 'assigned': return 'status-pending'; // Use pending style for assigned but maybe yellow text
             case 'confirmed': return 'status-confirmed';
+            case 'in_progress': return 'status-confirmed';
             case 'cancelled': return 'status-cancelled';
             case 'declined': return 'status-cancelled'; // Use cancelled style for declined
             case 'completed': return 'status-done'; // Map completed to done
@@ -630,7 +633,17 @@ $(document).ready(function () {
                         const clientOption = $(`#custom-bookingClient .custom-option[data-value="${b.user_id}"]`);
                         if (clientOption.length) {
                             $('#custom-bookingClient .custom-select-trigger span').html(clientOption.html());
-                            // Styling now handled by CSS (.custom-select-trigger .opt-info)
+                        } else {
+                            // Fallback when client option is missing (e.g., not loaded yet)
+                            const clientName = (typeof b.client === 'object' ? b.client?.name : b.client) || 'Client';
+                            const clientAvatar = ImageUtils.getAvatarUrl(b.client || b.client_avatar);
+                            const fallbackHtml = `
+                                <img src="${clientAvatar}" class="opt-img" alt="${clientName}" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-avatar.png')">
+                                <div class="opt-info">
+                                    <div class="opt-title">${clientName}</div>
+                                </div>
+                            `;
+                            $('#custom-bookingClient .custom-select-trigger span').html(fallbackHtml);
                         }
                     }
 

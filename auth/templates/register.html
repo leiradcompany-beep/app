@@ -139,6 +139,7 @@
                                         class="link">Privacy Policy</a></span>
                             </label>
 
+                            <div id="cf-turnstile-register-customer" class="cf-turnstile" style="margin: 8px 0;"></div>
                             <button type="submit" class="btn-submit full-width btn-enhanced">
                                 Create Customer Account <i class="ri-arrow-right-line"></i>
                             </button>
@@ -309,6 +310,7 @@
                                         class="link">Privacy Policy</a></span>
                             </label>
 
+                            <div id="cf-turnstile-register-cleaner" class="cf-turnstile" style="margin: 8px 0;"></div>
                             <button type="submit" class="btn-submit full-width btn-enhanced">
                                 Apply as Cleaner <i class="ri-arrow-right-line"></i>
                             </button>
@@ -353,6 +355,8 @@
     <script src="../../common/scripts/image-utils.js"></script>
     <!-- UI Utils -->
     <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- Auth Script -->
     <script src="../scripts/auth.js"></script>
 
@@ -360,6 +364,26 @@
         // Form Submission
         document.getElementById('customerRegisterForm').addEventListener('submit', handleRegister);
         document.getElementById('cleanerRegisterForm').addEventListener('submit', handleRegister);
+        (function(){
+            var base = getApiBaseUrl();
+            $.getJSON(base + '/turnstile/sitekey').done(function(res){
+                var key = (res && typeof res.site_key === 'string') ? res.site_key : null;
+                if(!key) return;
+                var el1 = document.getElementById('cf-turnstile-register-customer');
+                var el2 = document.getElementById('cf-turnstile-register-cleaner');
+                if (el1) el1.setAttribute('data-sitekey', key);
+                if (el2) el2.setAttribute('data-sitekey', key);
+                function render(){
+                    if(window.turnstile){
+                        window.turnstile.render('#cf-turnstile-register-customer', { sitekey: key, theme: 'light' });
+                        window.turnstile.render('#cf-turnstile-register-cleaner', { sitekey: key, theme: 'light' });
+                    } else {
+                        setTimeout(render, 100);
+                    }
+                }
+                render();
+            });
+        })();
     </script>
 </body>
 

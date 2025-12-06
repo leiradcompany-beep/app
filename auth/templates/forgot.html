@@ -69,8 +69,9 @@
                             <div class="input-wrapper">
                                 <input type="email" class="input" id="emailInput" placeholder="john@example.com"
                                     required>
-                                <i class="ri-mail-line icon"></i>
                             </div>
+                        </div>
+                        <div id="cf-turnstile-forgot" class="cf-turnstile" style="margin: 8px 0;"></div>
                         </div>
 
                         <button type="submit" class="btn-submit" id="submitBtn">
@@ -153,12 +154,31 @@
     <script src="../../common/scripts/image-utils.js"></script>
     <!-- UI Utils -->
     <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- Auth Script -->
     <script src="../scripts/auth.js"></script>
     <script>
         document.getElementById('forgotForm').addEventListener('submit', handleResetRequest);
         document.getElementById('otpForm').addEventListener('submit', handleVerifyResetOtp);
         document.getElementById('newPasswordForm').addEventListener('submit', handleNewPassword);
+        (function(){
+            var base = getApiBaseUrl();
+            $.getJSON(base + '/turnstile/sitekey').done(function(res){
+                var key = (res && typeof res.site_key === 'string') ? res.site_key : null;
+                if(!key) return;
+                var el = document.getElementById('cf-turnstile-forgot');
+                if (el) el.setAttribute('data-sitekey', key);
+                function render(){
+                    if(window.turnstile){
+                        window.turnstile.render('#cf-turnstile-forgot', { sitekey: key, theme: 'light' });
+                    } else {
+                        setTimeout(render, 100);
+                    }
+                }
+                render();
+            });
+        })();
     </script>
 </body>
 

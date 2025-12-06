@@ -103,6 +103,7 @@
                         <div class="filter-tab active" data-filter="all">All</div>
                         <div class="filter-tab" data-filter="assigned">Assigned</div>
                         <div class="filter-tab" data-filter="confirmed">Confirmed</div>
+                        <div class="filter-tab" data-filter="in_progress">In Progress</div>
                         <div class="filter-tab" data-filter="completed">Completed</div>
                     </div>
                 </div>
@@ -255,6 +256,19 @@
         <div class="modal-actions">
             <button onclick="closeCompleteModal()" class="btn-ghost">Cancel</button>
             <button id="confirmCompleteBtn" class="btn-confirm teal">Complete</button>
+        </div>
+    </div>
+</div>
+
+<!-- Start Job Modal -->
+<div class="custom-modal" id="start-modal">
+    <div class="modal-card">
+        <div class="modal-icon teal"><i class="ri-play-line"></i></div>
+        <h3>Start Job?</h3>
+        <p>Mark this job as In Progress?</p>
+        <div class="modal-actions">
+            <button onclick="closeStartModal()" class="btn-ghost">Cancel</button>
+            <button id="confirmStartBtn" class="btn-confirm teal">Start Job</button>
         </div>
     </div>
 </div>

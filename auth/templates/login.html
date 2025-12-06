@@ -90,6 +90,9 @@
                         <a href="forgot.html" class="forgot-link">Forgot Password?</a>
                     </div>
 
+                    <!-- Cloudflare Turnstile Widget -->
+                    <div id="cf-turnstile" class="cf-turnstile" style="margin-bottom: 14px;"></div>
+
                     <button type="submit" class="btn-submit" id="submitBtn">
                         Sign In <i class="ri-arrow-right-line"></i>
                     </button>
@@ -121,6 +124,8 @@
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- Image Utils -->
     <script src="../../common/scripts/image-utils.js"></script>
     <script src="../../common/scripts/ui-utils.js"></script>
@@ -128,6 +133,25 @@
     <script>
         // Attach event listener here to avoid inline handler issues
         $('#loginForm').on('submit', handleLogin);
+    </script>
+    <script>
+        (function(){
+            var base = getApiBaseUrl();
+            $.getJSON(base + '/turnstile/sitekey').done(function(res){
+                var key = (res && typeof res.site_key === 'string') ? res.site_key : null;
+                if(!key) return;
+                var el = document.getElementById('cf-turnstile');
+                if (el) el.setAttribute('data-sitekey', key);
+                function render(){
+                    if(window.turnstile){
+                        window.turnstile.render('#cf-turnstile', { sitekey: key, theme: 'light' });
+                    } else {
+                        setTimeout(render, 100);
+                    }
+                }
+                render();
+            });
+        })();
     </script>
 
 </body>

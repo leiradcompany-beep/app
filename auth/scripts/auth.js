@@ -32,6 +32,14 @@ function handleLogin(e) {
     const email = $('input[type="email"]').val();
     const password = $('#password').val();
 
+    // Cloudflare Turnstile token (auto-injected hidden input by widget)
+    const cfToken = $('input[name="cf-turnstile-response"]').val();
+    if (!cfToken || cfToken.trim() === '') {
+        UiUtils.showToast('Please complete the verification challenge.', 'error');
+        UiUtils.setBtnLoading(btn, false);
+        return;
+    }
+
     // Loading State
     UiUtils.setBtnLoading(btn, true, 'Verifying...');
 
@@ -42,7 +50,7 @@ function handleLogin(e) {
         headers: {
             'Accept': 'application/json'
         },
-        data: JSON.stringify({ email, password }),
+        data: JSON.stringify({ email, password, cf_turnstile_token: cfToken }),
         success: function (response) {
             if (response.success) {
                 localStorage.setItem('auth_token', response.token);
@@ -132,6 +140,13 @@ function handleRegister(e) {
     // Gather form data
     const formData = new FormData(form);
 
+    const cfToken = $(form).find('input[name="cf-turnstile-response"]').val();
+    if (!cfToken || cfToken.trim() === '') {
+        UiUtils.showToast('Please complete the verification challenge.', 'error');
+        UiUtils.setBtnLoading(btn, false);
+        return;
+    }
+
     // Determine role based on form ID
     const role = form.id === 'cleanerRegisterForm' ? 'cleaner' : 'customer';
     formData.append('role', role);
@@ -193,11 +208,13 @@ function handleRegister(e) {
 
     if (role === 'cleaner') {
         // Use FormData for file uploads
+        formData.append('cf_turnstile_token', cfToken);
         ajaxSettings.data = formData;
         ajaxSettings.contentType = false; // Required for FormData
         ajaxSettings.processData = false; // Required for FormData
     } else {
         // Use JSON for customers (cleaner/lighter payload)
+        data.cf_turnstile_token = cfToken;
         ajaxSettings.data = JSON.stringify(data);
         ajaxSettings.contentType = 'application/json';
     }
@@ -208,8 +225,15 @@ function handleRegister(e) {
 // Forgot Password Flow
 function handleResetRequest(e) {
     e.preventDefault();
-    const btn = document.getElementById('submitBtn');
+    const btn = document.getElementById('resetBtn') || document.querySelector('#forgotForm button[type="submit"]');
     const email = $('#emailInput').val();
+
+    const cfToken = $('#forgotForm').find('input[name="cf-turnstile-response"]').val();
+    if (!cfToken || cfToken.trim() === '') {
+        UiUtils.showToast('Please complete the verification challenge.', 'error');
+        if (btn) UiUtils.setBtnLoading(btn, false);
+        return;
+    }
 
     UiUtils.setBtnLoading(btn, true, 'Sending...');
 
@@ -218,7 +242,7 @@ function handleResetRequest(e) {
         method: 'POST',
         contentType: 'application/json',
         headers: { 'Accept': 'application/json' },
-        data: JSON.stringify({ email }),
+        data: JSON.stringify({ email, cf_turnstile_token: cfToken }),
         success: function (response) {
             if (response.success) {
                 localStorage.setItem('reset_email', email);

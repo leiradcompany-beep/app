@@ -35,7 +35,7 @@ function initScheduleTable() {
                     return [];
                 }
                 const rows = Array.isArray(json.data) ? [...json.data] : [];
-                const statusOrder = { assigned: 0, confirmed: 1, completed: 2 };
+                const statusOrder = { assigned: 0, confirmed: 1, in_progress: 2, completed: 3 };
                 rows.sort((a, b) => {
                     const sa = (a.raw_status || a.status || '').toLowerCase();
                     const sb = (b.raw_status || b.status || '').toLowerCase();
@@ -97,9 +97,12 @@ function initScheduleTable() {
             {
                 data: 'status',
                 createdCell: function (td) { $(td).attr('data-label', 'Status'); },
-                render: function (data) {
-                    let statusClass = data.toLowerCase();
-                    return `<span class="status ${statusClass}">${data}</span>`;
+                render: function (data, type, row) {
+                    const raw = (row.raw_status || data || '').toLowerCase();
+                    let label = data;
+                    let statusClass = raw;
+                    if (raw === 'in_progress') { label = 'In Progress'; statusClass = 'confirmed'; }
+                    return `<span class="status ${statusClass}">${label}</span>`;
                 }
             },
             {
@@ -122,8 +125,17 @@ function initScheduleTable() {
                         `;
                     }
 
-                    // Confirmed: Show Complete
+                    // Confirmed: Show Start only
                     if (status === 'confirmed') {
+                        return `
+                            <button class="btn-action-soft start" onclick="openStartModal('${row.id}')">
+                                <i class="ri-play-line"></i> Start Job
+                            </button>
+                        `;
+                    }
+
+                    // In Progress: Show Complete only
+                    if (status === 'in_progress') {
                         return `
                             <button class="btn-action-soft complete" onclick="openCompleteModal('${row.id}')">
                                 <i class="ri-check-double-line"></i> Complete Job
@@ -480,6 +492,14 @@ $(document).ready(function () {
         }
     });
 
+    $('#confirmStartBtn').on('click', function () {
+        if (currentJobId) {
+            const btn = $(this);
+            UiUtils.setBtnLoading(btn, true, 'Starting...');
+            updateJobStatus(currentJobId, 'in_progress', btn, 'Start Job');
+        }
+    });
+
     // Close Modals on Outside Click
     $('.custom-modal').on('click', function (e) {
         if (e.target === this) {
@@ -525,11 +545,10 @@ $(document).ready(function () {
         const table = $('#schedule-table').DataTable();
 
         if (filterValue === 'all') {
-            table.column(5).search('').draw(); // Column 5 is Status
+            table.column(5).search('').draw();
         } else {
-            // Use regex for precise matching, but account for HTML tags if searching rendered content
-            // We simply search for the keyword which should be unique enough in the status column
-            table.column(5).search(filterValue, true, false).draw();
+            const searchText = (filterValue === 'in_progress') ? 'In Progress' : filterValue;
+            table.column(5).search(searchText, true, false).draw();
         }
     });
 
@@ -537,21 +556,22 @@ $(document).ready(function () {
     $('.status-tabs .filter-tab.active').trigger('click');
 });
 
-window.updateJobStatus = function (id, status, btn, originalText) {
-    // Proceed with API call directly
-    ApiClient.post(`/cleaner/jobs/${id}/status`, { status: status })
-        .then(function (response) {
-            if (response.success) {
-                UiUtils.showToast('Job status updated', 'success');
-                $('#schedule-table').DataTable().ajax.reload();
+    window.updateJobStatus = function (id, status, btn, originalText) {
+        // Proceed with API call directly
+        ApiClient.post(`/cleaner/jobs/${id}/status`, { status: status })
+            .then(function (response) {
+                if (response.success) {
+                    UiUtils.showToast('Job status updated', 'success');
+                    $('#schedule-table').DataTable().ajax.reload();
 
                 if (status === 'confirmed') closeAcceptModal();
                 else if (status === 'declined') closeRejectModal();
+                else if (status === 'in_progress') closeStartModal();
                 else if (status === 'completed') closeCompleteModal();
-            } else {
-                UiUtils.showToast(response.message || 'Failed to update status', 'error');
-            }
-        })
+                } else {
+                    UiUtils.showToast(response.message || 'Failed to update status', 'error');
+                }
+            })
         .catch(function (xhr) {
             console.error('Status update error:', xhr);
             let msg = 'Error updating status';
@@ -563,4 +583,13 @@ window.updateJobStatus = function (id, status, btn, originalText) {
         .finally(function () {
             if (btn) UiUtils.setBtnLoading(btn, false, originalText);
         });
+};
+window.openStartModal = function (id) {
+    currentJobId = id;
+    toggleModal('start-modal', true);
+};
+
+window.closeStartModal = function () {
+    currentJobId = null;
+    toggleModal('start-modal', false);
 };
