@@ -2,10 +2,296 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url=landing/templates/index.html">
-    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leirad Services | Initializing</title>
+    
+    <!-- Font: 'Outfit' for the clean, geometric Tech look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 1. DESIGN TOKENS --- */
+        :root {
+            /* Backgrounds: Deep Space/Void */
+            --bg-void: #020617;
+            --bg-gradient: radial-gradient(circle at center, #1e293b 0%, #020617 70%);
+            
+            /* Accents */
+            --accent-cyan: #22d3ee;    /* Future Cyan */
+            --accent-blue: #3b82f6;    /* Tech Blue */
+            
+            /* Typography */
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            
+            /* Animation Physics */
+            --ease-cinematic: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        /* --- 2. RESET & LAYOUT --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-void);
+            background-image: var(--bg-gradient);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-primary);
+        }
+
+        /* --- 3. BACKGROUND SNOWFLAKES --- */
+        /* Z-Index 1: Behind the text */
+        .snowflakes {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .snowflake {
+            color: rgba(255, 255, 255, 0.4); 
+            font-size: 1em;
+            /* Subtle blue glow */
+            text-shadow: 0 0 8px rgba(34, 211, 238, 0.5);
+            position: fixed;
+            top: -10%;
+            user-select: none;
+            cursor: default;
+            animation-name: snowflakes-shake;
+            animation-duration: 3s;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+        }
+
+        .snowflake .inner {
+            animation-duration: 10s;
+            animation-name: snowflakes-fall;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes snowflakes-fall { 
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+        @keyframes snowflakes-shake {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(60px); }
+        }
+
+        /* Random timing for natural feel */
+        .snowflake:nth-child(1) { left: 5%; animation-duration: 4s; } .snowflake:nth-child(1) .inner { animation-duration: 8s; animation-delay: 0s; }
+        .snowflake:nth-child(2) { left: 15%; animation-duration: 6s; } .snowflake:nth-child(2) .inner { animation-duration: 12s; animation-delay: 1s; }
+        .snowflake:nth-child(3) { left: 25%; animation-duration: 5s; } .snowflake:nth-child(3) .inner { animation-duration: 9s; animation-delay: 4s; }
+        .snowflake:nth-child(4) { left: 40%; animation-duration: 4s; } .snowflake:nth-child(4) .inner { animation-duration: 7s; animation-delay: 2s; }
+        .snowflake:nth-child(5) { left: 55%; animation-duration: 7s; } .snowflake:nth-child(5) .inner { animation-duration: 11s; animation-delay: 0s; }
+        .snowflake:nth-child(6) { left: 70%; animation-duration: 5s; } .snowflake:nth-child(6) .inner { animation-duration: 13s; animation-delay: 3s; }
+        .snowflake:nth-child(7) { left: 85%; animation-duration: 6s; } .snowflake:nth-child(7) .inner { animation-duration: 9s; animation-delay: 1s; }
+        .snowflake:nth-child(8) { left: 95%; animation-duration: 4s; } .snowflake:nth-child(8) .inner { animation-duration: 10s; animation-delay: 5s; }
+
+
+        /* --- 4. IMMERSIVE CONTENT WRAPPER (No Container Box) --- */
+        .content-layer {
+            position: relative;
+            z-index: 10; /* Above the snow */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* --- 5. TYPOGRAPHY --- */
+        .brand-title {
+            font-size: 5rem; /* Large, immersive scale */
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            margin-bottom: 0.2rem;
+            text-transform: uppercase;
+            
+            /* Gradient Text */
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            
+            /* Text Glow to separate from background snow */
+            filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.3));
+
+            /* Animation */
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(15px); /* Start blurred */
+            animation: textReveal 1.2s var(--ease-cinematic) forwards;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            font-weight: 400;
+            margin-bottom: 4rem;
+            
+            opacity: 0;
+            transform: translateY(20px);
+            filter: blur(5px);
+            animation: textReveal 1.2s var(--ease-cinematic) 0.3s forwards;
+        }
+
+        /* --- 6. FUTURISTIC LOADER (Gyroscope) --- */
+        .loader-system {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.8s forwards;
+        }
+
+        .orbit-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-top: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+            animation: spin 2s linear infinite;
+        }
+
+        .orbit-inner {
+            position: absolute;
+            top: 22%; left: 22%;
+            width: 56%; height: 56%;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-left: 2px solid var(--accent-blue);
+            animation: spinReverse 1.5s linear infinite;
+        }
+
+        .core-pulse {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--accent-cyan);
+            animation: heartbeat 2s ease-in-out infinite;
+        }
+
+        .status-text {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 1s ease 1s forwards, blink 3s infinite;
+        }
+
+        /* --- 7. ANIMATIONS --- */
+        
+        /* Cinematic Text Reveal (Blur -> Clear) */
+        @keyframes textReveal {
+            0% { opacity: 0; filter: blur(15px); transform: translateY(30px) scale(0.95); }
+            100% { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+            50% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; box-shadow: 0 0 30px var(--accent-cyan); }
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* EXIT: Zoom in towards the user */
+        .exit-active .content-layer {
+            animation: zoomThrough 0.8s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+        }
+        
+        .exit-active .snowflakes {
+            transition: opacity 0.5s;
+            opacity: 0;
+        }
+
+        @keyframes zoomThrough {
+            0% { opacity: 1; transform: scale(1); filter: blur(0); }
+            100% { opacity: 0; transform: scale(3); filter: blur(20px); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .brand-title { font-size: 3rem; }
+            .tagline { font-size: 0.9rem; letter-spacing: 0.2em; margin-bottom: 3rem; }
+        }
+    </style>
 </head>
 <body>
-    <p>If you are not redirected automatically, follow this <a href="landing/templates/index.html">link to the landing page</a>.</p>
+
+    <!-- 1. Background Particles (Snow) -->
+    <div class="snowflakes" aria-hidden="true">
+        <div class="snowflake"><div class="inner">❅</div></div>
+        <div class="snowflake"><div class="inner">❅</div></div>
+        <div class="snowflake"><div class="inner">❅</div></div>
+        <div class="snowflake"><div class="inner">❅</div></div>
+        <div class="snowflake"><div class="inner">❅</div></div>
+        <div class="snowflake"><div class="inner">❅</div></div>
+        <div class="snowflake"><div class="inner">❅</div></div>
+        <div class="snowflake"><div class="inner">❅</div></div>
+    </div>
+
+    <!-- 2. Immersive Content Layer (No Container) -->
+    <div class="content-layer">
+        
+        <h1 class="brand-title">Leirad Services</h1>
+        <p class="tagline">Smart Cleaning. Pure Living.</p>
+
+        <!-- Tech Loader -->
+        <div class="loader-system">
+            <div class="orbit-outer"></div>
+            <div class="orbit-inner"></div>
+            <div class="core-pulse"></div>
+        </div>
+
+        <div class="status-text">System Initializing...</div>
+
+    </div>
+
+    <script>
+        // Configuration
+        const redirectUrl = "landing/templates/index.html";
+        const totalLoadTime = 4000; // 4 seconds
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const body = document.body;
+                
+                // Trigger the "Zoom Through" exit animation
+                body.classList.add('exit-active');
+
+                // Redirect precisely when animation finishes
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 700); 
+
+            }, totalLoadTime);
+        });
+    </script>
 </body>
 </html>
