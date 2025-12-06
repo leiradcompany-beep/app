@@ -69,10 +69,10 @@
                             <div class="input-wrapper">
                                 <input type="email" class="input" id="emailInput" placeholder="john@example.com"
                                     required>
+                                <i class="ri-mail-line icon"></i>
                             </div>
                         </div>
-                        <div id="cf-turnstile-forgot" class="cf-turnstile" style="margin: 8px 0;"></div>
-                        </div>
+                        <div id="cf-turnstile-forgot" class="turnstile-container" style="margin: 8px 0;"></div>
 
                         <button type="submit" class="btn-submit" id="submitBtn">
                             Send Verification Code <i class="ri-send-plane-fill"></i>
@@ -134,7 +134,7 @@
                             <div class="input-wrapper">
                                 <input type="password" class="input" id="confirmNewPassword"
                                     placeholder="Repeat password" required>
-                                <i class="ri-lock-check-line icon"></i>
+                                <i class="ri-lock-line icon"></i>
                             </div>
                         </div>
 
@@ -165,13 +165,18 @@
         (function(){
             var base = getApiBaseUrl();
             $.getJSON(base + '/turnstile/sitekey').done(function(res){
-                var key = (res && typeof res.site_key === 'string') ? res.site_key : null;
-                if(!key) return;
+                var key = (res && typeof res.site_key === 'string') ? res.site_key : String(res && res.site_key || '');
+                if(!key || key === '') return;
                 var el = document.getElementById('cf-turnstile-forgot');
-                if (el) el.setAttribute('data-sitekey', key);
+                if (!el) return;
+                // Avoid auto-render by not using cf-turnstile class; render manually
                 function render(){
-                    if(window.turnstile){
-                        window.turnstile.render('#cf-turnstile-forgot', { sitekey: key, theme: 'light' });
+                    if(window.turnstile && typeof key === 'string'){
+                        try {
+                            window.turnstile.render(el, { sitekey: key, theme: 'light' });
+                        } catch (e) {
+                            console.error('Turnstile render error', e);
+                        }
                     } else {
                         setTimeout(render, 100);
                     }

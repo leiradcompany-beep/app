@@ -91,7 +91,7 @@
                     </div>
 
                     <!-- Cloudflare Turnstile Widget -->
-                    <div id="cf-turnstile" class="cf-turnstile" style="margin-bottom: 14px;"></div>
+                    <div id="cf-turnstile" class="turnstile-container" style="margin-bottom: 14px;"></div>
 
                     <button type="submit" class="btn-submit" id="submitBtn">
                         Sign In <i class="ri-arrow-right-line"></i>
@@ -138,13 +138,18 @@
         (function(){
             var base = getApiBaseUrl();
             $.getJSON(base + '/turnstile/sitekey').done(function(res){
-                var key = (res && typeof res.site_key === 'string') ? res.site_key : null;
-                if(!key) return;
+                var key = (res && typeof res.site_key === 'string') ? res.site_key : String(res && res.site_key || '');
+                if(!key || key === '') return;
                 var el = document.getElementById('cf-turnstile');
-                if (el) el.setAttribute('data-sitekey', key);
+                if (!el) return;
+                // Avoid auto-render by not using cf-turnstile class; render manually
                 function render(){
-                    if(window.turnstile){
-                        window.turnstile.render('#cf-turnstile', { sitekey: key, theme: 'light' });
+                    if(window.turnstile && typeof key === 'string'){
+                        try {
+                            window.turnstile.render(el, { sitekey: key, theme: 'light' });
+                        } catch (e) {
+                            console.error('Turnstile render error', e);
+                        }
                     } else {
                         setTimeout(render, 100);
                     }

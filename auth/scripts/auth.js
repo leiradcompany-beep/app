@@ -173,7 +173,7 @@ function handleRegister(e) {
             if (response.success) {
                 // Both roles now require OTP verification
                 UiUtils.showToast('Please verify your email', 'info');
-                $('#otpModal').show();
+                $('#otpModal').addClass('active').show();
                 // Store email for OTP verification
                 localStorage.setItem('pending_verification_email', data.email);
                 // Store role to handle post-verification logic
@@ -225,17 +225,17 @@ function handleRegister(e) {
 // Forgot Password Flow
 function handleResetRequest(e) {
     e.preventDefault();
-    const btn = document.getElementById('resetBtn') || document.querySelector('#forgotForm button[type="submit"]');
+    const btn = document.querySelector('#forgotForm button[type="submit"]');
     const email = $('#emailInput').val();
+
+    UiUtils.setBtnLoading(btn, true, 'Sending...');
 
     const cfToken = $('#forgotForm').find('input[name="cf-turnstile-response"]').val();
     if (!cfToken || cfToken.trim() === '') {
         UiUtils.showToast('Please complete the verification challenge.', 'error');
-        if (btn) UiUtils.setBtnLoading(btn, false);
+        UiUtils.setBtnLoading(btn, false);
         return;
     }
-
-    UiUtils.setBtnLoading(btn, true, 'Sending...');
 
     $.ajax({
         url: `${API_BASE_URL}/forgot-password`,
@@ -249,22 +249,22 @@ function handleResetRequest(e) {
                 $('#resetFormWrapper').hide();
                 $('#otpWrapper').show();
                 UiUtils.showToast('OTP code sent to your email', 'success');
+                UiUtils.setBtnLoading(btn, false);
             } else {
                 UiUtils.showToast(response.message || 'Request failed', 'error');
+                UiUtils.setBtnLoading(btn, false);
             }
         },
         error: function (xhr) {
             UiUtils.showToast(xhr.responseJSON?.message || 'Request failed', 'error');
-        },
-        complete: function () {
-            UiUtils.setBtnLoading(btn, false, 'Send Verification Code');
+            UiUtils.setBtnLoading(btn, false);
         }
     });
 }
 
 function handleVerifyResetOtp(e) {
     e.preventDefault();
-    const btn = document.getElementById('verifyBtn');
+    const btn = document.querySelector('#otpForm button[type="submit"]');
     const otp = $('#otpInput').val();
     const email = localStorage.getItem('reset_email');
 
@@ -293,22 +293,22 @@ function handleVerifyResetOtp(e) {
                 $('#newPasswordWrapper').show();
                 // Store temp token if backend provides one, or rely on session/email
                 if (response.token) localStorage.setItem('reset_token', response.token);
+                UiUtils.setBtnLoading(btn, false);
             } else {
                 UiUtils.showToast(response.message || 'Invalid OTP', 'error');
+                UiUtils.setBtnLoading(btn, false);
             }
         },
         error: function (xhr) {
             UiUtils.showToast(xhr.responseJSON?.message || 'Verification failed', 'error');
-        },
-        complete: function () {
-            UiUtils.setBtnLoading(btn, false, 'Verify Code');
+            UiUtils.setBtnLoading(btn, false);
         }
     });
 }
 
 function handleNewPassword(e) {
     e.preventDefault();
-    const btn = document.getElementById('resetBtn');
+    const btn = document.querySelector('#newPasswordForm button[type="submit"]');
     const password = $('#newPassword').val();
     const confirm = $('#confirmNewPassword').val();
     const email = localStorage.getItem('reset_email');
@@ -352,13 +352,12 @@ function handleNewPassword(e) {
                 }, 2000);
             } else {
                 UiUtils.showToast(response.message || 'Reset failed', 'error');
+                UiUtils.setBtnLoading(btn, false);
             }
         },
         error: function (xhr) {
             UiUtils.showToast(xhr.responseJSON?.message || 'Reset failed', 'error');
-        },
-        complete: function () {
-            UiUtils.setBtnLoading(btn, false, 'Reset Password');
+            UiUtils.setBtnLoading(btn, false);
         }
     });
 }
@@ -459,9 +458,9 @@ function handleResendOtp(e) {
 $(document).ready(function () {
     $('#verifyOtpBtn').click(handleVerifyOtp);
     $('#resendOtpLink').click(handleResendOtp);
-    $('#otpCloseBtn').on('click', function(){ $('#otpModal').hide(); });
-    $('#otpInput').on('input', function(){ this.value = this.value.replace(/\D/g,'').slice(0,6); });
-    $('#otpCloseForgot').on('click', function(){
+    $('#otpCloseBtn').on('click', function () { $('#otpModal').removeClass('active').hide(); });
+    $('#otpInput').on('input', function () { this.value = this.value.replace(/\D/g, '').slice(0, 6); });
+    $('#otpCloseForgot').on('click', function () {
         $('#otpWrapper').hide();
         $('#resetFormWrapper').show();
         $('#otpInput').val('');

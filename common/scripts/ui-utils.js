@@ -18,7 +18,7 @@ const UiUtils = {
             $btn.data('original-html', $btn.html());
             $btn.html(`
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <div class="loading-spinner"></div>
+                    <i class="ri-loader-2-line loading-icon"></i>
                     <span>${text}</span>
                 </div>
             `);
@@ -120,6 +120,10 @@ const UiUtils = {
                     border: 2px solid currentColor;
                     border-right-color: transparent;
                     border-radius: 50%;
+                    animation: spin 0.75s linear infinite;
+                }
+                .loading-icon {
+                    font-size: 1.1rem;
                     animation: spin 0.75s linear infinite;
                 }
                 @keyframes spin {
