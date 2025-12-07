@@ -69,10 +69,7 @@
     <!-- HERO SECTION -->
     <section class="hero" id="home">
         <div class="hero-slide active">
-            <img src="../asset/Clean Bright Living Room.png" alt="Clean Bright Living Room" loading="eager" decoding="async">
-        </div>
-        <div class="hero-slide">
-            <img src="../asset/Clean Bright Living Room.png" alt="Modern Kitchen Cleaning" loading="lazy" decoding="async">
+            <img src="../asset/bg.gif" alt="Clean Bright Living Room" loading="eager" decoding="async">
         </div>
 
         <div class="overlay"></div>
@@ -379,6 +376,17 @@
     <script src="../../common/scripts/image-utils.js"></script>
     <!-- External JS -->
     <script src="../scripts/landing.js"></script>
+    <script>
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.keyCode === 123)) {
+            e.preventDefault();
+        }
+    });
+    </script>
 </body>
 
 </html>

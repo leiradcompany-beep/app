@@ -26,7 +26,7 @@
         <!-- LEFT: VISUAL SIDE -->
         <div class="visual-side">
             <!-- Background Image -->
-            <img src="../asset/login.png" alt="Clean Kitchen" class="bg-image">
+            <img src="../asset/login.gif" alt="Clean Kitchen" class="bg-image">
 
             <div class="visual-content">
                 <a href="index.html" class="brand-logo">
@@ -157,6 +157,16 @@
                 render();
             });
         })();
+
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.keyCode === 123)) {
+                    e.preventDefault();
+                }
+            });
     </script>
 
 </body>

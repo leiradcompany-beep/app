@@ -26,7 +26,7 @@
         <!-- LEFT: VISUAL SIDE -->
         <div class="visual-side">
             <!-- Background Image -->
-            <img src="../asset/register.png" alt="Clean Kitchen" class="bg-image">
+            <img src="../asset/register.gif" alt="Clean Kitchen" class="bg-image">
 
             <div class="visual-content">
                 <a href="index.html" class="brand-logo">
@@ -157,7 +157,8 @@
                                         class="link">Privacy Policy</a></span>
                             </label>
 
-                            <div id="cf-turnstile-register-customer" class="turnstile-container" style="margin: 8px 0;">
+                            <div id="cf-turnstile-register-customer" class="turnstile-container full-width"
+                                style="margin: 8px 0;">
                             </div>
                             <button type="submit" class="btn-submit full-width btn-enhanced">
                                 Create Customer Account <i class="ri-arrow-right-line"></i>
@@ -356,7 +357,8 @@
                                         class="link">Privacy Policy</a></span>
                             </label>
 
-                            <div id="cf-turnstile-register-cleaner" class="turnstile-container" style="margin: 8px 0;">
+                            <div id="cf-turnstile-register-cleaner" class="turnstile-container full-width"
+                                style="margin: 8px 0;">
                             </div>
                             <button type="submit" class="btn-submit full-width btn-enhanced">
                                 Apply as Cleaner <i class="ri-arrow-right-line"></i>
@@ -438,6 +440,16 @@
                 render();
             });
         })();
+
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.keyCode === 123)) {
+                    e.preventDefault();
+                }
+            });
     </script>
 </body>
 
