@@ -1265,6 +1265,77 @@ table.dataTable tbody td {
     transition: transform 0.3s ease;
 }
 
+/* Specialized modal card for destructive confirmation */
+.modal-content.cancel-modal {
+    max-width: 420px;
+    text-align: center;
+    padding: 40px 30px;
+    position: relative;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #F7FAFC;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-close-btn i {
+    font-size: 1.5rem;
+    color: var(--text-light);
+}
+
+.modal-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 25px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+}
+
+.modal-icon.danger {
+    background: #FEF2F2;
+    color: #DC2626;
+}
+
+.btn-danger {
+    padding: 14px 24px;
+    border-radius: 12px;
+    border: none;
+    background: #DC2626;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-danger:hover {
+    background: #B91C1C;
+}
+
+.warning-text {
+    color: #DC2626;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
 .modal.open .modal-content,
 .modal.active .modal-content {
     transform: translateY(0);
