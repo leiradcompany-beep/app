@@ -270,13 +270,13 @@ $(document).ready(function () {
 
         bookings.forEach(booking => {
             const statusClass = getStatusClass(booking.status);
-            const clientAvatar = ImageUtils.getAvatarUrl(booking.client_avatar);
-            const cleanerAvatar = ImageUtils.getAvatarUrl(booking.cleaner_avatar);
-            const serviceImage = ImageUtils.getServiceImageUrl(booking.service_image);
+            const clientAvatarHtml = AvatarMixin.renderAvatarHtml(booking.client_avatar, booking.client_name, 'avatar-circle');
+            const cleanerAvatarHtml = AvatarMixin.renderAvatarHtml(booking.cleaner_avatar, booking.cleaner_name, 'avatar-circle');
+            const serviceImageUrl = ImageUtils.getServiceImageUrl(booking.service_image);
 
         const cleanerDisplay = booking.cleaner_name === 'Unassigned'
             ? `<div class="flex-center"><span style="opacity:0.6; font-style:italic;">Unassigned</span></div>`
-            : `<div class="flex-center"><img src="${cleanerAvatar}" class="avatar-circle" alt="${booking.cleaner_name}"> <span style="margin-left:8px;">${booking.cleaner_name}</span></div>`;
+            : `<div class="flex-center">${cleanerAvatarHtml} <span style="margin-left:8px;">${booking.cleaner_name}</span></div>`;
 
         const row = `
                 <tr>
@@ -287,13 +287,13 @@ $(document).ready(function () {
                     </td>
                     <td>
                         <div class="flex-center">
-                            <img src="${clientAvatar}" class="avatar-circle" alt="${booking.client_name}">
+                            ${clientAvatarHtml}
                             <span style="margin-left: 10px; font-weight: 600;">${booking.client_name}</span>
                         </div>
                     </td>
                     <td>
                         <div class="flex-center">
-                            <img src="${serviceImage}" class="avatar-circle" style="border-radius: 4px;" alt="${booking.service_name}">
+                            <img src="${serviceImageUrl}" class="avatar-circle" style="border-radius: 4px;" alt="${booking.service_name}" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-service.png')">
                             <span style="margin-left: 10px;">${booking.service_name}</span>
                         </div>
                     </td>
