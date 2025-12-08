@@ -137,9 +137,19 @@
                 <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 10px;">Allowed *.jpeg, *.jpg, *.png, *.webp</p>
             </div>
 
-            <div class="form-group">
-                <label>Full Name <span style="color: red;">*</span></label>
-                <input type="text" id="cleanerName" required placeholder="e.g. Jane Doe">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>First Name <span style="color: red;">*</span></label>
+                    <input type="text" id="cleanerFirstName" required placeholder="e.g. Jane">
+                </div>
+                <div class="form-group">
+                    <label>Middle Name</label>
+                    <input type="text" id="cleanerMiddleName" placeholder="e.g. A.">
+                </div>
+                <div class="form-group">
+                    <label>Last Name <span style="color: red;">*</span></label>
+                    <input type="text" id="cleanerLastName" required placeholder="e.g. Doe">
+                </div>
             </div>
             <div class="form-group">
                 <label>Role / Title <span style="color: red;">*</span></label>
