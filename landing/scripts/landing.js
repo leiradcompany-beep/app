@@ -144,7 +144,8 @@ async function fetchServices() {
                 price: `₱${service.price}`,
                 img: getServiceImageUrl(service.image),
                 desc: service.description || "No description available.",
-                rating: service.rating
+                rating: service.rating,
+                rating_count: service.rating_count || 0
             }));
 
             populateModalSelect(servicesData);
@@ -309,7 +310,7 @@ function loadMore() {
             </div>
             <div class="service-content">
                 <h3 class="service-title">${service.title}</h3>
-                ${service.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(service.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(service.rating).toFixed(1)}</span></div>` : ''}
+                ${service.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(service.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(service.rating).toFixed(1)}${service.rating_count ? ` (${service.rating_count})` : ''}</span></div>` : ''}
                 <p class="service-text">${service.desc}</p>
                 
                 <div class="service-footer">
