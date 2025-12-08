@@ -567,32 +567,14 @@
 
     <!-- DELETE CONFIRMATION MODAL -->
     <div class="modal" id="delete-modal">
-        <div class="modal-content"
-            style="max-width: 400px; text-align: center; padding: 40px 30px; position: relative;">
-            <button onclick="closeDeleteModal()"
-                style="position: absolute; top: 20px; right: 20px; background: #F7FAFC; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer;">
-                <i class="ri-close-line" style="font-size: 1.5rem; color: var(--text-light);"></i>
-            </button>
-
-            <div
-                style="width: 80px; height: 80px; background: #FEF2F2; color: #DC2626; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 25px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);">
-                <i class="ri-error-warning-line"></i>
-            </div>
-            <h3 style="font-size: 1.6rem; color: var(--text-dark); margin-bottom: 12px; font-weight: 800;">Cancel
-                Booking?</h3>
-            <p style="color: var(--text-body); margin-bottom: 30px; line-height: 1.6; font-size: 1rem;">
-                Are you sure you want to cancel this booking? <br>
-                <span style="color: #DC2626; font-weight: 600; font-size: 0.9rem;">This action cannot be undone.</span>
-            </p>
+        <div class="modal-content cancel-modal">
+            <button class="modal-close-btn" onclick="closeDeleteModal()"><i class="ri-close-line"></i></button>
+            <div class="modal-icon danger"><i class="ri-error-warning-line"></i></div>
+            <h3>Cancel Booking?</h3>
+            <p>Are you sure you want to cancel this booking? <br><span class="warning-text">This action cannot be undone.</span></p>
             <div class="modal-actions-row">
-                <button onclick="closeDeleteModal()"
-                    style="padding: 14px 24px; border-radius: 12px; border: 1px solid var(--border-light); background: white; color: var(--text-dark); font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s;">
-                    No, Keep it
-                </button>
-                <button id="confirmDeleteBtn" onclick="confirmDeleteBooking()"
-                    style="padding: 14px 24px; border-radius: 12px; border: none; background: #DC2626; color: white; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);">
-                    Yes, Cancel Booking
-                </button>
+                <button onclick="closeDeleteModal()" class="btn-outline">No, Keep it</button>
+                <button id="confirmDeleteBtn" onclick="confirmDeleteBooking()" class="btn-danger">Yes, Cancel Booking</button>
             </div>
         </div>
     </div>
