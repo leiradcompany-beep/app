@@ -266,7 +266,10 @@ $(document).ready(function () {
             drawer.addClass('open');
             overlay.addClass('active');
             $('#drawerTitle').text('Add New Cleaner');
-            $('#cleanerPreview').attr('src', '../../assets/images/default-avatar.png');
+            $('#cleanerPreview')
+                .attr('src', '../../assets/images/default-avatar.png')
+                .off('error')
+                .on('error', function () { ImageUtils.handleImageError(this); });
             $('#passwordGroup').show();
         }
     };
@@ -277,7 +280,10 @@ $(document).ready(function () {
         const form = $('#cleanerDrawer form');
         form[0].reset();
         $('#cleanerId').val('');
-        $('#cleanerPreview').attr('src', '../../assets/images/default-avatar.png');
+        $('#cleanerPreview')
+            .attr('src', '../../assets/images/default-avatar.png')
+            .off('error')
+            .on('error', function () { ImageUtils.handleImageError(this); });
     }
 
 
@@ -302,12 +308,13 @@ $(document).ready(function () {
                     $('#cleanerEmail').val(data.email);
                     $('#cleanerPassword').val('');
 
-                    if (data.img) {
-                        const imgSrc = ImageUtils.getAvatarUrl(data.img);
-                        $('#cleanerPreview').attr('src', imgSrc);
-                    } else {
-                        $('#cleanerPreview').attr('src', '../../assets/images/default-avatar.png');
-                    }
+                    const avatarSrc = ImageUtils.getAvatarUrl(
+                        data.img || data.avatar || data.profile_photo_path || (data.user && (data.user.avatar || data.user.profile_photo_path))
+                    );
+                    $('#cleanerPreview')
+                        .attr('src', avatarSrc)
+                        .off('error')
+                        .on('error', function () { ImageUtils.handleImageError(this); });
 
                     $('#drawerTitle').text('Edit Cleaner Profile');
                     $('#passwordGroup').show();
