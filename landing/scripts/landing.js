@@ -20,6 +20,19 @@ let displayedCount = 0;
 const ITEMS_PER_PAGE = 6;
 let filteredData = [];
 
+function getStarsHtml(rating) {
+    const r = typeof rating === 'number' ? rating : parseFloat(rating || 0);
+    const full = Math.floor(r);
+    const hasHalf = (r - full) >= 0.5 ? 1 : 0;
+    const total = 5;
+    let s = '';
+    for (let i = 0; i < full; i++) s += '<i class="ri-star-fill"></i>';
+    if (hasHalf) s += '<i class="ri-star-half-line"></i>';
+    const empty = total - full - hasHalf;
+    for (let i = 0; i < empty; i++) s += '<i class="ri-star-line"></i>';
+    return `<span class="stars" style="color:#D69E2E; display:inline-flex; gap:2px;">${s}</span>`;
+}
+
 function normalizeString(str) {
     return (str || '').toString().toLowerCase().replace(/[\s_\-\/]/g, '');
 }
@@ -130,7 +143,8 @@ async function fetchServices() {
                 category: service.category,
                 price: `₱${service.price}`,
                 img: getServiceImageUrl(service.image),
-                desc: service.description || "No description available."
+                desc: service.description || "No description available.",
+                rating: service.rating
             }));
 
             populateModalSelect(servicesData);
@@ -154,7 +168,9 @@ async function fetchCleaners() {
                 name: cleaner.name,
                 role: cleaner.job_title || 'Cleaning Specialist',
                 img: getCleanerAvatar(cleaner),
-                desc: `Experience: ${cleaner.experience_years} years. Skills: ${Array.isArray(cleaner.skills) ? cleaner.skills.join(', ') : (cleaner.skills ? JSON.parse(cleaner.skills).join(', ') : 'General Cleaning')}`
+                desc: `Experience: ${cleaner.experience_years} years. Skills: ${Array.isArray(cleaner.skills) ? cleaner.skills.join(', ') : (cleaner.skills ? JSON.parse(cleaner.skills).join(', ') : 'General Cleaning')}`,
+                rating: cleaner.rating,
+                rating_count: cleaner.rating_count || 0
             }));
             renderCleaners();
         }
@@ -199,6 +215,7 @@ function renderCleaners() {
             <div class="team-info">
                 <h3 style="font-size:1.4rem; margin-bottom:5px;">${cleaner.name}</h3>
                 <p style="color:var(--accent); font-weight:600; font-size:0.9rem; text-transform:uppercase;">${cleaner.role}</p>
+                ${cleaner.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(cleaner.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(cleaner.rating).toFixed(1)}${cleaner.rating_count ? ` (${cleaner.rating_count})` : ''}</span></div>` : ''}
                 <p style="margin-top:10px; font-size:0.9rem; opacity:0.9;">${cleaner.desc}</p>
             </div>
         `;
@@ -292,6 +309,7 @@ function loadMore() {
             </div>
             <div class="service-content">
                 <h3 class="service-title">${service.title}</h3>
+                ${service.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(service.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(service.rating).toFixed(1)}</span></div>` : ''}
                 <p class="service-text">${service.desc}</p>
                 
                 <div class="service-footer">
