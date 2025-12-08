@@ -156,6 +156,10 @@ $(document).ready(function() {
             isEditing = false;
             $('#passwordRequired').show();
             $('#userPassword').attr('placeholder', '********').prop('required', true);
+            $('#userPreview')
+                .attr('src', '../../assets/images/default-avatar.png')
+                .off('error')
+                .on('error', function(){ ImageUtils.handleImageError(this); });
             
             drawer.addClass('open');
             overlay.addClass('active');
@@ -202,23 +206,12 @@ $(document).ready(function() {
         const phone = user.phone_number || user.phone;
         $('#userPhone').val(phone);
 
-        // Image Preview
-        let imgUrl = '../../assets/images/default-avatar.png';
-        const userImg = user.profile_photo_path || user.avatar || user.img;
-        const BASE_STORAGE_URL = API_BASE_URL.replace('/api', '');
-        
-        if (userImg) {
-            if (userImg.startsWith('http')) {
-                imgUrl = userImg;
-            } else if (userImg.startsWith('assets/')) {
-                imgUrl = '../../' + userImg;
-            } else if (userImg.startsWith('/storage/')) {
-                imgUrl = BASE_STORAGE_URL + userImg;
-            } else {
-                imgUrl = `${BASE_STORAGE_URL}/storage/${userImg}`;
-            }
-        }
-        $('#userPreview').attr('src', imgUrl);
+        // Image Preview (robust via ImageUtils)
+        const avatarSrc = ImageUtils.getAvatarUrl(user.profile_photo_path || user.avatar || user.img || user);
+        $('#userPreview')
+            .attr('src', avatarSrc)
+            .off('error')
+            .on('error', function(){ ImageUtils.handleImageError(this); });
 
         // Password not required for edit
         $('#passwordRequired').hide();
@@ -231,7 +224,10 @@ $(document).ready(function() {
     function resetForm() {
         $('#userForm')[0].reset();
         $('#userId').val('');
-        $('#userPreview').attr('src', '../../assets/images/default-avatar.png');
+        $('#userPreview')
+            .attr('src', '../../assets/images/default-avatar.png')
+            .off('error')
+            .on('error', function(){ ImageUtils.handleImageError(this); });
         $('#userRoleSelect').val('customer');
     }
 
