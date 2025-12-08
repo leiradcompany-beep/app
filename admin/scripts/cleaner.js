@@ -184,7 +184,11 @@ $(document).ready(function () {
             const cleanerId = $('#cleanerId').val();
 
             const formData = new FormData();
-            formData.append('name', $('#cleanerName').val());
+            const firstName = $('#cleanerFirstName').val().trim();
+            const middleName = $('#cleanerMiddleName').val().trim();
+            const lastName = $('#cleanerLastName').val().trim();
+            const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
+            formData.append('name', fullName);
             formData.append('role', $('#cleanerRole').val());
 
             const skills = $('#cleanerSkills').val().split(',').map(s => s.trim());
@@ -207,7 +211,7 @@ $(document).ready(function () {
                 formData.append('_method', 'PUT');
             }
 
-            if (!$('#cleanerName').val() || !$('#cleanerEmail').val() || (!cleanerId && !password)) {
+            if (!firstName || !lastName || !$('#cleanerEmail').val() || (!cleanerId && !password)) {
                 UiUtils.showToast('Please fill in all required fields', 'warning');
                 return;
             }
@@ -293,7 +297,24 @@ $(document).ready(function () {
         if (!cleaner) return;
 
         $('#cleanerId').val(id);
-        $('#cleanerName').val(cleaner.name);
+        // Split name into first/middle/last for edit prefill
+        (function(){
+            const fullName = (cleaner.name || '').trim();
+            const parts = fullName.split(' ').filter(Boolean);
+            let firstName = '', middleName = '', lastName = '';
+            if (parts.length > 0) {
+                firstName = parts[0];
+                if (parts.length === 2) {
+                    lastName = parts[1];
+                } else if (parts.length > 2) {
+                    lastName = parts[parts.length - 1];
+                    middleName = parts.slice(1, -1).join(' ');
+                }
+            }
+            $('#cleanerFirstName').val(firstName);
+            $('#cleanerMiddleName').val(middleName);
+            $('#cleanerLastName').val(lastName);
+        })();
         $('#cleanerRole').val(cleaner.role);
         $('#cleanerSkills').val((cleaner.skills || []).join(', '));
 
@@ -301,7 +322,23 @@ $(document).ready(function () {
             .then(function (response) {
                 if (response.success) {
                     const data = response.data;
-                    $('#cleanerName').val(data.name);
+                    (function(){
+                        const fullName = (data.name || '').trim();
+                        const parts = fullName.split(' ').filter(Boolean);
+                        let firstName = '', middleName = '', lastName = '';
+                        if (parts.length > 0) {
+                            firstName = parts[0];
+                            if (parts.length === 2) {
+                                lastName = parts[1];
+                            } else if (parts.length > 2) {
+                                lastName = parts[parts.length - 1];
+                                middleName = parts.slice(1, -1).join(' ');
+                            }
+                        }
+                        $('#cleanerFirstName').val(firstName);
+                        $('#cleanerMiddleName').val(middleName);
+                        $('#cleanerLastName').val(lastName);
+                    })();
                     $('#cleanerRole').val(data.role);
                     $('#cleanerSkills').val((data.skills || []).join(', '));
                     $('#cleanerExperience').val(data.experience_years);
