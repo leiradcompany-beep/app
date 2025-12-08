@@ -300,7 +300,7 @@ $(document).ready(function () {
 
             const cleanerName = (typeof booking.cleaner === 'object' ? booking.cleaner.name : booking.cleaner) || 'Unassigned';
             const cleanerDisplay = booking.cleaner
-                ? `<div class="person-chip"><img src="${cleanerAvatar}" alt="Cleaner"><div class="person-info"><span class="person-name">${cleanerName}</span><span class="person-role">Cleaner</span></div></div>`
+                ? `<div class="person-chip"><img src="${cleanerAvatar}" alt="Cleaner" onerror="ImageUtils.handleImageError(this)"><div class="person-info"><span class="person-name">${cleanerName}</span><span class="person-role">Cleaner</span></div></div>`
                 : `<div class="person-chip"><div class="person-info"><span class="person-name" style="opacity:0.6; font-style:italic;">Unassigned</span><span class="person-role">Cleaner</span></div></div>`;
 
             // Format Date for display (e.g., "Oct 24, 2023")
@@ -325,7 +325,7 @@ $(document).ready(function () {
                         <!-- Middle: Service & People -->
                         <div class="booking-main-info">
                             <div class="booking-service-header">
-                                <img src="${serviceImage}" alt="${booking.service}" class="service-thumb">
+                                <img src="${serviceImage}" alt="${booking.service}" class="service-thumb" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-service.png')">
                                 <h4 class="service-name">${booking.service}</h4>
                             </div>
                             
@@ -336,7 +336,7 @@ $(document).ready(function () {
 
                             <div class="booking-people">
                                 <div class="person-chip">
-                                    <img src="${clientAvatar}" alt="Client">
+                                    <img src="${clientAvatar}" alt="Client" onerror="ImageUtils.handleImageError(this)">
                                     <div class="person-info">
                                         <span class="person-name">${booking.client}</span>
                                         <span class="person-role">Client</span>
@@ -664,10 +664,10 @@ $(document).ready(function () {
                             // Use data from booking details if available
                             const cleanerName = (typeof b.cleaner === 'object' ? b.cleaner.name : b.cleaner) || 'Unknown';
                             // Use booking.cleaner_avatar if available, otherwise default
-                            const cleanerAvatar = getAvatarUrl(b.cleaner_avatar);
+                            const cleanerAvatar = ImageUtils.getAvatarUrl(b.cleaner_avatar);
 
                             const fallbackHtml = `
-                                <img src="${cleanerAvatar}" class="opt-img" alt="${cleanerName}">
+                                <img src="${cleanerAvatar}" class="opt-img" alt="${cleanerName}" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-avatar.png')">
                                 <div class="opt-info">
                                     <div class="opt-title">${cleanerName}</div>
                                 </div>
