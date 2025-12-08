@@ -459,6 +459,19 @@ function updateUpcomingWidget(job) {
 }
 
 // --- RENDER FUNCTIONS ---
+function getStarsHtml(rating) {
+    const r = typeof rating === 'number' ? rating : parseFloat(rating || 0);
+    const full = Math.floor(r);
+    const hasHalf = (r - full) >= 0.5 ? 1 : 0;
+    const total = 5;
+    let s = '';
+    for (let i = 0; i < full; i++) s += '<i class="ri-star-fill"></i>';
+    if (hasHalf) s += '<i class="ri-star-half-line"></i>';
+    const empty = total - full - hasHalf;
+    for (let i = 0; i < empty; i++) s += '<i class="ri-star-line"></i>';
+    return `<span class="stars" style="color:#D69E2E; display:inline-flex; gap:2px;">${s}</span>`;
+}
+
 function renderTrending() {
     let frequency = {};
     bookings.forEach(b => {
@@ -609,18 +622,20 @@ function renderServices() {
     }
 
     const createCard = (s) => {
-        // Rating Logic: Only show if rating_count > 0 (assuming s.rating_count exists, or s.rating > 0)
         let ratingHtml = '';
-        if (s.rating && parseFloat(s.rating) > 0) {
+        const avg = parseFloat(s.rating || 0);
+        const count = s.rating_count || 0;
+        if (count > 0 && avg > 0) {
             ratingHtml = `
-                <div class="rating" style="font-size:0.85rem; color:#D69E2E; margin: 0;">
-                    <i class="ri-star-fill"></i> ${s.rating}
+                <div class="rating" style="font-size:0.85rem; display:flex; align-items:center; gap:6px; margin:0;">
+                    ${getStarsHtml(avg)}
+                    <span style="color:var(--text-light);">${avg.toFixed(1)} (${count})</span>
                 </div>
             `;
         } else {
             ratingHtml = `
-                <div class="rating" style="font-size:0.85rem; color:var(--text-light); margin: 0; font-weight: 500;">
-                    No Ratings
+                <div class="rating" style="font-size:0.85rem; color:var(--text-light); margin:0; font-weight:500;">
+                    No ratings yet
                 </div>
             `;
         }
@@ -669,8 +684,10 @@ function renderCleaners(cleaners) {
     }
     const html = cleaners.map(c => {
         let ratingHtml = '';
-        if (c.rating_count && c.rating_count > 0) {
-            ratingHtml = `<div class="rating"><i class="ri-star-fill"></i> ${c.rating} / 5.0</div>`;
+        const avg = parseFloat(c.rating || 0);
+        const count = c.rating_count || 0;
+        if (count > 0 && avg > 0) {
+            ratingHtml = `<div class="rating" style="display:flex; align-items:center; gap:6px;">${getStarsHtml(avg)}<span style="color:var(--text-light); font-size:0.85rem;">${avg.toFixed(1)} (${count})</span></div>`;
         } else {
             ratingHtml = `<div class="rating" style="color:var(--text-light); font-size:0.85rem;">No ratings yet</div>`;
         }
@@ -723,8 +740,10 @@ function viewCleanerProfile(id) {
     $('#drawer-cleaner-name').text(cleaner.name);
     $('#drawer-cleaner-role').text(cleaner.role);
 
-    if (cleaner.rating_count && cleaner.rating_count > 0) {
-        $('#drawer-cleaner-rating').html(`<i class="ri-star-fill"></i> ${cleaner.rating} / 5.0`);
+    const avg = parseFloat(cleaner.rating || 0);
+    const count = cleaner.rating_count || 0;
+    if (count > 0 && avg > 0) {
+        $('#drawer-cleaner-rating').html(`${getStarsHtml(avg)} <span style="color:var(--text-light); font-size:0.9rem;">${avg.toFixed(1)} (${count})</span>`);
     } else {
         $('#drawer-cleaner-rating').html(`<span style="color:var(--text-light); font-size:0.9rem; font-weight:normal;">No ratings yet</span>`);
     }
