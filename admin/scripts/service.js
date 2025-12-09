@@ -126,6 +126,19 @@ $(document).ready(function () {
             return;
         }
 
+        function getStarsHtml(rating) {
+            const r = typeof rating === 'number' ? rating : parseFloat(rating || 0);
+            const full = Math.floor(r);
+            const hasHalf = (r - full) >= 0.5 ? 1 : 0;
+            const total = 5;
+            let s = '';
+            for (let i = 0; i < full; i++) s += '<i class="ri-star-fill"></i>';
+            if (hasHalf) s += '<i class="ri-star-half-line"></i>';
+            const empty = total - full - hasHalf;
+            for (let i = 0; i < empty; i++) s += '<i class="ri-star-line"></i>';
+            return `<span class="stars" style="color:#D69E2E; display:inline-flex; gap:2px;">${s}</span>`;
+        }
+
         visibleServices.forEach(service => {
             // Use ImageUtils for consistent image URL handling
             const imgSrc = ImageUtils.getServiceImageUrl(service.image);
@@ -144,6 +157,7 @@ $(document).ready(function () {
                             <div class="s-title">${service.title}</div>
                             <div class="s-price">₱${service.price}</div>
                         </div>
+                        ${service.rating_count && service.rating_count > 0 && service.rating ? `<div class="s-rating" style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(service.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(service.rating).toFixed(1)} (${service.rating_count})</span></div>` : `<div class="s-rating" style="margin:6px 0; color:var(--text-light); font-size:0.9rem;">Not yet rated</div>`}
                         <div class="s-desc">${service.description || 'No description available.'}</div>
                         <div class="s-meta">
                             <span><i class="ri-time-line"></i> ${service.duration}</span>
