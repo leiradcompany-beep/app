@@ -76,6 +76,19 @@ $(document).ready(function () {
             return;
         }
 
+        function getStarsHtml(rating) {
+            const r = typeof rating === 'number' ? rating : parseFloat(rating || 0);
+            const full = Math.floor(r);
+            const hasHalf = (r - full) >= 0.5 ? 1 : 0;
+            const total = 5;
+            let s = '';
+            for (let i = 0; i < full; i++) s += '<i class="ri-star-fill"></i>';
+            if (hasHalf) s += '<i class="ri-star-half-line"></i>';
+            const empty = total - full - hasHalf;
+            for (let i = 0; i < empty; i++) s += '<i class="ri-star-line"></i>';
+            return `<span class="stars" style="color:#D69E2E; display:inline-flex; gap:2px;">${s}</span>`;
+        }
+
         data.forEach(cleaner => {
             const skills = cleaner.skills || [];
             const skillsHtml = skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('');
@@ -122,7 +135,7 @@ $(document).ready(function () {
                             <span class="stat-label">Jobs</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-val">${cleaner.rating && cleaner.rating > 0 ? cleaner.rating : '<span style="font-size: 0.65rem; color: var(--text-light); font-weight: 600; white-space: nowrap;">Not yet rated</span>'}</span>
+                            <span class="stat-val">${(cleaner.rating_count && cleaner.rating_count > 0 && cleaner.rating) ? `${getStarsHtml(cleaner.rating)} <span style=\"color:var(--text-light); font-size:0.85rem;\">${parseFloat(cleaner.rating).toFixed(1)} (${cleaner.rating_count})</span>` : '<span style="font-size: 0.75rem; color: var(--text-light); font-weight: 600; white-space: nowrap;">Not yet rated</span>'}</span>
                             <span class="stat-label">Rating</span>
                         </div>
                     </div>
@@ -184,11 +197,7 @@ $(document).ready(function () {
             const cleanerId = $('#cleanerId').val();
 
             const formData = new FormData();
-            const firstName = $('#cleanerFirstName').val().trim();
-            const middleName = $('#cleanerMiddleName').val().trim();
-            const lastName = $('#cleanerLastName').val().trim();
-            const fullName = `${firstName} ${middleName} ${lastName}`.replace(/\s+/g, ' ').trim();
-            formData.append('name', fullName);
+            formData.append('name', $('#cleanerName').val());
             formData.append('role', $('#cleanerRole').val());
 
             const skills = $('#cleanerSkills').val().split(',').map(s => s.trim());
@@ -211,7 +220,7 @@ $(document).ready(function () {
                 formData.append('_method', 'PUT');
             }
 
-            if (!firstName || !lastName || !$('#cleanerEmail').val() || (!cleanerId && !password)) {
+            if (!$('#cleanerName').val() || !$('#cleanerEmail').val() || (!cleanerId && !password)) {
                 UiUtils.showToast('Please fill in all required fields', 'warning');
                 return;
             }
@@ -297,24 +306,7 @@ $(document).ready(function () {
         if (!cleaner) return;
 
         $('#cleanerId').val(id);
-        // Split name into first/middle/last for edit prefill
-        (function(){
-            const fullName = (cleaner.name || '').trim();
-            const parts = fullName.split(' ').filter(Boolean);
-            let firstName = '', middleName = '', lastName = '';
-            if (parts.length > 0) {
-                firstName = parts[0];
-                if (parts.length === 2) {
-                    lastName = parts[1];
-                } else if (parts.length > 2) {
-                    lastName = parts[parts.length - 1];
-                    middleName = parts.slice(1, -1).join(' ');
-                }
-            }
-            $('#cleanerFirstName').val(firstName);
-            $('#cleanerMiddleName').val(middleName);
-            $('#cleanerLastName').val(lastName);
-        })();
+        $('#cleanerName').val(cleaner.name);
         $('#cleanerRole').val(cleaner.role);
         $('#cleanerSkills').val((cleaner.skills || []).join(', '));
 
@@ -322,23 +314,7 @@ $(document).ready(function () {
             .then(function (response) {
                 if (response.success) {
                     const data = response.data;
-                    (function(){
-                        const fullName = (data.name || '').trim();
-                        const parts = fullName.split(' ').filter(Boolean);
-                        let firstName = '', middleName = '', lastName = '';
-                        if (parts.length > 0) {
-                            firstName = parts[0];
-                            if (parts.length === 2) {
-                                lastName = parts[1];
-                            } else if (parts.length > 2) {
-                                lastName = parts[parts.length - 1];
-                                middleName = parts.slice(1, -1).join(' ');
-                            }
-                        }
-                        $('#cleanerFirstName').val(firstName);
-                        $('#cleanerMiddleName').val(middleName);
-                        $('#cleanerLastName').val(lastName);
-                    })();
+                    $('#cleanerName').val(data.name);
                     $('#cleanerRole').val(data.role);
                     $('#cleanerSkills').val((data.skills || []).join(', '));
                     $('#cleanerExperience').val(data.experience_years);
