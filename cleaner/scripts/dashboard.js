@@ -111,7 +111,7 @@ function renderAssignmentRequests(requests) {
                 customerImg = '../../' + req.customer_img;
             }
         }
-        if (typeof customerImg === 'string' && customerImg.toLowerCase().includes('ui-avatars.com')) {
+        if (typeof customerImg === 'string' && customerImg.trim().toLowerCase().includes('ui-avatars.com')) {
             customerImg = '../../assets/images/default-avatar.png';
         }
 
@@ -289,14 +289,15 @@ function updateNextJob(job) {
             customerImg = '../../' + customerImg;
         }
     }
-    if (typeof customerImg === 'string' && customerImg.toLowerCase().includes('ui-avatars.com')) {
-        customerImg = '../../assets/images/default-avatar.png';
-    }
-    if (typeof customerImg === 'string' && customerImg.toLowerCase().includes('ui-avatars.com')) {
+    if (typeof customerImg === 'string' && customerImg.trim().toLowerCase().includes('ui-avatars.com')) {
         customerImg = '../../assets/images/default-avatar.png';
     }
 
-    $('#nextJobCustomerImg').attr('src', customerImg).show();
+    $('#nextJobCustomerImg')
+        .attr('src', customerImg)
+        .off('error')
+        .on('error', function(){ this.src='../../assets/images/default-avatar.png'; })
+        .show();
 
     // Handle Service Background Image
     let serviceImg = job.service_img;
@@ -344,7 +345,6 @@ function renderPendingJobs(jobs) {
         if (rawStatus === 'confirmed') statusClass = 'status-confirmed';
         else if (rawStatus === 'assigned') statusClass = 'status-pending'; // Visual style for assigned
 
-        // Ensure customer image has fallback
         let customerImg = job.customer_img;
         if (!customerImg || customerImg === 'null' || customerImg.trim() === '') {
             customerImg = '../../assets/images/default-avatar.png';
@@ -354,6 +354,12 @@ function renderPendingJobs(jobs) {
             } else if (!customerImg.startsWith('../../')) {
                 customerImg = '../../' + customerImg;
             }
+        }
+        if (typeof customerImg === 'string' && customerImg.trim().toLowerCase().includes('ui-avatars.com')) {
+            customerImg = '../../assets/images/default-avatar.png';
+        }
+        if (typeof customerImg === 'string' && customerImg.trim().toLowerCase().includes('ui-avatars.com')) {
+            customerImg = '../../assets/images/default-avatar.png';
         }
 
         let serviceImg = job.service_img;
