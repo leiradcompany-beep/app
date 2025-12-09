@@ -111,6 +111,9 @@ function renderAssignmentRequests(requests) {
                 customerImg = '../../' + req.customer_img;
             }
         }
+        if (typeof customerImg === 'string' && customerImg.includes('ui-avatars.com')) {
+            customerImg = '../../assets/images/default-avatar.png';
+        }
 
         const item = `
             <div class="assignment-card">
@@ -285,6 +288,12 @@ function updateNextJob(job) {
         } else if (!customerImg.startsWith('../../')) {
             customerImg = '../../' + customerImg;
         }
+    }
+    if (typeof customerImg === 'string' && customerImg.includes('ui-avatars.com')) {
+        customerImg = '../../assets/images/default-avatar.png';
+    }
+    if (typeof customerImg === 'string' && customerImg.includes('ui-avatars.com')) {
+        customerImg = '../../assets/images/default-avatar.png';
     }
 
     $('#nextJobCustomerImg').attr('src', customerImg).show();
