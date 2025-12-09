@@ -197,7 +197,7 @@ $(document).ready(function () {
             const cleanerId = $('#cleanerId').val();
 
             const formData = new FormData();
-            formData.append('name', $('#cleanerName').val());
+            formData.append('name', composeFullName());
             formData.append('role', $('#cleanerRole').val());
 
             const skills = $('#cleanerSkills').val().split(',').map(s => s.trim());
@@ -220,7 +220,7 @@ $(document).ready(function () {
                 formData.append('_method', 'PUT');
             }
 
-            if (!$('#cleanerName').val() || !$('#cleanerEmail').val() || (!cleanerId && !password)) {
+            if (!$('#cleanerFirstName').val() || !$('#cleanerLastName').val() || !$('#cleanerEmail').val() || (!cleanerId && !password)) {
                 UiUtils.showToast('Please fill in all required fields', 'warning');
                 return;
             }
@@ -306,7 +306,10 @@ $(document).ready(function () {
         if (!cleaner) return;
 
         $('#cleanerId').val(id);
-        $('#cleanerName').val(cleaner.name);
+        const partsInitial = splitName(cleaner.name);
+        $('#cleanerFirstName').val(partsInitial.first);
+        $('#cleanerMiddleName').val(partsInitial.middle);
+        $('#cleanerLastName').val(partsInitial.last);
         $('#cleanerRole').val(cleaner.role);
         $('#cleanerSkills').val((cleaner.skills || []).join(', '));
 
@@ -314,7 +317,10 @@ $(document).ready(function () {
             .then(function (response) {
                 if (response.success) {
                     const data = response.data;
-                    $('#cleanerName').val(data.name);
+                    const parts = splitName(data.name);
+                    $('#cleanerFirstName').val(parts.first);
+                    $('#cleanerMiddleName').val(parts.middle);
+                    $('#cleanerLastName').val(parts.last);
                     $('#cleanerRole').val(data.role);
                     $('#cleanerSkills').val((data.skills || []).join(', '));
                     $('#cleanerExperience').val(data.experience_years);
@@ -649,3 +655,19 @@ $(document).ready(function () {
         });
     }
 });
+    function splitName(fullName) {
+        const name = (fullName || '').trim();
+        if (!name) return { first: '', middle: '', last: '' };
+        const parts = name.split(/\s+/);
+        const first = parts.shift() || '';
+        const last = parts.length > 0 ? parts.pop() : '';
+        const middle = parts.join(' ');
+        return { first, middle, last };
+    }
+
+    function composeFullName() {
+        const first = ($('#cleanerFirstName').val() || '').trim();
+        const middle = ($('#cleanerMiddleName').val() || '').trim();
+        const last = ($('#cleanerLastName').val() || '').trim();
+        return [first, middle, last].filter(Boolean).join(' ');
+    }
