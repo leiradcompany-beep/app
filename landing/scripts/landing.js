@@ -216,7 +216,7 @@ function renderCleaners() {
             <div class="team-info">
                 <h3 style="font-size:1.4rem; margin-bottom:5px;">${cleaner.name}</h3>
                 <p style="color:var(--accent); font-weight:600; font-size:0.9rem; text-transform:uppercase;">${cleaner.role}</p>
-                ${cleaner.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(cleaner.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(cleaner.rating).toFixed(1)}${cleaner.rating_count ? ` (${cleaner.rating_count})` : ''}</span></div>` : ''}
+                ${cleaner.rating_count && cleaner.rating_count > 0 && cleaner.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(cleaner.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(cleaner.rating).toFixed(1)} (${cleaner.rating_count})</span></div>` : `<div style="margin:6px 0; color:var(--text-light); font-size:0.9rem;">Not yet rated</div>`}
                 <p style="margin-top:10px; font-size:0.9rem; opacity:0.9;">${cleaner.desc}</p>
             </div>
         `;
@@ -310,7 +310,7 @@ function loadMore() {
             </div>
             <div class="service-content">
                 <h3 class="service-title">${service.title}</h3>
-                ${service.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(service.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(service.rating).toFixed(1)}${service.rating_count ? ` (${service.rating_count})` : ''}</span></div>` : ''}
+                ${service.rating_count && service.rating_count > 0 && service.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(service.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(service.rating).toFixed(1)} (${service.rating_count})</span></div>` : `<div style="margin:6px 0; color:var(--text-light); font-size:0.9rem;">Not yet rated</div>`}
                 <p class="service-text">${service.desc}</p>
                 
                 <div class="service-footer">
