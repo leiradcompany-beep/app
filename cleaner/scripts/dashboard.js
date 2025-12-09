@@ -111,7 +111,7 @@ function renderAssignmentRequests(requests) {
                 customerImg = '../../' + req.customer_img;
             }
         }
-        if (typeof customerImg === 'string' && customerImg.includes('ui-avatars.com')) {
+        if (typeof customerImg === 'string' && customerImg.toLowerCase().includes('ui-avatars.com')) {
             customerImg = '../../assets/images/default-avatar.png';
         }
 
@@ -289,10 +289,10 @@ function updateNextJob(job) {
             customerImg = '../../' + customerImg;
         }
     }
-    if (typeof customerImg === 'string' && customerImg.includes('ui-avatars.com')) {
+    if (typeof customerImg === 'string' && customerImg.toLowerCase().includes('ui-avatars.com')) {
         customerImg = '../../assets/images/default-avatar.png';
     }
-    if (typeof customerImg === 'string' && customerImg.includes('ui-avatars.com')) {
+    if (typeof customerImg === 'string' && customerImg.toLowerCase().includes('ui-avatars.com')) {
         customerImg = '../../assets/images/default-avatar.png';
     }
 
