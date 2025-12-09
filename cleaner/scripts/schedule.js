@@ -75,9 +75,13 @@ function initScheduleTable() {
                 data: 'customer',
                 createdCell: function (td) { $(td).attr('data-label', 'Customer'); },
                 render: function (data, type, row) {
+                    let imgUrl = ImageUtils.withCacheBust(ImageUtils.getAvatarUrl(row.customer_img));
+                    if (typeof row.customer_img === 'string' && row.customer_img.includes('ui-avatars.com')) {
+                        imgUrl = '../../assets/images/default-avatar.png';
+                    }
                     return `
                         <div style="display:flex; align-items:center; gap:12px;">
-                            <img src="${ImageUtils.withCacheBust(ImageUtils.getAvatarUrl(row.customer_img))}" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:1px solid #E2E8F0;" alt="${data}" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-avatar.png')">
+                            <img src="${imgUrl}" style="width:34px; height:34px; border-radius:50%; object-fit:cover; border:1px solid #E2E8F0;" alt="${data}" onerror="ImageUtils.handleImageError(this, '../../assets/images/default-avatar.png')">
                             <div style="display:flex; flex-direction:column;">
                                 <span style="font-weight:600; color:var(--text-dark); line-height:1.2;">${data}</span>
                                 <span style="font-size:0.8em; color:var(--text-light); margin-bottom:2px;">${row.location}</span>
