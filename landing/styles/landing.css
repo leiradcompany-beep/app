@@ -382,6 +382,59 @@ header {
     .app-btn i { font-size: 1.3rem; }
     .app-btn.android { border-color: rgba(56, 178, 172, 0.6); }
     .app-btn.ios { border-color: rgba(255, 255, 255, 0.6); }
+    .app-icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        object-fit: contain;
+        background: rgba(255,255,255,0.8);
+    }
+
+    .app-store-section {
+        background: var(--bg-white);
+    }
+    .app-store-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    .app-store-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 18px 20px;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        background: #ffffff;
+        box-shadow: var(--shadow-sm);
+    }
+    .app-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        object-fit: contain;
+        background: #ffffff;
+        box-shadow: var(--shadow-sm);
+    }
+    .app-info { display: flex; flex-direction: column; gap: 4px; }
+    .app-title { font-weight: 800; color: var(--text-dark); }
+    .app-desc { color: var(--text-light); font-size: 0.95rem; }
+    .app-store-btn {
+        background-color: var(--primary);
+        color: #ffffff;
+        padding: 10px 18px;
+        border-radius: 50px;
+        font-weight: 700;
+        box-shadow: var(--shadow-sm);
+    }
+    .app-store-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    @media (max-width: 767px) {
+        .app-store-card { flex-direction: column; align-items: flex-start; }
+        .app-store-btn { width: 100%; justify-content: center; text-align: center; }
+    }
 
     @media (max-width: 767px) {
         .app-downloads { margin-top: 20px; }
