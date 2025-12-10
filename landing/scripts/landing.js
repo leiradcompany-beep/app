@@ -422,6 +422,11 @@ function toggleMenu() {
     const isExpanded = mobileNav.classList.contains('active');
     if (mobileToggle) {
         mobileToggle.setAttribute('aria-expanded', isExpanded);
+        mobileToggle.setAttribute('aria-label', isExpanded ? 'Close menu' : 'Open menu');
+        const icon = mobileToggle.querySelector('i');
+        if (icon) {
+            icon.className = isExpanded ? 'ri-close-line' : 'ri-menu-3-line';
+        }
     }
 
     // Prevent body scroll when menu is open
@@ -432,15 +437,27 @@ function toggleMenu() {
     }
 }
 
+function closeMobileMenu() {
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileToggle = document.querySelector('.mobile-toggle');
+    const body = document.body;
+    if (!mobileNav) return;
+    mobileNav.classList.remove('active');
+    body.classList.remove('menu-open');
+    if (mobileToggle) {
+        mobileToggle.setAttribute('aria-expanded', false);
+        mobileToggle.setAttribute('aria-label', 'Open menu');
+        const icon = mobileToggle.querySelector('i');
+        if (icon) icon.className = 'ri-menu-3-line';
+    }
+}
+
 // Close mobile menu when clicking on a link
 document.addEventListener('DOMContentLoaded', () => {
-    const mobileNavLinks = document.querySelectorAll('#mobileNav a:not(.btn-primary)');
+    const mobileNavLinks = document.querySelectorAll('#mobileNav a');
     mobileNavLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            // Allow the navigation to happen, then close the menu
-            setTimeout(() => {
-                toggleMenu();
-            }, 100);
+        link.addEventListener('click', () => {
+            closeMobileMenu();
         });
     });
     const mobileNav = document.getElementById('mobileNav');
@@ -451,13 +468,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const clickedInside = mobileNav.contains(e.target);
         const clickedToggle = toggle && toggle.contains(e.target);
         if (isOpen && !clickedInside && !clickedToggle) {
-            toggleMenu();
+            closeMobileMenu();
         }
     });
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
             if (mobileNav && mobileNav.classList.contains('active')) {
-                toggleMenu();
+                closeMobileMenu();
             }
         }
     });
@@ -467,4 +484,17 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     fetchServices();
     fetchCleaners();
+
+    const header = document.getElementById('header');
+    const hero = document.getElementById('home');
+    function updateHeaderState() {
+        if (!header || !hero) return;
+        const rect = hero.getBoundingClientRect();
+        const headerHeight = header.offsetHeight || 80;
+        const onHero = rect.bottom > headerHeight;
+        header.classList.toggle('header--on-hero', onHero);
+    }
+    updateHeaderState();
+    document.addEventListener('scroll', updateHeaderState, { passive: true });
+    window.addEventListener('resize', updateHeaderState);
 });
