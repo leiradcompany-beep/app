@@ -102,16 +102,16 @@
     }
 
     /* --- HEADER --- */
-    header {
+header {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         height: var(--header-height);
-        background: var(--glass);
+        background: transparent;
         backdrop-filter: blur(var(--blur));
         -webkit-backdrop-filter: blur(var(--blur));
-        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+        border-bottom: 1px solid transparent;
         z-index: 1000;
         transition: var(--transition);
     }
@@ -142,7 +142,7 @@
         gap: 40px;
     }
 
-    .nav-links a {
+.nav-links a {
         font-weight: 600;
         color: var(--text-body);
         font-size: 0.95rem;
@@ -152,6 +152,28 @@
     .nav-links a:hover,
     .nav-links a.active {
         color: var(--primary);
+    }
+
+    .header--on-hero {
+        border-bottom-color: transparent;
+    }
+    .header--on-hero .logo {
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    }
+    .header--on-hero .logo i {
+        color: var(--accent);
+    }
+    .header--on-hero .nav-links a {
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+    }
+    .header--on-hero .nav-links a:hover,
+    .header--on-hero .nav-links a.active {
+        color: var(--primary-light);
+    }
+    .header--on-hero .btn-primary.header-cta {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     }
 
     .nav-links a::after {
@@ -192,15 +214,46 @@
     /* Mobile Toggle */
     .mobile-toggle {
         display: none;
-        font-size: 1.5rem;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #ffffff;
         color: var(--text-dark);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-sm);
         cursor: pointer;
+        place-items: center;
+        transition: var(--transition);
+    }
+    .mobile-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+    .mobile-toggle:focus-visible {
+        outline: 3px solid rgba(56, 178, 172, 0.5);
+        outline-offset: 2px;
+    }
+    .mobile-toggle i {
+        font-size: 1.35rem;
+        line-height: 1;
+    }
+    .mobile-toggle[aria-expanded="true"] {
+        background: var(--primary);
+        color: #ffffff;
+        border-color: var(--primary);
+        box-shadow: 0 8px 20px rgba(44, 122, 123, 0.35);
+    }
+    .header--on-hero .mobile-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.35);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     }
 
     /* --- HERO SECTION --- */
     .hero {
         position: relative;
-        height: 95vh;
+        height: 100vh;
         min-height: 650px;
         width: 100%;
         overflow: hidden;
@@ -1135,7 +1188,7 @@
         }
 
         .mobile-toggle {
-            display: block;
+            display: grid;
         }
 
         header {
