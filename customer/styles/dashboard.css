@@ -2810,22 +2810,6 @@ table.dataTable tbody td {
         font-weight: 700;
         margin-bottom: 16px;
     }
-    .section-header {
-        padding: 0 16px;
-        align-items: center;
-        gap: 8px;
-    }
-    .see-all {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 40px;
-        padding: 8px 12px;
-        border: 1px solid var(--border-light);
-        border-radius: 10px;
-        background: #fff;
-        text-decoration: none;
-    }
 
     .hero-text h2 {
         font-size: 1.6rem;
@@ -2957,32 +2941,11 @@ table.dataTable tbody td {
    =================================== */
 @media (max-width: 767px) {
 
-    /* Service cards horizontal scroll */
+    /* Service cards grid */
     .services-scroll {
-        display: flex;
-        overflow-x: auto;
-        gap: 16px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-x;
-        padding: 0 16px 8px;
-        scrollbar-width: none;
-        position: relative;
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
-    .services-scroll::-webkit-scrollbar { display: none; }
-    .services-scroll .service-card { flex: 0 0 85%; scroll-snap-align: start; }
-    .services-scroll::before,
-    .services-scroll::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        width: 24px;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-    }
-    .services-scroll::before { left: 0; background: linear-gradient(to right, var(--bg-body), transparent); }
-    .services-scroll::after { right: 0; background: linear-gradient(to left, var(--bg-body), transparent); }
 
     /* Service card enhancements */
     .service-card {
@@ -3329,39 +3292,17 @@ table.dataTable tbody td {
    =================================== */
 @media (max-width: 767px) {
 
-    /* Trending cards horizontal scroll */
+    /* Trending cards */
     .trending-row {
-        display: flex;
-        overflow-x: auto;
+        grid-template-columns: 1fr;
         gap: 16px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-x;
-        padding: 0 16px 8px;
-        scrollbar-width: none;
-        position: relative;
     }
-    .trending-row::-webkit-scrollbar { display: none; }
 
     .trending-card {
         padding: 14px;
         min-height: auto;
         border-radius: 12px;
-        flex: 0 0 85%;
-        scroll-snap-align: start;
     }
-    .trending-row::before,
-    .trending-row::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        width: 24px;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-    }
-    .trending-row::before { left: 0; background: linear-gradient(to right, var(--bg-body), transparent); }
-    .trending-row::after { right: 0; background: linear-gradient(to left, var(--bg-body), transparent); }
 
     .trending-img {
         width: 56px;
