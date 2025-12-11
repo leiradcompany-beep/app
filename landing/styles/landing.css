@@ -1535,13 +1535,21 @@ header {
 
         /* Team */
         .team-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+            scrollbar-width: none;
         }
+        .team-grid::-webkit-scrollbar { display: none; }
 
         .team-card {
             height: 380px;
             border-radius: var(--radius-lg);
+            flex: 0 0 85%;
+            scroll-snap-align: start;
         }
 
         .team-info {
@@ -1551,6 +1559,22 @@ header {
         /* Reviews */
         .reviews-section {
             padding: 60px 0;
+        }
+
+        .reviews-section .services-grid {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+        .reviews-section .services-grid::-webkit-scrollbar { display: none; }
+
+        .reviews-section .review-card {
+            flex: 0 0 85%;
+            scroll-snap-align: start;
         }
 
         .review-card {
