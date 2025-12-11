@@ -2941,10 +2941,20 @@ table.dataTable tbody td {
    =================================== */
 @media (max-width: 767px) {
 
-    /* Service cards grid */
+    /* Service cards horizontal scroll */
     .services-scroll {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+        scrollbar-width: none;
+    }
+    .services-scroll::-webkit-scrollbar { display: none; }
+    .services-scroll .service-card {
+        flex: 0 0 85%;
+        scroll-snap-align: start;
     }
 
     /* Service card enhancements */
@@ -3292,16 +3302,24 @@ table.dataTable tbody td {
    =================================== */
 @media (max-width: 767px) {
 
-    /* Trending cards */
+    /* Trending cards horizontal scroll */
     .trending-row {
-        grid-template-columns: 1fr;
+        display: flex;
+        overflow-x: auto;
         gap: 16px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+        scrollbar-width: none;
     }
+    .trending-row::-webkit-scrollbar { display: none; }
 
     .trending-card {
         padding: 14px;
         min-height: auto;
         border-radius: 12px;
+        flex: 0 0 85%;
+        scroll-snap-align: start;
     }
 
     .trending-img {
