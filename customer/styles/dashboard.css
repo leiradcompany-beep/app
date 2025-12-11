@@ -2948,14 +2948,27 @@ table.dataTable tbody td {
         gap: 16px;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 8px;
+        padding: 0 16px 8px;
         scrollbar-width: none;
+        position: relative;
     }
     .services-scroll::-webkit-scrollbar { display: none; }
     .services-scroll .service-card {
         flex: 0 0 85%;
         scroll-snap-align: start;
     }
+    .services-scroll::before,
+    .services-scroll::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 24px;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+    .services-scroll::before { left: 0; background: linear-gradient(to right, var(--bg-body), transparent); }
+    .services-scroll::after { right: 0; background: linear-gradient(to left, var(--bg-body), transparent); }
 
     /* Service card enhancements */
     .service-card {
@@ -3309,8 +3322,9 @@ table.dataTable tbody td {
         gap: 16px;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 8px;
+        padding: 0 16px 8px;
         scrollbar-width: none;
+        position: relative;
     }
     .trending-row::-webkit-scrollbar { display: none; }
 
@@ -3321,6 +3335,18 @@ table.dataTable tbody td {
         flex: 0 0 85%;
         scroll-snap-align: start;
     }
+    .trending-row::before,
+    .trending-row::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        width: 24px;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+    .trending-row::before { left: 0; background: linear-gradient(to right, var(--bg-body), transparent); }
+    .trending-row::after { right: 0; background: linear-gradient(to left, var(--bg-body), transparent); }
 
     .trending-img {
         width: 56px;
