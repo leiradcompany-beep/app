@@ -178,6 +178,9 @@ function handleRegister(e) {
                 localStorage.setItem('pending_verification_email', data.email);
                 // Store role to handle post-verification logic
                 localStorage.setItem('pending_verification_role', role);
+                // Store expiry time for OTP (10 minutes from now)
+                localStorage.setItem('pending_verification_expires_at', String(Date.now() + 10 * 60 * 1000));
+                startOtpCountdown();
             } else {
                 UiUtils.showToast(response.message || 'Registration failed', 'error');
                 UiUtils.setBtnLoading(btn, false);
@@ -391,6 +394,12 @@ function handleVerifyOtp() {
         return;
     }
 
+    const expiresAt = Number(localStorage.getItem('pending_verification_expires_at'));
+    if (expiresAt && Date.now() > expiresAt) {
+        UiUtils.showToast('OTP expired. Please resend a new code.', 'error');
+        return;
+    }
+
     UiUtils.setBtnLoading(btn, true, 'Verifying...');
 
     $.ajax({
@@ -413,6 +422,7 @@ function handleVerifyOtp() {
                 UiUtils.showToast(msg, 'success');
                 localStorage.removeItem('pending_verification_email');
                 localStorage.removeItem('pending_verification_role');
+                localStorage.removeItem('pending_verification_expires_at');
                 $('#otpModal').hide();
 
                 // Redirect to login page
@@ -447,11 +457,44 @@ function handleResendOtp(e) {
         data: JSON.stringify({ email }),
         success: function (response) {
             UiUtils.showToast('OTP resent successfully', 'success');
+            localStorage.setItem('pending_verification_expires_at', String(Date.now() + 10 * 60 * 1000));
+            startOtpCountdown();
         },
         error: function (xhr) {
             UiUtils.showToast('Failed to resend OTP', 'error');
         }
     });
+}
+
+function formatTime(ms) {
+    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+    const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+    const s = String(totalSeconds % 60).padStart(2, '0');
+    return `${m}:${s}`;
+}
+
+let otpTimerRef = null;
+function startOtpCountdown() {
+    if (otpTimerRef) {
+        clearInterval(otpTimerRef);
+        otpTimerRef = null;
+    }
+    const expiresAt = Number(localStorage.getItem('pending_verification_expires_at'));
+    const countdownEl = $('#otpCountdown');
+    const verifyBtn = $('#verifyOtpBtn');
+    if (!expiresAt || !countdownEl.length) return;
+    verifyBtn.prop('disabled', false);
+    otpTimerRef = setInterval(() => {
+        const remaining = expiresAt - Date.now();
+        if (remaining <= 0) {
+            clearInterval(otpTimerRef);
+            otpTimerRef = null;
+            countdownEl.text('Expired');
+            verifyBtn.prop('disabled', true);
+            return;
+        }
+        countdownEl.text(`Expires in ${formatTime(remaining)}`);
+    }, 1000);
 }
 
 // Attach OTP Listeners
@@ -472,4 +515,14 @@ $(document).ready(function () {
         const provider = text.includes('google') ? 'Google' : (text.includes('facebook') ? 'Facebook' : 'Social');
         UiUtils.showToast(`${provider} login is not yet implemented. Please use email/password login.`, 'warning');
     });
+    const pendingEmail = localStorage.getItem('pending_verification_email');
+    const expiresAt = Number(localStorage.getItem('pending_verification_expires_at'));
+    if (pendingEmail && expiresAt && Date.now() < expiresAt) {
+        $('#otpModal').addClass('active').show();
+        startOtpCountdown();
+    } else {
+        if (expiresAt && Date.now() >= expiresAt) {
+            localStorage.removeItem('pending_verification_expires_at');
+        }
+    }
 });
