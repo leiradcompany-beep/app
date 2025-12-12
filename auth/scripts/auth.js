@@ -524,6 +524,15 @@ $(document).ready(function () {
         const provider = text.includes('google') ? 'Google' : (text.includes('facebook') ? 'Facebook' : 'Social');
     UiUtils.showToast(`${provider} login is not yet implemented. Please use email/password login.`, 'warning');
     });
+    const params = new URLSearchParams(window.location.search);
+    const verified = params.get('verified');
+    if (verified === '1') {
+        localStorage.removeItem('pending_verification_email');
+        localStorage.removeItem('pending_verification_role');
+        localStorage.removeItem('pending_verification_expires_at');
+        $('#otpModal').removeClass('active').hide();
+        UiUtils.showToast('Email verified successfully. You may now log in to your account.', 'success');
+    }
     const pendingEmail = localStorage.getItem('pending_verification_email');
     const expiresAt = Number(localStorage.getItem('pending_verification_expires_at'));
     if (pendingEmail && expiresAt && Date.now() < expiresAt) {
