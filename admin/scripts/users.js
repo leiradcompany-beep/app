@@ -3,8 +3,24 @@ $(document).ready(function() {
     let users = [];
     let currentFilter = 'all';
     let isEditing = false;
+    let currentUserId = null;
 
     // --- INITIALIZATION ---
+    try {
+        const localUser = JSON.parse(localStorage.getItem('user_data') || '{}');
+        currentUserId = localUser && localUser.id ? localUser.id : null;
+    } catch (e) {
+        currentUserId = null;
+    }
+
+    if (!currentUserId) {
+        ApiClient.get('/user').then(res => {
+            if (res && res.success && res.data && res.data.id) {
+                currentUserId = res.data.id;
+                localStorage.setItem('user_data', JSON.stringify(res.data));
+            }
+        }).catch(() => {});
+    }
     loadUsers();
 
     // --- EVENT LISTENERS ---
@@ -95,6 +111,11 @@ $(document).ready(function() {
                 if (!imgUrl.startsWith('data:')) imgUrl += `?t=${new Date().getTime()}`;
             }
 
+            const isAdmin = user.role === 'admin';
+            const isSuperAdmin = String(user.id) === '8';
+            const isSelf = currentUserId && String(user.id) === String(currentUserId);
+            const showDelete = (!isAdmin) || (isAdmin && !isSuperAdmin && !isSelf);
+
             html += `
                 <div class="user-card">
                     <div class="card-header">
@@ -126,7 +147,7 @@ $(document).ready(function() {
                             <button class="action-btn btn-edit" onclick="openEditDrawer('${user.id}')">
                                 <i class="ri-pencil-line"></i>
                             </button>
-                            ${user.role !== 'admin' ? `
+                            ${showDelete ? `
                             <button class="action-btn btn-delete" onclick="confirmDelete('${user.id}')">
                                 <i class="ri-delete-bin-line"></i>
                             </button>` : ''}
