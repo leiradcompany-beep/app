@@ -289,24 +289,24 @@ function renderRecentHistory(bookings) {
     }
 
     recent.forEach(b => {
-        let statusClass = 'pending';
+        let statusClass = 'status-pending';
         let displayStatus = b.status;
 
         if (b.raw_status === 'confirmed') {
-            statusClass = 'confirmed';
+            statusClass = 'status-confirmed';
             displayStatus = 'Confirmed';
         } else if (b.raw_status === 'in_progress') {
-            statusClass = 'confirmed';
+            statusClass = 'status-in-progress';
             displayStatus = 'In Progress';
         } else if (b.raw_status === 'assigned') {
-            statusClass = 'assigned';
+            statusClass = 'status-assigned';
             displayStatus = 'Assigned';
         } else if (b.raw_status === 'completed') {
-            statusClass = 'completed';
+            statusClass = 'status-completed';
         } else if (b.raw_status === 'cancelled') {
-            statusClass = 'cancelled';
+            statusClass = 'status-cancelled';
         } else if (b.raw_status === 'declined') {
-            statusClass = 'reassigning';
+            statusClass = 'status-reassigning';
             displayStatus = 'Reassigning';
         }
 
@@ -322,7 +322,7 @@ function renderRecentHistory(bookings) {
                     </div>
                 </td>
                 <td style="text-align: right; padding: 18px 24px;" title="${b.raw_status === 'declined' ? 'Cleaner declined, admin is finding a new match' : ''}">
-                    <span class="status ${statusClass}">${displayStatus}</span>
+                    <span class="status-badge ${statusClass}">${displayStatus}</span>
                 </td>
             </tr>
         `;
@@ -845,24 +845,24 @@ function initBookingTable() {
                 data: 'status',
                 createdCell: function (td) { $(td).attr('data-label', 'Status'); },
                 render: function (data, type, row) {
-                    let statusClass = data.toLowerCase();
+                    let statusClass = 'status-' + (data || '').toLowerCase();
                     let displayStatus = data;
 
                     if (row.raw_status === 'assigned') {
-                        statusClass = 'assigned';
+                        statusClass = 'status-assigned';
                         displayStatus = 'Assigned';
                     } else if (row.raw_status === 'declined') {
-                        statusClass = 'reassigning';
+                        statusClass = 'status-reassigning';
                         displayStatus = 'Reassigning';
                     } else if (row.raw_status === 'confirmed') {
-                        statusClass = 'confirmed';
+                        statusClass = 'status-confirmed';
                         displayStatus = 'Confirmed';
                     } else if (row.raw_status === 'in_progress') {
-                        statusClass = 'confirmed';
+                        statusClass = 'status-in-progress';
                         displayStatus = 'In Progress';
                     }
 
-                    return `<span class="status ${statusClass}">${displayStatus}</span>`;
+                    return `<span class="status-badge ${statusClass}">${displayStatus}</span>`;
                 }
             },
             {
