@@ -129,14 +129,45 @@
     <!-- Image Utils -->
     <script src="../../common/scripts/image-utils.js"></script>
     <script src="../../common/scripts/ui-utils.js"></script>
-    <script src="../scripts/auth.js"></script>
     <script>
-        // Attach event listener here to avoid inline handler issues
-        $('#loginForm').on('submit', handleLogin);
+        (function(){
+            var tried = 0;
+            var candidates = [
+                '../scripts/auth.js',
+                '../../auth/scripts/auth.js',
+                '/frontend/auth/scripts/auth.js'
+            ];
+            function load(idx){
+                if (idx >= candidates.length) return;
+                var s = document.createElement('script');
+                s.src = candidates[idx];
+                s.onload = function(){
+                    window.__authLoaded = true;
+                    // Attach login handler when available
+                    function attach(){
+                        if (typeof window.handleLogin === 'function') {
+                            $('#loginForm').off('submit').on('submit', window.handleLogin);
+                        } else {
+                            setTimeout(attach, 50);
+                        }
+                    }
+                    attach();
+                };
+                s.onerror = function(){
+                    load(idx + 1);
+                };
+                document.head.appendChild(s);
+            }
+            load(tried);
+        })();
     </script>
     <script>
         (function(){
-            var base = getApiBaseUrl();
+            var base = (typeof getApiBaseUrl === 'function')
+                ? getApiBaseUrl()
+                : ((location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+                    ? 'http://127.0.0.1:8000/api'
+                    : 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api');
             $.getJSON(base + '/turnstile/sitekey').done(function(res){
                 var key = (res && typeof res.site_key === 'string') ? res.site_key : String(res && res.site_key || '');
                 if(!key || key === '') return;
