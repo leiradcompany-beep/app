@@ -105,8 +105,8 @@ function initScheduleTable() {
                     const raw = (row.raw_status || data || '').toLowerCase();
                     let label = data;
                     let statusClass = raw;
-                    if (raw === 'in_progress') { label = 'In Progress'; statusClass = 'confirmed'; }
-                    return `<span class="status ${statusClass}">${label}</span>`;
+                    if (raw === 'in_progress') { label = 'In Progress'; statusClass = 'in_progress'; }
+                    return `<span class="status-badge ${statusClass}">${label}</span>`;
                 }
             },
             {
