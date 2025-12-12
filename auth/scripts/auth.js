@@ -249,9 +249,11 @@ function handleResetRequest(e) {
         success: function (response) {
             if (response.success) {
                 localStorage.setItem('reset_email', email);
+                localStorage.setItem('reset_expires_at', String(Date.now() + 10 * 60 * 1000));
                 $('#resetFormWrapper').hide();
                 $('#otpWrapper').show();
                 UiUtils.showToast('OTP code sent to your email', 'success');
+                startResetOtpCountdown();
                 UiUtils.setBtnLoading(btn, false);
             } else {
                 UiUtils.showToast(response.message || 'Request failed', 'error');
@@ -282,6 +284,12 @@ function handleVerifyResetOtp(e) {
         return;
     }
 
+    const expiresAt = Number(localStorage.getItem('reset_expires_at'));
+    if (expiresAt && Date.now() > expiresAt) {
+        UiUtils.showToast('OTP expired. Please resend a new code.', 'error');
+        return;
+    }
+
     UiUtils.setBtnLoading(btn, true, 'Verifying...');
 
     $.ajax({
@@ -296,6 +304,7 @@ function handleVerifyResetOtp(e) {
                 $('#newPasswordWrapper').show();
                 // Store temp token if backend provides one, or rely on session/email
                 if (response.token) localStorage.setItem('reset_token', response.token);
+                localStorage.removeItem('reset_expires_at');
                 UiUtils.setBtnLoading(btn, false);
             } else {
                 UiUtils.showToast(response.message || 'Invalid OTP', 'error');
@@ -513,7 +522,7 @@ $(document).ready(function () {
     $('.social-btn').on('click', function () {
         const text = $(this).text().trim().toLowerCase();
         const provider = text.includes('google') ? 'Google' : (text.includes('facebook') ? 'Facebook' : 'Social');
-        UiUtils.showToast(`${provider} login is not yet implemented. Please use email/password login.`, 'warning');
+    UiUtils.showToast(`${provider} login is not yet implemented. Please use email/password login.`, 'warning');
     });
     const pendingEmail = localStorage.getItem('pending_verification_email');
     const expiresAt = Number(localStorage.getItem('pending_verification_expires_at'));
@@ -525,4 +534,64 @@ $(document).ready(function () {
             localStorage.removeItem('pending_verification_expires_at');
         }
     }
+    const resetEmail = localStorage.getItem('reset_email');
+    const resetExpiresAt = Number(localStorage.getItem('reset_expires_at'));
+    if (resetEmail && resetExpiresAt && Date.now() < resetExpiresAt && $('#otpWrapper').length) {
+        $('#resetFormWrapper').hide();
+        $('#otpWrapper').show();
+        startResetOtpCountdown();
+    } else {
+        if (resetExpiresAt && Date.now() >= resetExpiresAt) {
+            localStorage.removeItem('reset_expires_at');
+        }
+    }
+});
+
+let resetOtpTimerRef = null;
+function startResetOtpCountdown() {
+    if (resetOtpTimerRef) {
+        clearInterval(resetOtpTimerRef);
+        resetOtpTimerRef = null;
+    }
+    const expiresAt = Number(localStorage.getItem('reset_expires_at'));
+    const countdownEl = $('#forgotOtpCountdown');
+    const verifyBtn = $('#verifyBtn');
+    if (!expiresAt || !countdownEl.length || !verifyBtn.length) return;
+    verifyBtn.prop('disabled', false);
+    resetOtpTimerRef = setInterval(() => {
+        const remaining = expiresAt - Date.now();
+        if (remaining <= 0) {
+            clearInterval(resetOtpTimerRef);
+            resetOtpTimerRef = null;
+            countdownEl.text('Expired');
+            verifyBtn.prop('disabled', true);
+            return;
+        }
+        countdownEl.text(`Expires in ${formatTime(remaining)}`);
+    }, 1000);
+}
+
+function handleResendResetOtp(e) {
+    e.preventDefault();
+    const email = localStorage.getItem('reset_email');
+    if (!email) return;
+    $.ajax({
+        url: `${API_BASE_URL}/resend-otp`,
+        method: 'POST',
+        contentType: 'application/json',
+        headers: { 'Accept': 'application/json' },
+        data: JSON.stringify({ email }),
+        success: function () {
+            UiUtils.showToast('OTP resent successfully', 'success');
+            localStorage.setItem('reset_expires_at', String(Date.now() + 10 * 60 * 1000));
+            startResetOtpCountdown();
+        },
+        error: function () {
+            UiUtils.showToast('Failed to resend OTP', 'error');
+        }
+    });
+}
+
+$(document).ready(function () {
+    $('#resendResetOtpLink').click(handleResendResetOtp);
 });
