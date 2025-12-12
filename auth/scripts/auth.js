@@ -9,11 +9,6 @@ const getApiBaseUrl = () => {
 
 const API_BASE_URL = getApiBaseUrl();
 
-let pendingVerificationEmail = null;
-let pendingVerificationRole = null;
-let pendingVerificationExpiresAt = null;
-let resetFlowEmail = null;
-let resetFlowExpiresAt = null;
 
 // Toggle Password Visibility
 function togglePw(inputId = 'password', iconId = 'toggleIcon') {
@@ -177,12 +172,11 @@ function handleRegister(e) {
         },
         success: function (response) {
             if (response.success) {
-                // Both roles now require OTP verification
                 UiUtils.showToast('Please verify your email', 'info');
                 $('#otpModal').addClass('active').show();
-                pendingVerificationEmail = data.email;
-                pendingVerificationRole = role;
-                pendingVerificationExpiresAt = Date.now() + 10 * 60 * 1000;
+                localStorage.setItem('pending_verification_email', data.email);
+                localStorage.setItem('pending_verification_role', role);
+                localStorage.setItem('pending_verification_expires_at', String(Date.now() + 10 * 60 * 1000));
                 startOtpCountdown();
             } else {
                 UiUtils.showToast(response.message || 'Registration failed', 'error');
@@ -251,8 +245,8 @@ function handleResetRequest(e) {
         data: JSON.stringify({ email, cf_turnstile_token: cfToken }),
         success: function (response) {
             if (response.success) {
-                resetFlowEmail = email;
-                resetFlowExpiresAt = Date.now() + 10 * 60 * 1000;
+                localStorage.setItem('reset_email', email);
+                localStorage.setItem('reset_expires_at', String(Date.now() + 10 * 60 * 1000));
                 $('#resetFormWrapper').hide();
                 $('#otpWrapper').show();
                 UiUtils.showToast('OTP code sent to your email', 'success');
@@ -274,7 +268,7 @@ function handleVerifyResetOtp(e) {
     e.preventDefault();
     const btn = document.querySelector('#otpForm button[type="submit"]');
     const otp = $('#otpInput').val();
-    const email = resetFlowEmail;
+    const email = localStorage.getItem('reset_email');
 
     if (!email) {
         UiUtils.showToast('Session expired. Please start over.', 'error');
@@ -287,7 +281,7 @@ function handleVerifyResetOtp(e) {
         return;
     }
 
-    const expiresAt = Number(resetFlowExpiresAt);
+    const expiresAt = Number(localStorage.getItem('reset_expires_at'));
     if (expiresAt && Date.now() > expiresAt) {
         UiUtils.showToast('OTP expired. Please resend a new code.', 'error');
         return;
@@ -307,7 +301,7 @@ function handleVerifyResetOtp(e) {
                 $('#newPasswordWrapper').show();
                 // Store temp token if backend provides one, or rely on session/email
                 if (response.token) localStorage.setItem('reset_token', response.token);
-                resetFlowExpiresAt = null;
+                localStorage.removeItem('reset_expires_at');
                 UiUtils.setBtnLoading(btn, false);
             } else {
                 UiUtils.showToast(response.message || 'Invalid OTP', 'error');
@@ -398,7 +392,7 @@ $(document).ready(function () {
 // OTP Handling
 function handleVerifyOtp() {
     const otp = $('#otpInput').val();
-    let email = pendingVerificationEmail;
+    let email = localStorage.getItem('pending_verification_email');
     if (!email) {
         email = $('#customerRegisterForm input[name="email"]').val() || $('#cleanerRegisterForm input[name="email"]').val() || '';
     }
@@ -409,7 +403,7 @@ function handleVerifyOtp() {
         return;
     }
 
-    const expiresAt = Number(pendingVerificationExpiresAt);
+    const expiresAt = Number(localStorage.getItem('pending_verification_expires_at'));
     if (expiresAt && Date.now() > expiresAt) {
         UiUtils.showToast('OTP expired. Please resend a new code.', 'error');
         return;
@@ -427,7 +421,7 @@ function handleVerifyOtp() {
         data: JSON.stringify({ email, otp }),
         success: function (response) {
             if (response.success) {
-                const role = pendingVerificationRole;
+                const role = localStorage.getItem('pending_verification_role');
                 let msg = 'Email verified successfully! Please login.';
 
                 if (role === 'cleaner') {
@@ -435,9 +429,9 @@ function handleVerifyOtp() {
                 }
 
                 UiUtils.showToast(msg, 'success');
-                pendingVerificationEmail = null;
-                pendingVerificationRole = null;
-                pendingVerificationExpiresAt = null;
+                localStorage.removeItem('pending_verification_email');
+                localStorage.removeItem('pending_verification_role');
+                localStorage.removeItem('pending_verification_expires_at');
                 $('#otpModal').hide();
 
                 // Redirect to login page
@@ -458,7 +452,7 @@ function handleVerifyOtp() {
 
 function handleResendOtp(e) {
     e.preventDefault();
-    const email = pendingVerificationEmail || $('#customerRegisterForm input[name="email"]').val() || $('#cleanerRegisterForm input[name="email"]').val() || '';
+    const email = localStorage.getItem('pending_verification_email') || $('#customerRegisterForm input[name="email"]').val() || $('#cleanerRegisterForm input[name="email"]').val() || '';
 
     if (!email) return;
 
@@ -472,7 +466,7 @@ function handleResendOtp(e) {
         data: JSON.stringify({ email }),
         success: function (response) {
             UiUtils.showToast('OTP resent successfully', 'success');
-            pendingVerificationExpiresAt = Date.now() + 10 * 60 * 1000;
+            localStorage.setItem('pending_verification_expires_at', String(Date.now() + 10 * 60 * 1000));
             startOtpCountdown();
         },
         error: function (xhr) {
@@ -494,7 +488,7 @@ function startOtpCountdown() {
         clearInterval(otpTimerRef);
         otpTimerRef = null;
     }
-    const expiresAt = Number(pendingVerificationExpiresAt);
+    const expiresAt = Number(localStorage.getItem('pending_verification_expires_at'));
     const countdownEl = $('#otpCountdown');
     const verifyBtn = $('#verifyOtpBtn');
     if (!expiresAt || !countdownEl.length) return;
@@ -535,6 +529,9 @@ $(document).ready(function () {
     if (verified === '1') {
         $('#otpModal').removeClass('active').hide();
         UiUtils.showToast('Email verified successfully. You may now log in to your account.', 'success');
+        localStorage.removeItem('pending_verification_email');
+        localStorage.removeItem('pending_verification_role');
+        localStorage.removeItem('pending_verification_expires_at');
     }
 });
 
@@ -544,7 +541,7 @@ function startResetOtpCountdown() {
         clearInterval(resetOtpTimerRef);
         resetOtpTimerRef = null;
     }
-    const expiresAt = Number(resetFlowExpiresAt);
+    const expiresAt = Number(localStorage.getItem('reset_expires_at'));
     const countdownEl = $('#forgotOtpCountdown');
     const verifyBtn = $('#verifyBtn');
     if (!expiresAt || !countdownEl.length || !verifyBtn.length) return;
@@ -564,7 +561,7 @@ function startResetOtpCountdown() {
 
 function handleResendResetOtp(e) {
     e.preventDefault();
-    const email = resetFlowEmail || $('#emailInput').val();
+    const email = localStorage.getItem('reset_email') || $('#emailInput').val();
     if (!email) return;
     $.ajax({
         url: `${API_BASE_URL}/resend-otp`,
@@ -574,7 +571,7 @@ function handleResendResetOtp(e) {
         data: JSON.stringify({ email }),
         success: function () {
             UiUtils.showToast('OTP resent successfully', 'success');
-            resetFlowExpiresAt = Date.now() + 10 * 60 * 1000;
+            localStorage.setItem('reset_expires_at', String(Date.now() + 10 * 60 * 1000));
             startResetOtpCountdown();
         },
         error: function () {
