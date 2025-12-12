@@ -2115,6 +2115,22 @@ table.dataTable tbody td {
     color: #d32f2f;
 }
 
+/* Additional badges for full visualization */
+.status-in-progress {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.status-upcoming {
+    background: #fff8e1;
+    color: #ffa000;
+}
+
+.status-badge.rated {
+    background: #e8f5e9;
+    color: #388e3c;
+}
+
 @media (max-width: 576px) {
     .table-wrapper table {
         display: none !important;
