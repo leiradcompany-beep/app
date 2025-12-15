@@ -957,6 +957,8 @@ function openBooking(id) {
     // Reset Date and Time
     $('#date-picker').val('');
     $('#time-picker').val('');
+    $('#time-validation-msg').hide().text('');
+    $('#time-slot-list').empty();
 
     // Time Range Validation Listener
     $('#time-picker').off('change').on('change', function () {
@@ -990,10 +992,91 @@ function openBooking(id) {
             return;
         }
         validateSelectedSlotUI();
+        renderAvailableSlots();
     });
 
     $('#booking-modal').addClass('active'); // Match CSS class .modal.active
     $('#drawer-overlay').addClass('active');
+}
+
+function renderAvailableSlots() {
+    const container = $('#time-slot-list');
+    if (!container.length) return;
+    container.empty();
+    const date = $('#date-picker').val();
+    if (!date || !currentService) return;
+
+    const str = (currentService.duration || '').toLowerCase();
+    let baseMinutes = 60;
+    const hMatch = str.match(/(\d+)\s*h/);
+    const mMatch = str.match(/(\d+)\s*m/);
+    if (hMatch) baseMinutes = parseInt(hMatch[1], 10) * 60;
+    else if (mMatch) baseMinutes = parseInt(mMatch[1], 10);
+
+    const minTime = 8 * 60;
+    const maxTime = 17 * 60;
+
+    const sameDay = bookings.filter(function (b) {
+        const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
+        const status = (b.raw_status || b.status || '').toLowerCase();
+        const notCancelled = status !== 'cancelled';
+        return sameService && (b.date === date) && notCancelled;
+    });
+
+    for (let start = minTime; start <= maxTime; start += baseMinutes) {
+        const h = String(Math.floor(start / 60)).padStart(2, '0');
+        const m = String(start % 60).padStart(2, '0');
+        const value = `${h}:${m}`;
+        const ap = Math.floor(start / 60) >= 12 ? 'PM' : 'AM';
+        const h12 = (Math.floor(start / 60) % 12) || 12;
+        const label = `${h12}:${m} ${ap}`;
+        const end = start + baseMinutes;
+
+        const overlapping = sameDay.some(function (b) {
+            const bt = (function (t) {
+                const mm = (t || '').trim();
+                const x = mm.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+                if (!x) return mm;
+                let hh = parseInt(x[1], 10);
+                const mins = x[2];
+                const ap2 = x[3].toUpperCase();
+                if (ap2 === 'PM' && hh < 12) hh += 12;
+                if (ap2 === 'AM' && hh === 12) hh = 0;
+                return String(hh).padStart(2, '0') + ':' + mins;
+            })(b.time);
+            const bp = bt.split(':');
+            const bs = (parseInt(bp[0], 10) || 0) * 60 + (parseInt(bp[1], 10) || 0);
+            const be = bs + baseMinutes;
+            return start < be && end > bs;
+        });
+
+        const btn = $('<button type="button"></button>')
+            .text(label)
+            .attr('data-time', value)
+            .css({
+                padding: '6px 10px',
+                border: '1px solid var(--border)',
+                borderRadius: '8px',
+                background: 'var(--bg-elevated)',
+                color: 'var(--text-body)',
+                cursor: 'pointer'
+            });
+
+        if (overlapping) {
+            btn.prop('disabled', true)
+               .css({ opacity: 0.6, cursor: 'not-allowed' })
+               .attr('title', 'Selected time overlaps with an existing booking for this service. Please pick a non-overlapping time.');
+        } else {
+            btn.on('click', function () {
+                $('#time-picker').val(value).trigger('change');
+                $('#time-validation-msg').hide().text('');
+                $('#confirmBookingBtn').prop('disabled', false);
+                validateSelectedSlotUI();
+            });
+        }
+
+        container.append(btn);
+    }
 }
 
 function validateSelectedSlotUI() {
