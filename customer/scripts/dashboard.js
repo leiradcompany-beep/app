@@ -1012,6 +1012,21 @@ function confirmBooking() {
         return;
     }
 
+    const duplicate = bookings.some(b => {
+        const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
+        const sameDate = (b.date || '') === newBooking.date;
+        const bTime = ((b.time || '') + '').substring(0, 5);
+        const sameTime = bTime === newBooking.time;
+        const status = (b.raw_status || b.status || '').toLowerCase();
+        const notCancelled = status !== 'cancelled';
+        return sameService && sameDate && sameTime && notCancelled;
+    });
+    if (duplicate) {
+        if (btn.length) UiUtils.setBtnLoading(btn, false, 'Confirm & Pay ' + currentPrice);
+        UiUtils.showToast('You already booked this service at the same date and time.', 'error');
+        return;
+    }
+
     // Make actual API call to create booking
     ApiClient.post('/customer/bookings', newBooking)
         .then(function (response) {
