@@ -494,6 +494,31 @@ $(document).ready(function () {
                 return;
             }
 
+            const to24 = (display) => {
+                if (!display) return '';
+                const m = (display + '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+                if (!m) return (display + '').substring(0,5);
+                let h = parseInt(m[1], 10);
+                const min = m[2];
+                const ap = m[3].toUpperCase();
+                if (ap === 'PM' && h !== 12) h += 12;
+                if (ap === 'AM' && h === 12) h = 0;
+                return `${String(h).padStart(2,'0')}:${min}`;
+            };
+            const duplicateSlot = bookings.some(b => {
+                const sameService = String(b.service_id) === String(bookingData.service_id);
+                const sameDate = (b.date || '') === bookingData.date;
+                const sameTime = to24(b.time) === bookingData.time;
+                const status = (b.status || '').toLowerCase();
+                const notCancelled = status !== 'cancelled';
+                const differentRecord = !bookingId || String(b.id) !== String(bookingId);
+                return sameService && sameDate && sameTime && notCancelled && differentRecord;
+            });
+            if (duplicateSlot) {
+                UiUtils.showToast('Selected service is already booked at this date and time.', 'error');
+                return;
+            }
+
             UiUtils.setBtnLoading(btn, true, 'Saving...');
 
             const request = bookingId
