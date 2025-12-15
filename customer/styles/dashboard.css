@@ -895,6 +895,24 @@ ul {
     box-shadow: 0 2px 4px -1px rgba(44, 122, 123, 0.2);
 }
 
+/* Standalone duration pill below description */
+.service-duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: #F8FAFC;
+    color: var(--text-light);
+    font-weight: 600;
+    border: 1px solid var(--border-light);
+    white-space: nowrap;
+    margin-bottom: 12px;
+}
+.service-duration i {
+    color: var(--primary);
+}
+
 /* Trending Service Card (New) */
 .trending-row {
     display: grid;
