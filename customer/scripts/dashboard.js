@@ -621,49 +621,50 @@ function renderServices() {
         seeMoreBtn.hide();
     }
 
-    const createCard = (s) => {
-        let ratingHtml = '';
-        const avg = parseFloat(s.rating || 0);
-        const count = s.rating_count || 0;
-        if (count > 0 && avg > 0) {
-            ratingHtml = `
-                <div class="rating" style="font-size:0.85rem; display:flex; align-items:center; gap:6px; margin:0;">
-                    ${getStarsHtml(avg)}
-                    <span style="color:var(--text-light);">${avg.toFixed(1)} (${count})</span>
-                </div>
-            `;
-        } else {
-            ratingHtml = `
-                <div class="rating" style="font-size:0.85rem; color:var(--text-light); margin:0; font-weight:500;">
-                    No ratings yet
-                </div>
-            `;
-        }
+        const createCard = (s) => {
+            let ratingHtml = '';
+            const avg = parseFloat(s.rating || 0);
+            const count = s.rating_count || 0;
+            if (count > 0 && avg > 0) {
+                ratingHtml = `
+                    <div class="rating" style="font-size:0.85rem; display:flex; align-items:center; gap:6px; margin:0;">
+                        ${getStarsHtml(avg)}
+                        <span style="color:var(--text-light);">${avg.toFixed(1)} (${count})</span>
+                    </div>
+                `;
+            } else {
+                ratingHtml = `
+                    <div class="rating" style="font-size:0.85rem; color:var(--text-light); margin:0; font-weight:500;">
+                        No ratings yet
+                    </div>
+                `;
+            }
 
-        const imgUrl = ImageUtils.getServiceImageUrl(s.img);
-        const fallbackUrl = '../../assets/images/default-service.png';
+            const imgUrl = ImageUtils.getServiceImageUrl(s.img);
+            const fallbackUrl = '../../assets/images/default-service.png';
 
-        return `
-        <div class="service-card">
-            <div class="service-img">
-                <img src="${imgUrl}" alt="${s.title}" onerror="this.src='${fallbackUrl}'; this.style.objectFit='cover'; this.style.backgroundColor='#f8fafc';">
-                <span class="service-tag">${s.category}</span>
-            </div>
-            <div class="service-body">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                    <h4 class="service-title">${s.title}</h4>
+            return `
+            <div class="service-card">
+                <div class="service-img">
+                    <img src="${imgUrl}" alt="${s.title}" onerror="this.src='${fallbackUrl}'; this.style.objectFit='cover'; this.style.backgroundColor='#f8fafc';">
+                    <span class="service-tag">${s.category}</span>
                 </div>
-                <div style="margin-bottom: 12px;">${ratingHtml}</div>
-                <p class="service-desc">${s.desc}</p>
-                <div class="service-footer">
-                    <span class="price">${s.price}</span>
-                    <button class="btn-book-now" onclick="openBooking(${s.id})">
-                        Book Now <i class="ri-arrow-right-line"></i>
-                    </button>
+                <div class="service-body">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                        <h4 class="service-title">${s.title}</h4>
+                    </div>
+                    <div style="margin-bottom: 12px;">${ratingHtml}</div>
+                    <p class="service-desc">${s.desc}</p>
+                    <div class="service-footer">
+                        <span class="price">${s.price}</span>
+                        ${s.duration ? `<span class="duration" style="font-size:0.85rem; color:var(--text-light); margin-left:10px;"><i class="ri-time-line"></i> Avg. Duration: ${s.duration}</span>` : ''}
+                        <button class="btn-book-now" onclick="openBooking(${s.id})">
+                            Book Now <i class="ri-arrow-right-line"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `};
+        `};
 
     // Render Featured (Top 2 from all data, or filtered? Usually featured is static, but here let's keep it simple)
     // The original code rendered servicesData.slice(0,2) for featured.
