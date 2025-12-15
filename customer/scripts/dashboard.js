@@ -1081,20 +1081,19 @@ function confirmBooking() {
     });
     if (sameDayBookings.length > 0) {
         const baseMinutes = parseDurationMinutes(currentService.duration);
-        let maxEndMinutes = 0;
-        sameDayBookings.forEach(b => {
-            const start24 = to24Time(b.time);
-            const startMinutes = minutesFromHHMM(start24);
-            const endMinutes = startMinutes + baseMinutes;
-            if (endMinutes > maxEndMinutes) maxEndMinutes = endMinutes;
-        });
         const newStartMinutes = minutesFromHHMM(newBooking.time);
-        if (newStartMinutes < maxEndMinutes) {
-            const endHH = String(Math.floor(maxEndMinutes / 60)).padStart(2, '0');
-            const endMM = String(maxEndMinutes % 60).padStart(2, '0');
-            const endTime12 = to12(`${endHH}:${endMM}`);
+        const newEndMinutes = newStartMinutes + baseMinutes;
+
+        const overlapping = sameDayBookings.some(b => {
+            const start24 = to24Time(b.time);
+            const existStart = minutesFromHHMM(start24);
+            const existEnd = existStart + baseMinutes;
+            return newStartMinutes < existEnd && newEndMinutes > existStart;
+        });
+
+        if (overlapping) {
             if (btn.length) UiUtils.setBtnLoading(btn, false, 'Confirm & Pay ' + currentPrice);
-            UiUtils.showToast(`You have an existing booking for this service until ${endTime12}. Please select a later time.`, 'error');
+            UiUtils.showToast('Selected time overlaps with an existing booking for this service. Please pick a non-overlapping time.', 'error');
             return;
         }
     }
