@@ -868,6 +868,22 @@ ul {
     opacity: 0.3;
 }
 
+.service-footer .duration {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: #F8FAFC;
+    color: var(--text-light);
+    font-weight: 600;
+    border: 1px solid var(--border-light);
+    white-space: nowrap;
+}
+.service-footer .duration i {
+    color: var(--primary);
+}
+
 .service-footer button {
     background: var(--primary);
     color: white;
@@ -893,6 +909,24 @@ ul {
 .service-footer button:active {
     transform: translateY(0);
     box-shadow: 0 2px 4px -1px rgba(44, 122, 123, 0.2);
+}
+
+@media (max-width: 768px) {
+    .service-footer {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .service-footer .duration {
+        order: 3;
+        width: 100%;
+    }
+    .service-footer .price {
+        order: 1;
+    }
+    .service-footer button {
+        order: 2;
+        margin-left: auto;
+    }
 }
 
 /* Trending Service Card (New) */
