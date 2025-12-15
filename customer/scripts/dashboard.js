@@ -1006,6 +1006,15 @@ function renderAvailableSlots() {
     const date = $('#date-picker').val();
     if (!date || !currentService) return;
 
+    const toISO = function (d) {
+        const dateObj = new Date(d);
+        if (isNaN(dateObj)) return (d || '').trim();
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    };
+
     const str = (currentService.duration || '').toLowerCase();
     let baseMinutes = 60;
     const hMatch = str.match(/(\d+)\s*h/);
@@ -1020,7 +1029,8 @@ function renderAvailableSlots() {
         const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
         const status = (b.raw_status || b.status || '').toLowerCase();
         const notCancelled = status !== 'cancelled';
-        return sameService && (b.date === date) && notCancelled;
+        const isoDate = toISO(b.date);
+        return sameService && (isoDate === date) && notCancelled;
     });
 
     for (let start = minTime; start <= maxTime; start += baseMinutes) {
@@ -1108,12 +1118,23 @@ function validateSelectedSlotUI() {
     })(time);
     const newEndMinutes = newStartMinutes + baseMinutes;
 
+    // Local ISO date converter to align with stored display formats
+    const toISO = function (d) {
+        const dateObj = new Date(d);
+        if (isNaN(dateObj)) return (d || '').trim();
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    };
+
     const overlapping = bookings
         .filter(function (b) {
             const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
             const status = (b.raw_status || b.status || '').toLowerCase();
             const notCancelled = status !== 'cancelled';
-            return sameService && (b.date === date) && notCancelled;
+            const isoDate = toISO(b.date);
+            return sameService && (isoDate === date) && notCancelled;
         })
         .some(function (b) {
             const bTime24 = (function (t) {
