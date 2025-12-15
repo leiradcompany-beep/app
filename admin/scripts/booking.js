@@ -133,8 +133,9 @@ $(document).ready(function () {
         const conflicts = bookings
             .filter(b => {
                 const sameCleaner = String(b.cleaner_id) === String(cleanerId);
-                const notCancelled = (b.status || '').toLowerCase() !== 'cancelled';
-                return sameCleaner && (b.date === date) && notCancelled;
+                const status = (b.status || '').toLowerCase();
+                const active = status !== 'cancelled' && status !== 'completed';
+                return sameCleaner && (b.date === date) && active;
             })
             .some(b => {
                 const existStart = minutesFromHHMM(normalizeToHHMM(b.time));
