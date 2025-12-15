@@ -972,7 +972,11 @@ function openBooking(id) {
         if (timeInMinutes < minTime || timeInMinutes > maxTime) {
             UiUtils.showToast('Please select a time between 8:00 AM and 5:00 PM.', 'error');
             $(this).val('');
+            $('#time-validation-msg').hide().text('');
+            $('#confirmBookingBtn').prop('disabled', false);
+            return;
         }
+        validateSelectedSlotUI();
     });
 
     // Sunday Restriction Listener
@@ -981,11 +985,79 @@ function openBooking(id) {
         if (inputDate.getDay() === 0) { // 0 = Sunday
             UiUtils.showToast('Sorry, we are closed on Sundays. Please choose another date.', 'error');
             $(this).val('');
+            $('#time-validation-msg').hide().text('');
+            $('#confirmBookingBtn').prop('disabled', false);
+            return;
         }
+        validateSelectedSlotUI();
     });
 
     $('#booking-modal').addClass('active'); // Match CSS class .modal.active
     $('#drawer-overlay').addClass('active');
+}
+
+function validateSelectedSlotUI() {
+    const date = $('#date-picker').val();
+    const time = $('#time-picker').val();
+    const msgEl = $('#time-validation-msg');
+    if (!msgEl.length) return;
+
+    msgEl.hide().text('');
+    $('#confirmBookingBtn').prop('disabled', false);
+
+    if (!date || !time || !currentService) return;
+
+    const baseMinutes = (function (s) {
+        const str = (s || '').toLowerCase();
+        let m = 60;
+        const hMatch = str.match(/(\d+)\s*h/);
+        const mMatch = str.match(/(\d+)\s*m/);
+        if (hMatch) m = parseInt(hMatch[1], 10) * 60;
+        else if (mMatch) m = parseInt(mMatch[1], 10);
+        return m;
+    })(currentService.duration);
+
+    const newStartMinutes = (function (t) {
+        const parts = (t || '').split(':');
+        const h = parseInt(parts[0], 10) || 0;
+        const m = parseInt(parts[1], 10) || 0;
+        return h * 60 + m;
+    })(time);
+    const newEndMinutes = newStartMinutes + baseMinutes;
+
+    const overlapping = bookings
+        .filter(function (b) {
+            const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
+            const status = (b.raw_status || b.status || '').toLowerCase();
+            const notCancelled = status !== 'cancelled';
+            return sameService && (b.date === date) && notCancelled;
+        })
+        .some(function (b) {
+            const bTime24 = (function (t) {
+                const m = (t || '').trim();
+                const x = m.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+                if (!x) return m;
+                let h = parseInt(x[1], 10);
+                const min = x[2];
+                const ap = x[3].toUpperCase();
+                if (ap === 'PM' && h < 12) h += 12;
+                if (ap === 'AM' && h === 12) h = 0;
+                return String(h).padStart(2, '0') + ':' + min;
+            })(b.time);
+            const existStart = (function (t) {
+                const parts = (t || '').split(':');
+                const h = parseInt(parts[0], 10) || 0;
+                const m = parseInt(parts[1], 10) || 0;
+                return h * 60 + m;
+            })(bTime24);
+            const existEnd = existStart + baseMinutes;
+            return newStartMinutes < existEnd && newEndMinutes > existStart;
+        });
+
+    if (overlapping) {
+        msgEl.text('Selected time overlaps with an existing booking for this service. Please pick a non-overlapping time.').show();
+        $('#confirmBookingBtn').prop('disabled', true);
+    }
 }
 
 function closeModal() {
