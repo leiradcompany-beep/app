@@ -655,9 +655,9 @@ function renderServices() {
                     </div>
                     <div style="margin-bottom: 12px;">${ratingHtml}</div>
                     <p class="service-desc">${s.desc}</p>
+                    ${s.duration ? `<div class="service-duration"><i class="ri-time-line"></i> Avg. Duration: ${s.duration}</div>` : ''}
                     <div class="service-footer">
                         <span class="price">${s.price}</span>
-                        ${s.duration ? `<span class="duration" style="font-size:0.85rem; color:var(--text-light); margin-left:10px;"><i class="ri-time-line"></i> Avg. Duration: ${s.duration}</span>` : ''}
                         <button class="btn-book-now" onclick="openBooking(${s.id})">
                             Book Now <i class="ri-arrow-right-line"></i>
                         </button>
