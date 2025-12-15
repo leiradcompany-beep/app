@@ -1013,11 +1013,55 @@ function confirmBooking() {
         return;
     }
 
+    function to24Time(t) {
+        const m = (t || '').trim();
+        const x = m.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+        if (!x) return m;
+        let h = parseInt(x[1], 10);
+        const min = x[2];
+        const ap = x[3].toUpperCase();
+        if (ap === 'PM' && h < 12) h += 12;
+        if (ap === 'AM' && h === 12) h = 0;
+        return String(h).padStart(2, '0') + ':' + min;
+    }
+    function displayDateToISO(d) {
+        const date = new Date(d);
+        if (isNaN(date)) return (d || '').trim();
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+    function minutesFromHHMM(t) {
+        const parts = (t || '').split(':');
+        const h = parseInt(parts[0], 10) || 0;
+        const m = parseInt(parts[1], 10) || 0;
+        return h * 60 + m;
+    }
+    function parseDurationMinutes(s) {
+        const str = (s || '').toLowerCase();
+        let m = 60;
+        const hMatch = str.match(/(\d+)\s*h/);
+        const mMatch = str.match(/(\d+)\s*m/);
+        if (hMatch) m = parseInt(hMatch[1], 10) * 60;
+        else if (mMatch) m = parseInt(mMatch[1], 10);
+        return m;
+    }
+    function to12(hhmm) {
+        const parts = (hhmm || '').split(':');
+        let h = parseInt(parts[0], 10) || 0;
+        const m = String(parseInt(parts[1], 10) || 0).padStart(2, '0');
+        const ap = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        return `${h12}:${m} ${ap}`;
+    }
+
     const duplicate = bookings.some(b => {
         const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
-        const sameDate = (b.date || '') === newBooking.date;
-        const bTime = ((b.time || '') + '').substring(0, 5);
-        const sameTime = bTime === newBooking.time;
+        const isoDate = displayDateToISO(b.date);
+        const sameDate = isoDate === newBooking.date;
+        const bTime24 = to24Time(b.time);
+        const sameTime = bTime24 === newBooking.time;
         const status = (b.raw_status || b.status || '').toLowerCase();
         const notCancelled = status !== 'cancelled';
         return sameService && sameDate && sameTime && notCancelled;
@@ -1026,6 +1070,33 @@ function confirmBooking() {
         if (btn.length) UiUtils.setBtnLoading(btn, false, 'Confirm & Pay ' + currentPrice);
         UiUtils.showToast('You already booked this service at the same date and time.', 'error');
         return;
+    }
+    
+    const sameDayBookings = bookings.filter(b => {
+        const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
+        const isoDate = displayDateToISO(b.date);
+        const status = (b.raw_status || b.status || '').toLowerCase();
+        const notCancelled = status !== 'cancelled';
+        return sameService && isoDate === newBooking.date && notCancelled;
+    });
+    if (sameDayBookings.length > 0) {
+        const baseMinutes = parseDurationMinutes(currentService.duration);
+        let maxEndMinutes = 0;
+        sameDayBookings.forEach(b => {
+            const start24 = to24Time(b.time);
+            const startMinutes = minutesFromHHMM(start24);
+            const endMinutes = startMinutes + baseMinutes;
+            if (endMinutes > maxEndMinutes) maxEndMinutes = endMinutes;
+        });
+        const newStartMinutes = minutesFromHHMM(newBooking.time);
+        if (newStartMinutes < maxEndMinutes) {
+            const endHH = String(Math.floor(maxEndMinutes / 60)).padStart(2, '0');
+            const endMM = String(maxEndMinutes % 60).padStart(2, '0');
+            const endTime12 = to12(`${endHH}:${endMM}`);
+            if (btn.length) UiUtils.setBtnLoading(btn, false, 'Confirm & Pay ' + currentPrice);
+            UiUtils.showToast(`You have an existing booking for this service until ${endTime12}. Please select a later time.`, 'error');
+            return;
+        }
     }
 
     // Make actual API call to create booking
