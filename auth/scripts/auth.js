@@ -542,6 +542,65 @@ $(document).ready(function () {
         $('#newPasswordWrapper').show();
         UiUtils.showToast('Verification successful. You may now set a new password.', 'success');
     }
+    const autoVerify = params.get('auto_verify');
+    const qEmail = params.get('email');
+    const qOtp = params.get('otp');
+    const path = window.location.pathname.toLowerCase();
+    if (autoVerify === '1' && qEmail && qOtp) {
+        if (path.endsWith('register.html')) {
+            UiUtils.showToast('Verifying your email...', 'info');
+            $.ajax({
+                url: `${API_BASE_URL}/verify-otp`,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: { 'Accept': 'application/json' },
+                data: JSON.stringify({ email: qEmail, otp: qOtp }),
+                success: function (response) {
+                    if (response.success) {
+                        UiUtils.showToast('Email verified successfully!', 'success');
+                        const cleanUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, cleanUrl);
+                        setTimeout(() => {
+                            window.location.href = 'login.html?verified=1';
+                        }, 800);
+                    } else {
+                        UiUtils.showToast(response.message || 'Verification failed', 'error');
+                    }
+                },
+                error: function (xhr) {
+                    UiUtils.showToast(xhr.responseJSON?.message || 'Verification failed', 'error');
+                }
+            });
+        } else if (path.endsWith('forgot.html')) {
+            UiUtils.showToast('Verifying reset code...', 'info');
+            $.ajax({
+                url: `${API_BASE_URL}/verify-otp`,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: { 'Accept': 'application/json' },
+                data: JSON.stringify({ email: qEmail, otp: qOtp }),
+                success: function (response) {
+                    if (response.success) {
+                        if (response.token) {
+                            localStorage.setItem('reset_token', response.token);
+                        }
+                        localStorage.setItem('reset_email', qEmail);
+                        $('#resetFormWrapper').hide();
+                        $('#otpWrapper').hide();
+                        $('#newPasswordWrapper').show();
+                        UiUtils.showToast('Verification successful. You may now set a new password.', 'success');
+                        const cleanUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, cleanUrl);
+                    } else {
+                        UiUtils.showToast(response.message || 'Invalid code', 'error');
+                    }
+                },
+                error: function (xhr) {
+                    UiUtils.showToast(xhr.responseJSON?.message || 'Verification failed', 'error');
+                }
+            });
+        }
+    }
 });
 
 let resetOtpTimerRef = null;
