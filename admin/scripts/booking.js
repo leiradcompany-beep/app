@@ -23,6 +23,7 @@ $(document).ready(function () {
         loadBookings();
         loadDropdownData();
         setupEventListeners();
+        setupAvailabilityChecks();
         startRealtimeClock();
     }
 
@@ -66,6 +67,86 @@ $(document).ready(function () {
                 populateRichSelect('#bookingCleaner', cleaners, 'user_id', 'name', null, 'img', 'cleaner');
             }
         });
+    }
+
+    function parseDurationMinutes(s) {
+        const str = (s || '').toLowerCase();
+        let m = 60;
+        const hMatch = str.match(/(\d+)\s*h/);
+        const mMatch = str.match(/(\d+)\s*m/);
+        if (hMatch) m = parseInt(hMatch[1], 10) * 60;
+        else if (mMatch) m = parseInt(mMatch[1], 10);
+        return m;
+    }
+
+    function minutesFromHHMM(t) {
+        const parts = (t || '').split(':');
+        const h = parseInt(parts[0], 10) || 0;
+        const m = parseInt(parts[1], 10) || 0;
+        return h * 60 + m;
+    }
+
+    function normalizeToHHMM(display) {
+        if (!display) return '';
+        const ampm = (display + '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+        if (ampm) {
+            let h = parseInt(ampm[1], 10);
+            const min = ampm[2];
+            const ap = ampm[3].toUpperCase();
+            if (ap === 'PM' && h !== 12) h += 12;
+            if (ap === 'AM' && h === 12) h = 0;
+            return `${String(h).padStart(2,'0')}:${min}`;
+        }
+        // Accept HH:mm:ss
+        if ((display + '').length >= 5) return (display + '').substring(0,5);
+        return display + '';
+    }
+
+    function setupAvailabilityChecks() {
+        const trigger = function() { validateCleanerAvailabilityUI(); };
+        $('#bookingCleaner').on('change', trigger);
+        $('#bookingService').on('change', trigger);
+        $('#bookingDate').on('change', trigger);
+        $('#bookingTime').on('change', trigger);
+    }
+
+    function validateCleanerAvailabilityUI() {
+        const msgEl = $('#cleaner-availability-msg');
+        if (!msgEl.length) return;
+
+        msgEl.hide().text('');
+        const submitBtn = $('#bookingDrawer form').find('button[type="submit"]');
+        submitBtn.prop('disabled', false);
+
+        const cleanerId = $('#bookingCleaner').val();
+        const serviceId = $('#bookingService').val();
+        const date = $('#bookingDate').val();
+        const time = $('#bookingTime').val();
+
+        if (!cleanerId || !serviceId || !date || !time) return;
+
+        const service = services.find(s => String(s.id) === String(serviceId));
+        const baseMinutes = parseDurationMinutes(service?.duration || '1h');
+        const newStartMinutes = minutesFromHHMM(time);
+        const newEndMinutes = newStartMinutes + baseMinutes;
+
+        const conflicts = bookings
+            .filter(b => {
+                const sameCleaner = String(b.cleaner_id) === String(cleanerId);
+                const notCancelled = (b.status || '').toLowerCase() !== 'cancelled';
+                return sameCleaner && (b.date === date) && notCancelled;
+            })
+            .some(b => {
+                const existStart = minutesFromHHMM(normalizeToHHMM(b.time));
+                const existDur = parseDurationMinutes(b.duration || service?.duration || '1h');
+                const existEnd = existStart + existDur;
+                return newStartMinutes < existEnd && newEndMinutes > existStart;
+            });
+
+        if (conflicts) {
+            msgEl.text('Selected cleaner is not available at this time for the selected service duration. Please choose another time or cleaner.').show();
+            submitBtn.prop('disabled', true);
+        }
     }
 
     function populateSelect(selector, data, valueKey, textKey) {
