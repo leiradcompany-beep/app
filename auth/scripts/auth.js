@@ -82,6 +82,7 @@ function handleLogin(e) {
             const message = xhr.responseJSON?.message || 'Login failed. Please try again.';
             UiUtils.showToast(message, 'error');
             if (xhr.status === 401) {
+                try { sessionStorage.setItem('login_email_persist', email); } catch (e) {}
                 setTimeout(() => {
                     window.location.reload();
                 }, 600);
@@ -90,6 +91,16 @@ function handleLogin(e) {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    try {
+        const savedEmail = sessionStorage.getItem('login_email_persist');
+        if (savedEmail) {
+            $('input[type="email"]').val(savedEmail);
+            sessionStorage.removeItem('login_email_persist');
+        }
+    } catch (e) {}
+});
 
 function resetBtn(btn, originalText) {
     UiUtils.setBtnLoading(btn, false);
