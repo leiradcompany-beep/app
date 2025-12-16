@@ -387,11 +387,17 @@
 
             <div class="form-group" style="margin-bottom:15px;">
                 <label>Select Date</label>
-                <input type="date" class="form-input" id="date-picker">
+                <div class="input-with-icon">
+                    <input type="date" class="form-input" id="date-picker">
+                    <i class="ri-calendar-2-line input-icon" aria-hidden="true"></i>
+                </div>
             </div>
             <div class="form-group" style="margin-bottom:20px;">
                 <label>Select Time (8:00 AM - 5:00 PM)</label>
-                <input type="time" class="form-input" id="time-picker" min="08:00" max="17:00">
+                <div class="input-with-icon">
+                    <input type="time" class="form-input" id="time-picker" min="08:00" max="17:00">
+                    <i class="ri-time-line input-icon" aria-hidden="true"></i>
+                </div>
                 <div id="time-validation-msg" style="display:none; color:#d32f2f; margin-top:8px; font-size:0.9rem;" aria-live="polite"></div>
                 <div id="time-slot-list" class="slot-list" style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;"></div>
             </div>
