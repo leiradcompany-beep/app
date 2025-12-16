@@ -1642,6 +1642,7 @@ function saveProfile(e) {
                         setTimeout(function(){ window.location.reload(); }, 600);
                     } else {
                         UiUtils.showToast((response && response.message) || 'Failed to update password', 'error');
+                        setTimeout(function(){ window.location.reload(); }, 600);
                     }
                 })
                 .catch(function (xhr) {
@@ -1652,6 +1653,7 @@ function saveProfile(e) {
                         msg = 'Incorrect current password';
                     }
                     UiUtils.showToast(msg, 'error');
+                    setTimeout(function(){ window.location.reload(); }, 600);
                 })
                 .finally(function () {
                     UiUtils.setBtnLoading(btn, false, 'Save Changes');
