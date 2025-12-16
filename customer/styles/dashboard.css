@@ -3538,3 +3538,9 @@ table.dataTable tbody td {
         right: 12px;
     }
 }
+
+.input-with-icon { position: relative; }
+.input-with-icon .form-input { padding-right: 44px; }
+.input-with-icon .input-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--text-body); pointer-events: none; opacity: 0.75; }
+@media (max-width: 767px) { .input-with-icon .input-icon { display: inline-block; } }
+@media (min-width: 768px) { .input-with-icon .input-icon { display: none; } }
