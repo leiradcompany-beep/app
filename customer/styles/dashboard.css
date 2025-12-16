@@ -2404,6 +2404,11 @@ table.dataTable tbody td {
 
 /* Mobile Sidebar Overlay */
 @media (max-width: 767px) {
+    /* Hide export buttons in History on mobile */
+    .export-btn-desktop,
+    .export-btn-mobile-container {
+        display: none !important;
+    }
     .sidebar::before {
         content: '';
         position: fixed;
