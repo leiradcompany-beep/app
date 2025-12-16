@@ -1648,13 +1648,13 @@ table.dataTable tbody td {
 
 @media (max-width: 576px) {
 
-    /* Show mobile export button and hide desktop export button */
+    /* Hide all export buttons on mobile */
     .export-btn-desktop {
         display: none !important;
     }
 
     .export-btn-mobile-container {
-        display: block !important;
+        display: none !important;
     }
 
     /* Timeline Container (Tbody) */
