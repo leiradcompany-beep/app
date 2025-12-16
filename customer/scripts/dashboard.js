@@ -1555,6 +1555,10 @@ function saveProfile(e) {
         formData.append('avatar', fileInput.files[0]);
     }
 
+    const currentPasswordVal = ($('#inp-current-password').val() || '').toString().trim();
+    const newPasswordVal = ($('#inp-new-password').val() || '').toString().trim();
+    const wantsPasswordUpdate = currentPasswordVal.length > 0 || newPasswordVal.length > 0;
+
     const token = localStorage.getItem('auth_token');
     const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://127.0.0.1:8000/api'
@@ -1599,7 +1603,50 @@ function saveProfile(e) {
             UiUtils.showToast('Failed to update profile', 'error');
         },
         complete: function () {
-            UiUtils.setBtnLoading(btn, false, 'Save Changes');
+            if (!wantsPasswordUpdate) {
+                UiUtils.setBtnLoading(btn, false, 'Save Changes');
+                return;
+            }
+
+            if (!currentPasswordVal || !newPasswordVal) {
+                UiUtils.showToast('Provide both current and new password to update.', 'error');
+                UiUtils.setBtnLoading(btn, false, 'Save Changes');
+                return;
+            }
+
+            if (newPasswordVal.length < 8) {
+                UiUtils.showToast('New password must be at least 8 characters.', 'error');
+                UiUtils.setBtnLoading(btn, false, 'Save Changes');
+                return;
+            }
+
+            UiUtils.setBtnLoading(btn, true, 'Updating password...');
+
+            ApiClient.post('/settings/password', {
+                currentPassword: currentPasswordVal,
+                newPassword: newPasswordVal
+            })
+                .then(function (response) {
+                    if (response && response.success) {
+                        UiUtils.showToast('Password updated successfully', 'success');
+                        $('#inp-current-password').val('');
+                        $('#inp-new-password').val('');
+                    } else {
+                        UiUtils.showToast((response && response.message) || 'Failed to update password', 'error');
+                    }
+                })
+                .catch(function (xhr) {
+                    let msg = 'Failed to update password';
+                    if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = xhr.responseJSON.message;
+                    } else if (xhr && xhr.status === 400) {
+                        msg = 'Incorrect current password';
+                    }
+                    UiUtils.showToast(msg, 'error');
+                })
+                .finally(function () {
+                    UiUtils.setBtnLoading(btn, false, 'Save Changes');
+                });
         }
     });
 }
