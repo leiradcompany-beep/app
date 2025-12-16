@@ -1634,6 +1634,7 @@ function saveProfile(e) {
                         $('#inp-current-password').val('');
                         $('#inp-new-password').val('');
                         loadDashboardData();
+                        setTimeout(function(){ window.location.reload(); }, 600);
                     } else {
                         UiUtils.showToast((response && response.message) || 'Failed to update password', 'error');
                     }
