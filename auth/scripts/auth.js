@@ -72,11 +72,20 @@ function handleLogin(e) {
                 }, 800);
             } else {
                 UiUtils.showToast(response.message || 'Login failed', 'error');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 600);
                 UiUtils.setBtnLoading(btn, false);
             }
         },
         error: function (xhr) {
-            UiUtils.showToast(xhr.responseJSON?.message || 'Login failed. Please try again.', 'error');
+            const message = xhr.responseJSON?.message || 'Login failed. Please try again.';
+            UiUtils.showToast(message, 'error');
+            if (xhr.status === 401) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 600);
+            }
             UiUtils.setBtnLoading(btn, false);
         }
     });
