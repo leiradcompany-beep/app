@@ -957,8 +957,13 @@ function openBooking(id) {
     $('#modal-service-name').text(`Booking: ${service.title}`);
     $('#modal-price').text(service.price);
 
-    // Prefill contact info
     $('#phone-picker').val($('#inp-phone').val());
+    $('#phone-picker')
+        .off('input keypress paste blur')
+        .on('input', function () { this.value = this.value.replace(/\D/g, ''); })
+        .on('keypress', function (e) { const c = e.which || e.keyCode; if (c < 48 || c > 57) e.preventDefault(); })
+        .on('paste', function (e) { e.preventDefault(); const txt = (e.originalEvent.clipboardData || window.clipboardData).getData('text'); this.value = String(txt).replace(/\D/g, ''); })
+        .on('blur', function () { this.value = this.value.replace(/\D/g, ''); });
     $('#address-picker').val($('#inp-address').val());
 
     // Date Restrictions: Min Date = Tomorrow
