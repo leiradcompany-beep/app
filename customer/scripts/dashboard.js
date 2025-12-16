@@ -1598,6 +1598,8 @@ function saveProfile(e) {
                 userData.address = $('#inp-address').val();
                 localStorage.setItem('user_data', JSON.stringify(userData));
             }
+
+            loadDashboardData();
         },
         error: function (xhr) {
             UiUtils.showToast('Failed to update profile', 'error');
@@ -1631,6 +1633,7 @@ function saveProfile(e) {
                         UiUtils.showToast('Password updated successfully', 'success');
                         $('#inp-current-password').val('');
                         $('#inp-new-password').val('');
+                        loadDashboardData();
                     } else {
                         UiUtils.showToast((response && response.message) || 'Failed to update password', 'error');
                     }
