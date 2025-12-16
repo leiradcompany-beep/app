@@ -90,6 +90,10 @@ $(document).ready(function () {
     setInterval(function () {
         loadDashboardData(true); // true = silent mode
     }, 60000);
+
+    $('#mobile-refresh-btn').on('click', function () {
+        loadDashboardData();
+    });
 });
 
 function handleLogout(e) {
@@ -928,6 +932,15 @@ function navigate(sectionId) {
     // Scroll to top for better UX on mobile
     if (window.innerWidth <= 767) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const refreshBtn = $('#mobile-refresh-btn');
+    if (refreshBtn.length) {
+        if (sectionId === 'profile' && window.innerWidth <= 767) {
+            refreshBtn.css('display', 'flex');
+        } else {
+            refreshBtn.hide();
+        }
     }
 }
 
