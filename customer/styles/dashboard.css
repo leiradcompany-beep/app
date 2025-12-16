@@ -3515,3 +3515,16 @@ table.dataTable tbody td {
         width: 100%;
     }
 }
+
+.mobile-refresh-btn {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .mobile-refresh-btn {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 1000;
+    }
+}
