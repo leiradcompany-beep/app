@@ -568,8 +568,18 @@ $(document).ready(function () {
                     UiUtils.showToast('Job status updated', 'success');
                     $('#schedule-table').DataTable().ajax.reload();
 
-                if (status === 'confirmed') closeAcceptModal();
-                else if (status === 'declined') closeRejectModal();
+                // If this was an acceptance that triggered auto-rejections, reload the page
+                if (status === 'confirmed') {
+                    closeAcceptModal();
+                    
+                    // Check if there were auto-rejections by looking for a special flag in response
+                    if (response.has_auto_rejections) {
+                        // Reload the entire page to ensure UI consistency
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1500);
+                    }
+                } else if (status === 'declined') closeRejectModal();
                 else if (status === 'in_progress') closeStartModal();
                 else if (status === 'completed') closeCompleteModal();
                 } else {
@@ -597,3 +607,4 @@ window.closeStartModal = function () {
     currentJobId = null;
     toggleModal('start-modal', false);
 };
+
