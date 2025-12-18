@@ -135,7 +135,7 @@ $(document).ready(function () {
                 const sameCleaner = String(b.cleaner_id) === String(cleanerId);
                 const status = (b.status || '').toLowerCase();
                 // Only consider bookings that have been accepted by the cleaner as conflicts
-                const accepted = status === 'confirmed' || status === 'in_progress' || status === 'completed';
+                const accepted = status === 'confirmed' || status === 'in_progress';
                 return sameCleaner && (b.date === date) && accepted;
             })
             .some(b => {
