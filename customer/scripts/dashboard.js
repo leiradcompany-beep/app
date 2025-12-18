@@ -1250,48 +1250,6 @@ function confirmBooking() {
         return `${h12}:${m} ${ap}`;
     }
 
-    const duplicate = bookings.some(b => {
-        const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
-        const isoDate = displayDateToISO(b.date);
-        const sameDate = isoDate === newBooking.date;
-        const bTime24 = to24Time(b.time);
-        const sameTime = bTime24 === newBooking.time;
-        const status = (b.raw_status || b.status || '').toLowerCase();
-        const notCancelled = status !== 'cancelled';
-        return sameService && sameDate && sameTime && notCancelled;
-    });
-    if (duplicate) {
-        if (btn.length) UiUtils.setBtnLoading(btn, false, 'Confirm & Pay ' + currentPrice);
-        UiUtils.showToast('You already booked this service at the same date and time.', 'error');
-        return;
-    }
-    
-    const sameDayBookings = bookings.filter(b => {
-        const sameService = (b.service || '').toString().trim() === (currentService.title || '').toString().trim();
-        const isoDate = displayDateToISO(b.date);
-        const status = (b.raw_status || b.status || '').toLowerCase();
-        const notCancelled = status !== 'cancelled';
-        return sameService && isoDate === newBooking.date && notCancelled;
-    });
-    if (sameDayBookings.length > 0) {
-        const baseMinutes = parseDurationMinutes(currentService.duration);
-        const newStartMinutes = minutesFromHHMM(newBooking.time);
-        const newEndMinutes = newStartMinutes + baseMinutes;
-
-        const overlapping = sameDayBookings.some(b => {
-            const start24 = to24Time(b.time);
-            const existStart = minutesFromHHMM(start24);
-            const existEnd = existStart + baseMinutes;
-            return newStartMinutes < existEnd && newEndMinutes > existStart;
-        });
-
-        if (overlapping) {
-            if (btn.length) UiUtils.setBtnLoading(btn, false, 'Confirm & Pay ' + currentPrice);
-            UiUtils.showToast('Selected time overlaps with an existing booking for this service. Please pick a non-overlapping time.', 'error');
-            return;
-        }
-    }
-
     // Make actual API call to create booking
     ApiClient.post('/customer/bookings', newBooking)
         .then(function (response) {
