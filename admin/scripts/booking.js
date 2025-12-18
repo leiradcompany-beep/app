@@ -146,8 +146,8 @@ $(document).ready(function () {
             });
 
         if (conflicts) {
-            msgEl.text('Overlap detected with an accepted booking. You can still assign; cleaner must accept and availability will be enforced on acceptance.').show();
-            submitBtn.prop('disabled', false);
+            msgEl.text('Selected cleaner is not available at this time for the selected service duration. Please choose another time or cleaner.').show();
+            submitBtn.prop('disabled', true);
         }
     }
 
