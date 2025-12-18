@@ -587,19 +587,6 @@ $(document).ready(function () {
                 if (ap === 'AM' && h === 12) h = 0;
                 return `${String(h).padStart(2,'0')}:${min}`;
             };
-            const duplicateSlot = bookings.some(b => {
-                const sameService = String(b.service_id) === String(bookingData.service_id);
-                const sameDate = (b.date || '') === bookingData.date;
-                const sameTime = to24(b.time) === bookingData.time;
-                const status = (b.status || '').toLowerCase();
-                const notCancelled = status !== 'cancelled';
-                const differentRecord = !bookingId || String(b.id) !== String(bookingId);
-                return sameService && sameDate && sameTime && notCancelled && differentRecord;
-            });
-            if (duplicateSlot) {
-                UiUtils.showToast('Selected service is already booked at this date and time.', 'error');
-                return;
-            }
 
             UiUtils.setBtnLoading(btn, true, 'Saving...');
 
