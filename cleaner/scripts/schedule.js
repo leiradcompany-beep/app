@@ -1,3 +1,5 @@
+
+
 $(document).ready(function () {
     initScheduleTable();
 
@@ -563,23 +565,33 @@ $(document).ready(function () {
         ApiClient.post(`/cleaner/jobs/${id}/status`, { status: status })
             .then(function (response) {
                 if (response.success) {
-                    UiUtils.showToast('Job status updated', 'success');
+                    let msg = 'Job status updated';
+                    if (status === 'confirmed') {
+                        const count = response.auto_rejections?.count || 0;
+                        const nums = (response.auto_rejections?.numbers || []).join(', ');
+                        if (count > 0) {
+                            msg = `Accepted. Auto-rejected ${count} overlapping assignment(s): ${nums}`;
+                        } else {
+                            msg = 'Accepted assignment';
+                        }
+                    } else if (status === 'declined') {
+                        msg = 'Assignment declined';
+                    } else if (status === 'in_progress') {
+                        msg = 'Job started';
+                    } else if (status === 'completed') {
+                        msg = 'Job completed';
+                    }
+                    UiUtils.showToast(msg, 'success');
                     $('#schedule-table').DataTable().ajax.reload();
 
-                // If this was an acceptance that triggered auto-rejections, reload the page
-                if (status === 'confirmed') {
-                    closeAcceptModal();
-                    
-                    // Check if there were auto-rejections by looking for a special flag in response
-                    if (response.has_auto_rejections) {
-                        // Reload the entire page to ensure UI consistency
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1500);
-                    }
-                } else if (status === 'declined') closeRejectModal();
-                else if (status === 'in_progress') closeStartModal();
-                else if (status === 'completed') closeCompleteModal();
+                    if (status === 'confirmed') {
+                        closeAcceptModal();
+                        if (response.has_auto_rejections) {
+                            setTimeout(() => { window.location.reload(); }, 1200);
+                        }
+                    } else if (status === 'declined') closeRejectModal();
+                    else if (status === 'in_progress') closeStartModal();
+                    else if (status === 'completed') closeCompleteModal();
                 } else {
                     UiUtils.showToast(response.message || 'Failed to update status', 'error');
                 }
@@ -605,4 +617,3 @@ window.closeStartModal = function () {
     currentJobId = null;
     toggleModal('start-modal', false);
 };
-
