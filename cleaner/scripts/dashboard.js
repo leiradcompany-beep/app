@@ -233,8 +233,22 @@ function updateJobStatus(id, status, btn, originalText) {
     ApiClient.post(`/cleaner/jobs/${id}/status`, { status: status })
         .then(function (response) {
             if (response.success) {
-                UiUtils.showToast('Status updated successfully', 'success');
-                loadDashboardData(); // Reload
+                let msg = 'Status updated successfully';
+                if (status === 'confirmed') {
+                    const count = response.auto_rejections?.count || 0;
+                    const nums = (response.auto_rejections?.numbers || []).join(', ');
+                    msg = count > 0
+                        ? `Accepted. Auto-rejected ${count} overlapping assignment(s): ${nums}`
+                        : 'Accepted assignment';
+                } else if (status === 'declined') {
+                    msg = 'Assignment declined';
+                } else if (status === 'in_progress') {
+                    msg = 'Job started';
+                } else if (status === 'completed') {
+                    msg = 'Job completed';
+                }
+                UiUtils.showToast(msg, 'success');
+                loadDashboardData();
                 if (status === 'confirmed') closeAcceptModal();
                 else if (status === 'declined') closeRejectModal();
             } else {
