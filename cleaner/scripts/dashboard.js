@@ -242,7 +242,11 @@ function updateJobStatus(id, status, btn, originalText) {
             }
         })
         .catch(function (xhr) {
-            UiUtils.showToast('Error updating status', 'error');
+            let msg = 'Error updating status';
+            if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            UiUtils.showToast(msg, 'error');
         })
         .finally(function () {
             if (btn) UiUtils.setBtnLoading(btn, false, originalText);
