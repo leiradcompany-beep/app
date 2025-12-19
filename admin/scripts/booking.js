@@ -545,6 +545,11 @@ $(document).ready(function () {
             const btn = $(this).find('button[type="submit"]');
             const form = $(this);
             const bookingId = form.data('id');
+            const origStatus = form.data('status');
+            if (bookingId && origStatus && origStatus !== 'pending' && origStatus !== 'declined') {
+                UiUtils.showToast('Editing is only allowed for pending or declined bookings', 'warning');
+                return;
+            }
 
             const bookingData = {
                 user_id: $('#bookingClient').val(),
@@ -711,6 +716,7 @@ $(document).ready(function () {
                     const b = response.data;
                     const form = $('#bookingDrawer form');
                     form.data('id', b.id);
+                    form.data('status', b.status);
 
                     $('#bookingClient').val(b.user_id);
                     $('#bookingService').val(b.service_id);
@@ -827,24 +833,18 @@ $(document).ready(function () {
                         $('#bookingStatusGroup').show();
                     }
 
-                    // Handle Cancelled or Completed Status (View Only)
-                    const isReadOnly = b.status === 'cancelled' || b.status === 'completed';
+                    const isEditable = b.status === 'pending' || b.status === 'declined';
 
-                    if (isReadOnly) {
+                    if (!isEditable) {
                         $('#drawerTitle').text(`Booking Details (${capitalize(b.status)})`);
 
-                        // Disable ALL inputs including status
-                        form.find('input, select').prop('disabled', true);
+                        $('#bookingClient, #bookingService, #bookingCleaner, #bookingDate, #bookingTime, #bookingAddress, #bookingPhone, #bookingStatus').prop('disabled', true);
                         $('.custom-select-wrapper').css('pointer-events', 'none').css('opacity', '0.6');
 
-                        // Completely hide the submit button in view-only mode
                         form.find('button[type="submit"]').hide();
                     } else if (b.status === 'declined') {
-                        // Reassign mode handled above
                         form.find('input, select').prop('disabled', false);
-                        // Lock other fields except cleaner
                         $('#bookingClient, #bookingService, #bookingDate, #bookingTime, #bookingAddress, #bookingPhone').prop('disabled', true);
-                        // Disable custom dropdowns for locked fields
                         $('#custom-bookingClient, #custom-bookingService').css('pointer-events', 'none').css('opacity', '0.7');
 
                         $('.custom-select-wrapper#custom-bookingCleaner').css('pointer-events', 'auto').css('opacity', '1');
@@ -852,7 +852,6 @@ $(document).ready(function () {
                     } else {
                         $('#drawerTitle').text('Edit Booking');
                         form.find('input, select').prop('disabled', false);
-                        // Enable custom dropdowns
                         $('.custom-select-wrapper').css('pointer-events', 'auto').css('opacity', '1');
                         form.find('button[type="submit"]').show().text('Update Booking');
                     }
