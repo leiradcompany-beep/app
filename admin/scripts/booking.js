@@ -310,6 +310,7 @@ $(document).ready(function () {
             // Mapping for custom filter labels
             let targetStatus = currentFilter;
             if (currentFilter === 'declined (reassign)') targetStatus = 'declined';
+            if (currentFilter === 'in progress') targetStatus = 'in_progress';
 
             return b.status.toLowerCase() === targetStatus;
         });
