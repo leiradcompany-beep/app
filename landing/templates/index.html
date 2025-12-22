@@ -275,8 +275,38 @@
                 <h2 class="section-title">Our Cleaning Specialists</h2>
                 <p class="section-desc">Dedicated professionals committed to excellence.</p>
             </div>
+            <div class="team-controls">
+                <button id="teamPrevBtn" class="arrow-btn" aria-label="Previous">
+                    <i class="ri-arrow-left-line"></i>
+                </button>
+                <button id="teamNextBtn" class="arrow-btn" aria-label="Next">
+                    <i class="ri-arrow-right-line"></i>
+                </button>
+            </div>
             <div class="team-grid" id="teamGrid">
                 <!-- Cleaners injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="section-header text-center" style="max-width: 100%;">
+                <span class="section-subtitle">Community</span>
+                <h2 class="section-title">Real People, Real Clean Homes</h2>
+                <p class="section-desc">See how many are trusting LEIRAD today.</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="ri-user-3-line"></i></div>
+                    <div class="stat-value" id="totalCustomers">--</div>
+                    <div class="stat-label">Total Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="ri-brush-line"></i></div>
+                    <div class="stat-value" id="totalCleaners">--</div>
+                    <div class="stat-label">Total Cleaners</div>
+                </div>
             </div>
         </div>
     </section>
@@ -318,6 +348,19 @@
                         <div class="reviewer-avatar"></div>
                         <span class="reviewer-name">Jessica Davis</span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready for a pristine home?</h2>
+                <p>Join thousands of happy customers enjoying eco-friendly, professional cleaning.</p>
+                <div class="cta-actions">
+                    <a href="../../auth/templates/login.html" class="btn-primary">Book Now</a>
+                    <button class="btn-secondary" onclick="document.getElementById('services').scrollIntoView()">Explore Services</button>
                 </div>
             </div>
         </div>
