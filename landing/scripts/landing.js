@@ -413,9 +413,6 @@ function filterServices(category, btn) {
 }
 
 function searchServices(query) {
-    if (window.cfSearchRequired && (!window.cfSearchToken || String(window.cfSearchToken).trim() === '')) {
-        return;
-    }
     currentSearch = query.trim();
     applyFilters();
 }
