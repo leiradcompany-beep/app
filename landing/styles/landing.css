@@ -594,6 +594,32 @@ header {
         /* Move by half the total width (7 items) */
     }
 
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 25px;
+        margin: 30px 0 10px 0;
+    }
+    .stat-card {
+        background: var(--bg-white);
+        padding: 25px;
+        border-radius: var(--radius-xl);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: var(--transition);
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+    .stat-icon {
+        width: 50px; height: 50px; border-radius: 14px; background: var(--primary-light);
+        display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+    .stat-value { font-size: 2rem; font-weight: 800; color: var(--text-dark); line-height: 1; }
+    .stat-label { color: var(--text-light); font-size: 0.9rem; font-weight: 600; }
+
     /* --- SERVICES SECTION STYLING --- */
     .section-header {
         margin-bottom: 60px;
@@ -1030,6 +1056,27 @@ header {
         opacity: 1;
     }
 
+    .team-controls {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+    .arrow-btn {
+        background: var(--primary);
+        color: #fff;
+        border-radius: 50px;
+        padding: 10px 14px;
+        font-weight: 700;
+        box-shadow: 0 4px 10px rgba(44, 122, 123, 0.2);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+    .arrow-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+    .arrow-btn[disabled] { background: #CBD5E0; color: #718096; cursor: not-allowed; box-shadow: none; transform: none; }
+
     @media (hover: none) {
         .team-info {
             transform: translateY(0);
@@ -1068,6 +1115,41 @@ header {
         align-items: center;
         gap: 12px;
     }
+
+    .cta-section {
+        background: linear-gradient(135deg, #2C7A7B, #234E52);
+        color: white;
+        padding: 80px 0;
+    }
+    .cta-content {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .cta-content h2 {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+    .cta-content p {
+        color: #E6FFFA;
+        margin-bottom: 20px;
+    }
+    .cta-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+    }
+    .btn-secondary {
+        background: white;
+        color: var(--primary);
+        padding: 10px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        transition: var(--transition);
+    }
+    .btn-secondary:hover { background: #E6FFFA; }
 
     .reviewer-avatar {
         width: 40px;
@@ -1535,21 +1617,13 @@ header {
 
         /* Team */
         .team-grid {
-            display: flex;
-            overflow-x: auto;
-            gap: 16px;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 8px;
-            scrollbar-width: none;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
-        .team-grid::-webkit-scrollbar { display: none; }
 
         .team-card {
             height: 380px;
             border-radius: var(--radius-lg);
-            flex: 0 0 85%;
-            scroll-snap-align: start;
         }
 
         .team-info {
@@ -1559,22 +1633,6 @@ header {
         /* Reviews */
         .reviews-section {
             padding: 60px 0;
-        }
-
-        .reviews-section .services-grid {
-            display: flex;
-            overflow-x: auto;
-            gap: 12px;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 8px;
-            scrollbar-width: none;
-        }
-        .reviews-section .services-grid::-webkit-scrollbar { display: none; }
-
-        .reviews-section .review-card {
-            flex: 0 0 85%;
-            scroll-snap-align: start;
         }
 
         .review-card {
