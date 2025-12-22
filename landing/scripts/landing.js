@@ -19,6 +19,8 @@ let currentSearch = '';
 let displayedCount = 0;
 const ITEMS_PER_PAGE = 6;
 let filteredData = [];
+let teamPage = 0;
+let teamItemsPerSlide = 4;
 
 function getStarsHtml(rating) {
     const r = typeof rating === 'number' ? rating : parseFloat(rating || 0);
@@ -202,13 +204,48 @@ async function fetchCleaners() {
     }
 }
 
+async function fetchPublicStats() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/public/stats`);
+        const result = await response.json();
+        if (result && result.success && result.data) {
+            const { customers, cleaners } = result.data;
+            const customersEl = document.getElementById('totalCustomers');
+            const cleanersEl = document.getElementById('totalCleaners');
+            if (customersEl) customersEl.textContent = customers.toLocaleString();
+            if (cleanersEl) cleanersEl.textContent = cleaners.toLocaleString();
+        }
+    } catch (e) {
+        console.warn('Failed to fetch public stats', e);
+    }
+}
+
+function getTeamItemsPerSlide() {
+    const w = window.innerWidth || document.documentElement.clientWidth || 1024;
+    if (w >= 992) return 4;
+    if (w >= 768) return 2;
+    return 1;
+}
+
+function updateTeamButtons(totalPages) {
+    const prev = document.getElementById('teamPrevBtn');
+    const next = document.getElementById('teamNextBtn');
+    if (prev) prev.disabled = teamPage <= 0;
+    if (next) next.disabled = teamPage >= totalPages - 1;
+}
+
 function renderCleaners() {
     const teamGrid = document.getElementById('teamGrid');
     if (!teamGrid) return;
+    teamItemsPerSlide = getTeamItemsPerSlide();
+    const totalPages = Math.max(1, Math.ceil((cleanersData || []).length / teamItemsPerSlide));
+    if (teamPage >= totalPages) teamPage = totalPages - 1;
+    if (teamPage < 0) teamPage = 0;
+    const start = teamPage * teamItemsPerSlide;
+    const end = start + teamItemsPerSlide;
 
     teamGrid.innerHTML = '';
-
-    cleanersData.forEach(cleaner => {
+    (cleanersData.slice(start, end)).forEach(cleaner => {
         const card = document.createElement('div');
         card.className = 'team-card';
         card.innerHTML = `
@@ -222,6 +259,22 @@ function renderCleaners() {
         `;
         teamGrid.appendChild(card);
     });
+    updateTeamButtons(totalPages);
+}
+
+function nextTeamSlide() {
+    const totalPages = Math.max(1, Math.ceil((cleanersData || []).length / getTeamItemsPerSlide()));
+    if (teamPage < totalPages - 1) {
+        teamPage += 1;
+        renderCleaners();
+    }
+}
+
+function prevTeamSlide() {
+    if (teamPage > 0) {
+        teamPage -= 1;
+        renderCleaners();
+    }
 }
 
 
@@ -484,6 +537,14 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     fetchServices();
     fetchCleaners();
+    fetchPublicStats();
+    const prev = document.getElementById('teamPrevBtn');
+    const next = document.getElementById('teamNextBtn');
+    if (prev) prev.addEventListener('click', prevTeamSlide);
+    if (next) next.addEventListener('click', nextTeamSlide);
+    window.addEventListener('resize', () => {
+        renderCleaners();
+    });
 
     const header = document.getElementById('header');
     const hero = document.getElementById('home');
