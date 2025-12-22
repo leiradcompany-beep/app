@@ -83,24 +83,27 @@
                     <button class="toggle-btn">
                         <i class="ri-menu-2-line"></i>
                     </button>
-                    <h2 class="header-title">Overview</h2>
+                    <div class="welcome-text">
+                        <h2 class="header-title">Overview</h2>
+                        <p id="welcomeMessage"></p>
+                    </div>
                 </div>
 
                 <div class="header-actions">
-                    
-                    <!-- NOTIFICATION BELL -->
-                    <div class="icon-btn" id="notifBtn">
+                    <div class="search-box" style="margin-right: 8px;">
+                        <i class="ri-search-line"></i>
+                        <input type="text" placeholder="Search..." aria-label="Search" />
+                    </div>
+                    <button class="btn-sm" id="viewAllBookingsBtn">View All</button>
+                    <div class="icon-btn" id="notifBtn" aria-label="Notifications">
                         <i class="ri-notification-3-line"></i>
                         <span class="badge" id="notifCount">0</span>
-                        
-                        <!-- NOTIFICATION DROPDOWN -->
                         <div class="notification-dropdown" id="notifDropdown">
                             <div class="dropdown-header">
                                 <h6>Notifications</h6>
                                 <span class="mark-read">Mark all read</span>
                             </div>
                             <div class="dropdown-list" id="notifList">
-                                <!-- Notifications will be loaded here -->
                                 <div style="padding: 20px; text-align: center; color: var(--text-light);">No notifications</div>
                             </div>
                             <div class="dropdown-footer">
@@ -108,62 +111,76 @@
                             </div>
                         </div>
                     </div>
-
+                    <button class="icon-btn" id="logoutBtn" title="Logout" aria-label="Logout">
+                        <i class="ri-logout-box-r-line"></i>
+                    </button>
                 </div>
             </header>
 
-            <!-- STATS CARDS -->
-            <div class="stats-grid" id="statsGrid">
-                <!-- Card 1 -->
-                <div class="stat-card" title="Includes all booking statuses (Pending, Confirmed, Completed, Cancelled)">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="ri-calendar-check-fill"></i></div>
+            <section class="content-section">
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card" title="Includes all booking statuses">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="ri-calendar-check-fill"></i></div>
+                        </div>
+                        <div>
+                            <div class="stat-value" id="statBookings">--</div>
+                            <div class="stat-label">Bookings Today</div>
+                        </div>
+                        <div class="trend" id="trendBookings">...</div>
                     </div>
-                    <div>
-                        <div class="stat-value" id="statBookings">--</div>
-                        <div class="stat-label">Bookings Today</div>
+                    <div class="stat-card" title="Based on completed bookings only">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="ri-money-dollar-circle-fill"></i></div>
+                        </div>
+                        <div>
+                            <div class="stat-value" id="statRevenue">--</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                        <div class="trend" id="trendRevenue">...</div>
                     </div>
-                    <div class="trend" id="trendBookings">...</div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="ri-user-heart-fill"></i></div>
+                        </div>
+                        <div>
+                            <div class="stat-value" id="statClients">--</div>
+                            <div class="stat-label">Active Clients</div>
+                        </div>
+                        <div class="trend" id="trendClients">...</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon"><i class="ri-time-fill"></i></div>
+                        </div>
+                        <div>
+                            <div class="stat-value" id="statAvailability">--</div>
+                            <div class="stat-label">Availability Rate</div>
+                        </div>
+                        <div class="trend" id="trendAvailability">...</div>
+                    </div>
                 </div>
 
-                <!-- Card 2 -->
-                <div class="stat-card" title="Based on completed bookings only">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="ri-money-dollar-circle-fill"></i></div>
-                    </div>
-                    <div>
-                        <div class="stat-value" id="statRevenue">--</div>
-                        <div class="stat-label">Total Revenue</div>
-                    </div>
-                    <div class="trend" id="trendRevenue">...</div>
+                <div class="quick-actions">
+                    <a href="booking.html" class="action-card">
+                        <i class="ri-add-circle-line"></i>
+                        <span>New Booking</span>
+                    </a>
+                    <a href="cleaner.html" class="action-card">
+                        <i class="ri-user-add-line"></i>
+                        <span>Add Cleaner</span>
+                    </a>
+                    <a href="service.html" class="action-card">
+                        <i class="ri-tools-line"></i>
+                        <span>Manage Services</span>
+                    </a>
+                    <a href="users.html" class="action-card">
+                        <i class="ri-team-line"></i>
+                        <span>Manage Users</span>
+                    </a>
                 </div>
+            </section>
 
-                <!-- Card 3 -->
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="ri-user-heart-fill"></i></div>
-                    </div>
-                    <div>
-                        <div class="stat-value" id="statClients">--</div>
-                        <div class="stat-label">Active Clients</div>
-                    </div>
-                    <div class="trend" id="trendClients">...</div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="stat-card">
-                    <div class="stat-header">
-                        <div class="stat-icon"><i class="ri-time-fill"></i></div>
-                    </div>
-                    <div>
-                        <div class="stat-value" id="statAvailability">--</div>
-                        <div class="stat-label">Availability Rate</div>
-                    </div>
-                    <div class="trend" id="trendAvailability">...</div>
-                </div>
-            </div>
-
-            <!-- TABLE SECTION -->
             <div class="table-section">
                 <div class="section-header">
                     <h3>Recent Bookings</h3>
@@ -172,7 +189,6 @@
                             <i class="ri-search-line"></i>
                             <input type="text" id="bookingSearchInput" placeholder="Search bookings...">
                         </div>
-                        <button class="btn-sm" id="viewAllBookingsBtn">View All</button>
                     </div>
                 </div>
                 <div style="overflow-x: auto;">
