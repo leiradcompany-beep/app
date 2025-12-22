@@ -42,6 +42,9 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Manrope', sans-serif; }
 body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hidden; }
 
+.welcome-text h2 { font-size: 1.4rem; font-weight: 800; color: var(--text-dark); }
+.welcome-text p { color: var(--text-light); font-size: 0.9rem; }
+
 /* --- LAYOUT & SIDEBAR --- */
 .dashboard-container {
     display: grid;
@@ -230,6 +233,12 @@ body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hi
 .trend-down { color: #E53E3E; }
 .trend-neutral { color: var(--text-light); }
 
+.content-section { display: flex; flex-direction: column; gap: 24px; }
+.quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.action-card { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid var(--border-light); border-radius: var(--radius-lg); background: var(--bg-white); color: var(--text-dark); text-decoration: none; transition: var(--transition); font-weight: 600; }
+.action-card i { font-size: 1.4rem; color: var(--primary); }
+.action-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+
 /* --- TABLE --- */
 .table-section {
     background: white; border-radius: var(--radius-xl); padding: 30px;
@@ -304,6 +313,7 @@ body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hi
     
     .main-content { padding: 20px; }
     .stats-grid { grid-template-columns: 1fr; }
+    .quick-actions { grid-template-columns: 1fr; }
     
     .overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
