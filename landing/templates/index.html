@@ -174,6 +174,7 @@
                     <input type="text" id="serviceSearch" class="search-input" placeholder="Find your perfect clean..."
                         onkeyup="searchServices(this.value)">
                 </div>
+                <div id="cf-turnstile-search" class="turnstile-container" style="margin-top: 10px;"></div>
 
                 <!-- Filter Buttons -->
                 <div class="filter-container">
@@ -401,9 +402,9 @@
                 <div class="footer-col">
                     <h5>Contact</h5>
                     <ul class="footer-links">
-                        <li><i class="ri-map-pin-line"></i> 123 Sparkle Ave, NY</li>
-                        <li><i class="ri-phone-line"></i> +1 (555) 123-4567</li>
-                        <li><i class="ri-mail-line"></i> hello@leirad.com</li>
+                        <li><i class="ri-map-pin-line"></i> Bitoon, Ozamiz City, 7200 Philippines</li>
+                        <li><i class="ri-phone-line"></i> +63 9816249065</li>
+                        <li><i class="ri-mail-line"></i> leiradcompany@gmail.com</li>
                     </ul>
                 </div>
             </div>
@@ -451,6 +452,8 @@
 
     <!-- Image Utils -->
     <script src="../../common/scripts/image-utils.js"></script>
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- External JS -->
     <script src="../scripts/landing.js"></script>
     <script>
@@ -463,6 +466,84 @@
             e.preventDefault();
         }
     });
+    </script>
+    <script>
+        (function () {
+            var searchInput = document.getElementById('serviceSearch');
+            var container = document.getElementById('cf-turnstile-search');
+            window.cfSearchRequired = false;
+            window.cfSearchToken = '';
+            function setDisabled(disabled) {
+                if (!searchInput) return;
+                searchInput.disabled = !!disabled;
+                if (disabled) {
+                    searchInput.setAttribute('placeholder', 'Complete verification to search…');
+                } else {
+                    searchInput.setAttribute('placeholder', 'Find your perfect clean…');
+                }
+            }
+            function renderTurnstile(siteKey) {
+                function tryRender() {
+                    if (window.turnstile && container && siteKey) {
+                        try {
+                            window.turnstile.render(container, {
+                                sitekey: siteKey,
+                                theme: 'light',
+                                callback: function (token) {
+                                    window.cfSearchToken = token || '';
+                                    setDisabled(false);
+                                },
+                                'error-callback': function () {
+                                    setDisabled(true);
+                                },
+                                'expired-callback': function () {
+                                    window.cfSearchToken = '';
+                                    setDisabled(true);
+                                }
+                            });
+                        } catch (e) {
+                            setTimeout(tryRender, 100);
+                        }
+                    } else {
+                        setTimeout(tryRender, 100);
+                    }
+                }
+                tryRender();
+            }
+            try {
+                var base = (function () {
+                    var hostname = window.location.hostname;
+                    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                        return 'http://127.0.0.1:8000';
+                    } else {
+                        return 'https://itsolutions.muccsbblock1.com/cleaning_services/public';
+                    }
+                })();
+                fetch(base + '/api/turnstile/sitekey')
+                    .then(function (r) { return r.json(); })
+                    .then(function (res) {
+                        var key = (res && typeof res.site_key === 'string') ? res.site_key : String(res && res.site_key || '');
+                        if (key) {
+                            window.cfSearchRequired = true;
+                            setDisabled(true);
+                            renderTurnstile(key);
+                        } else {
+                            window.cfSearchRequired = false;
+                            setDisabled(false);
+                            if (container) container.style.display = 'none';
+                        }
+                    })
+                    .catch(function () {
+                        window.cfSearchRequired = false;
+                        setDisabled(false);
+                        if (container) container.style.display = 'none';
+                    });
+            } catch (e) {
+                window.cfSearchRequired = false;
+                setDisabled(false);
+                if (container) container.style.display = 'none';
+            }
+        })();
     </script>
 </body>
 
