@@ -177,7 +177,7 @@
                 <div id="cf-turnstile-search" class="turnstile-container" style="margin-top: 10px;"></div>
 
                 <!-- Filter Buttons -->
-                <div class="filter-container">
+                <div class="filter-container" id="filterContainer">
                     <button class="filter-btn active" onclick="filterServices('all', this)">All</button>
                     <button class="filter-btn" onclick="filterServices('Standard Clean', this)">Standard</button>
                     <button class="filter-btn" onclick="filterServices('Deep Clean', this)">Deep Clean</button>
@@ -452,7 +452,6 @@
 
     <!-- Image Utils -->
     <script src="../../common/scripts/image-utils.js"></script>
-    <!-- Cloudflare Turnstile -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <!-- External JS -->
     <script src="../scripts/landing.js"></script>
@@ -471,6 +470,7 @@
         (function () {
             var searchInput = document.getElementById('serviceSearch');
             var container = document.getElementById('cf-turnstile-search');
+            var filterContainer = document.getElementById('filterContainer');
             window.cfSearchRequired = false;
             window.cfSearchToken = '';
             function setDisabled(disabled) {
@@ -492,13 +492,16 @@
                                 callback: function (token) {
                                     window.cfSearchToken = token || '';
                                     setDisabled(false);
+                                    if (filterContainer) filterContainer.style.display = '';
                                 },
                                 'error-callback': function () {
                                     setDisabled(true);
+                                    if (filterContainer) filterContainer.style.display = 'none';
                                 },
                                 'expired-callback': function () {
                                     window.cfSearchToken = '';
                                     setDisabled(true);
+                                    if (filterContainer) filterContainer.style.display = 'none';
                                 }
                             });
                         } catch (e) {
@@ -526,22 +529,26 @@
                         if (key) {
                             window.cfSearchRequired = true;
                             setDisabled(true);
+                            if (filterContainer) filterContainer.style.display = 'none';
                             renderTurnstile(key);
                         } else {
                             window.cfSearchRequired = false;
                             setDisabled(false);
                             if (container) container.style.display = 'none';
+                            if (filterContainer) filterContainer.style.display = '';
                         }
                     })
                     .catch(function () {
                         window.cfSearchRequired = false;
                         setDisabled(false);
                         if (container) container.style.display = 'none';
+                        if (filterContainer) filterContainer.style.display = '';
                     });
             } catch (e) {
                 window.cfSearchRequired = false;
                 setDisabled(false);
                 if (container) container.style.display = 'none';
+                if (filterContainer) filterContainer.style.display = '';
             }
         })();
     </script>
