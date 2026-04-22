@@ -20,24 +20,23 @@
 // IMPORTANT: Update this URL to your actual Laravel backend URL
 // For production (Hostinger): https://itsolutions.muccsbblock1.com/cleaning_services/public/api
 // For development (Local): http://localhost:8000/api
-const API_BASE_URL = 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api';
+var API_BASE_URL = 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api';
 
 /**
  * Verify admin authentication before allowing access
  */
 function verifyAdminAccess() {
-    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+    var token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
     
     if (!token) {
-        window.location.href = '/auth/templates/login.html'; // Redirect to login
+        window.location.href = '/auth/templates/login.html';
         return false;
     }
     
-    // Verify user is admin
-    const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+    var user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
     if (user.role !== 'admin') {
         alert('Access Denied: This tool is restricted to administrators only.');
-        window.location.href = '/admin/templates/dashboard.html'; // Redirect to dashboard
+        window.location.href = '/admin/templates/dashboard.html';
         return false;
     }
     
@@ -47,8 +46,8 @@ function verifyAdminAccess() {
 /**
  * Get authentication headers for API requests
  */
-async function getAuthHeaders() {
-    const token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+function getAuthHeaders() {
+    var token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
     
     if (!token) {
         throw new Error('Authentication required. Please login first.');
@@ -57,15 +56,15 @@ async function getAuthHeaders() {
     return {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        'Authorization': 'Bearer ' + token
     };
 }
 
 /**
  * Encrypt data by sending it to the Laravel backend
  */
-async function encryptData() {
-    const input = document.getElementById('encryptInput').value.trim();
+function encryptData() {
+    var input = document.getElementById('encryptInput').value.trim();
     
     if (!input) {
         showError('Please enter text to encrypt');
@@ -77,122 +76,107 @@ async function encryptData() {
         return;
     }
 
-    // Clear previous results
     hideResult('encryptResult');
     hideError();
     showLoading(true);
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/encrypt`, {
-            method: 'POST',
-            headers: await getAuthHeaders(),
-            body: JSON.stringify({ data: input }),
-        });
-
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.message || 'Encryption failed');
-        }
-
+    fetch(API_BASE_URL + '/encrypt', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ data: input })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(result) {
         if (!result.encrypted) {
-            throw new Error('No encrypted data received');
+            throw new Error(result.message || 'No encrypted data received');
         }
-
-        // Display encrypted result
         document.getElementById('encryptedOutput').value = result.encrypted;
         showResult('encryptResult');
-        
-    } catch (error) {
+    })
+    .catch(function(error) {
         console.error('Encryption error:', error);
-        if (error.message.includes('Failed to fetch')) {
+        if (error.message && error.message.includes('Failed to fetch')) {
             showError('Cannot connect to server. Please check your internet connection and API URL.');
         } else {
             showError(error.message || 'Failed to encrypt data');
         }
-    } finally {
+    })
+    .finally(function() {
         showLoading(false);
-    }
+    });
 }
 
 /**
  * Decrypt data by sending it to the Laravel backend
  */
-async function decryptData() {
-    const input = document.getElementById('decryptInput').value.trim();
+function decryptData() {
+    var input = document.getElementById('decryptInput').value.trim();
     
     if (!input) {
         showError('Please enter encrypted text');
         return;
     }
 
-    // Basic validation - encrypted strings should be base64 encoded
     if (input.length < 20) {
         showError('Invalid encrypted text format. Text too short.');
         return;
     }
 
-    // Clear previous results
     hideResult('decryptResult');
     hideError();
     showLoading(true);
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/decrypt`, {
-            method: 'POST',
-            headers: await getAuthHeaders(),
-            body: JSON.stringify({ encrypted: input }),
-        });
-
-        const result = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(result.message || 'Decryption failed');
-        }
-
+    fetch(API_BASE_URL + '/decrypt', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ encrypted: input })
+    })
+    .then(function(response) {
+        return response.json();
+    })
+    .then(function(result) {
         if (result.decrypted === undefined || result.decrypted === null) {
-            throw new Error('No decrypted data received');
+            throw new Error(result.message || 'No decrypted data received');
         }
-
-        // Display decrypted result
         document.getElementById('decryptedOutput').value = result.decrypted;
         showResult('decryptResult');
-        
-    } catch (error) {
+    })
+    .catch(function(error) {
         console.error('Decryption error:', error);
-        if (error.message.includes('Failed to fetch')) {
+        if (error.message && error.message.includes('Failed to fetch')) {
             showError('Cannot connect to server. Please check your internet connection and API URL.');
         } else {
             showError(error.message || 'Failed to decrypt data');
         }
-    } finally {
+    })
+    .finally(function() {
         showLoading(false);
-    }
+    });
 }
 
 /**
  * Copy text to clipboard from a textarea element
  */
 function copyToClipboard(elementId) {
-    const textarea = document.getElementById(elementId);
+    var textarea = document.getElementById(elementId);
     
     if (!textarea) {
         showError('Element not found');
         return;
     }
 
-    // Modern clipboard API (preferred)
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(textarea.value)
-            .then(() => {
+            .then(function() {
                 showTemporaryMessage('Copied to clipboard!', 'success');
             })
-            .catch(err => {
+            .catch(function(err) {
                 console.error('Failed to copy:', err);
                 fallbackCopyToClipboard(textarea);
             });
     } else {
-        // Fallback for older browsers
         fallbackCopyToClipboard(textarea);
     }
 }
@@ -202,7 +186,7 @@ function copyToClipboard(elementId) {
  */
 function fallbackCopyToClipboard(textarea) {
     textarea.select();
-    textarea.setSelectionRange(0, 99999); // For mobile devices
+    textarea.setSelectionRange(0, 99999);
     
     try {
         document.execCommand('copy');
@@ -215,27 +199,18 @@ function fallbackCopyToClipboard(textarea) {
 /**
  * Show a temporary success message
  */
-function showTemporaryMessage(message, type = 'success') {
-    const messageEl = document.createElement('div');
-    messageEl.className = `temp-message ${type}`;
+function showTemporaryMessage(message, type) {
+    if (!type) type = 'success';
+    var messageEl = document.createElement('div');
+    messageEl.className = 'temp-message ' + type;
     messageEl.textContent = message;
-    messageEl.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 24px;
-        background: ${type === 'success' ? '#4CAF50' : '#f44336'};
-        color: white;
-        border-radius: 4px;
-        z-index: 10000;
-        animation: slideIn 0.3s ease;
-    `;
+    var bgColor = type === 'success' ? '#4CAF50' : '#f44336';
+    messageEl.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 12px 24px; background: ' + bgColor + '; color: white; border-radius: 4px; z-index: 10000;';
     
     document.body.appendChild(messageEl);
     
-    setTimeout(() => {
-        messageEl.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => messageEl.remove(), 300);
+    setTimeout(function() {
+        messageEl.remove();
     }, 2000);
 }
 
@@ -243,7 +218,7 @@ function showTemporaryMessage(message, type = 'success') {
  * UI Helper Functions
  */
 function showLoading(show) {
-    const loadingEl = document.getElementById('loading');
+    var loadingEl = document.getElementById('loading');
     if (show) {
         loadingEl.classList.remove('hidden');
     } else {
@@ -252,30 +227,29 @@ function showLoading(show) {
 }
 
 function showError(message) {
-    const errorEl = document.getElementById('error');
-    const errorMessageEl = document.getElementById('errorMessage');
+    var errorEl = document.getElementById('error');
+    var errorMessageEl = document.getElementById('errorMessage');
     
     errorMessageEl.textContent = message;
     errorEl.classList.remove('hidden');
     
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
+    setTimeout(function() {
         hideError();
     }, 5000);
 }
 
 function hideError() {
-    const errorEl = document.getElementById('error');
+    var errorEl = document.getElementById('error');
     errorEl.classList.add('hidden');
 }
 
 function showResult(elementId) {
-    const element = document.getElementById(elementId);
+    var element = document.getElementById(elementId);
     element.classList.remove('hidden');
 }
 
 function hideResult(elementId) {
-    const element = document.getElementById(elementId);
+    var element = document.getElementById(elementId);
     element.classList.add('hidden');
 }
 
@@ -283,20 +257,18 @@ function hideResult(elementId) {
  * Character counter for encryption input
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // Verify admin access on page load
     if (!verifyAdminAccess()) {
         return;
     }
 
-    const encryptInput = document.getElementById('encryptInput');
-    const charCount = document.getElementById('encryptCharCount');
+    var encryptInput = document.getElementById('encryptInput');
+    var charCount = document.getElementById('encryptCharCount');
     
     if (encryptInput && charCount) {
         encryptInput.addEventListener('input', function() {
-            const length = this.value.length;
-            charCount.textContent = `${length}/1000`;
+            var length = this.value.length;
+            charCount.textContent = length + '/1000';
             
-            // Visual feedback when approaching limit
             if (length > 900) {
                 charCount.style.color = '#f44336';
             } else if (length > 700) {
@@ -314,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        const activeElement = document.activeElement;
+        var activeElement = document.activeElement;
         
         if (activeElement.id === 'encryptInput') {
             e.preventDefault();
