@@ -20,7 +20,7 @@
 // IMPORTANT: Update this URL to your actual Laravel backend URL
 // For production (Hostinger): https://your-laravel-domain.com/api
 // For development (Local): http://localhost:8000/api
-const API_BASE_URL = 'https://your-laravel-backend.com/api';
+const API_BASE_URL = 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api'';
 
 /**
  * Verify admin authentication before allowing access
