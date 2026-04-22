@@ -15,12 +15,9 @@
  * 2. Encryption keys would be exposed
  * 3. Vulnerable to reverse engineering
  * 4. No secure key storage mechanism in browsers
+ * 
+ * NOTE: Uses API_BASE_URL from api-client.js (loaded before this script)
  */
-
-// IMPORTANT: Update this URL to your actual Laravel backend URL
-// For production (Hostinger): https://itsolutions.muccsbblock1.com/cleaning_services/public/api
-// For development (Local): http://localhost:8000/api
-var API_BASE_URL = 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api';
 
 /**
  * Verify admin authentication before allowing access
