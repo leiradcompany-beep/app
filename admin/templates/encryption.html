@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption Tool - Admin Panel</title>
+    <link rel="stylesheet" href="../styles/encryption-tool.css">
+</head>
+<body>
+    <div class="encryption-container">
+        <header class="encryption-header">
+            <h1>Secure Encryption Tool</h1>
+            <p class="subtitle">Admin-only access | AES-256-CBC encryption powered by Laravel</p>
+        </header>
+
+        <div class="admin-badge">
+            <i class="icon">🔐</i>
+            <span>Administrator Access Required</span>
+        </div>
+
+        <div class="security-notice">
+            <strong>Security Notice:</strong> All encryption/decryption happens securely on the backend. 
+            Your data is never exposed in transit when using HTTPS. This tool is restricted to administrators only.
+        </div>
+
+        <div class="encryption-grid">
+            <!-- Encryption Section -->
+            <section class="encryption-section">
+                <h2>Encrypt Data</h2>
+                <div class="form-group">
+                    <label for="encryptInput">Text to Encrypt</label>
+                    <textarea 
+                        id="encryptInput" 
+                        placeholder="Enter sensitive text to encrypt..." 
+                        maxlength="1000"
+                        rows="5"
+                    ></textarea>
+                    <span class="char-count" id="encryptCharCount">0/1000</span>
+                </div>
+                <button id="encryptBtn" class="btn btn-primary" onclick="encryptData()">
+                    Encrypt Data
+                </button>
+                <div id="encryptResult" class="result-box hidden">
+                    <div class="result-header">
+                        <span class="result-icon">✓</span>
+                        <span class="result-title">Encryption Successful</span>
+                    </div>
+                    <div class="result-content">
+                        <textarea id="encryptedOutput" readonly></textarea>
+                        <button class="btn btn-secondary" onclick="copyToClipboard('encryptedOutput')">
+                            Copy to Clipboard
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Decryption Section -->
+            <section class="decryption-section">
+                <h2>Decrypt Data</h2>
+                <div class="form-group">
+                    <label for="decryptInput">Encrypted Text</label>
+                    <textarea 
+                        id="decryptInput" 
+                        placeholder="Paste encrypted text from database..." 
+                        rows="5"
+                    ></textarea>
+                </div>
+                <button id="decryptBtn" class="btn btn-primary" onclick="decryptData()">
+                    Decrypt Data
+                </button>
+                <div id="decryptResult" class="result-box hidden">
+                    <div class="result-header">
+                        <span class="result-icon">✓</span>
+                        <span class="result-title">Decryption Successful</span>
+                    </div>
+                    <div class="result-content">
+                        <textarea id="decryptedOutput" readonly></textarea>
+                        <button class="btn btn-secondary" onclick="copyToClipboard('decryptedOutput')">
+                            Copy to Clipboard
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="loading-overlay hidden">
+            <div class="loading-spinner"></div>
+            <p>Processing your request...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error" class="error-box hidden">
+            <span class="error-icon">⚠</span>
+            <span id="errorMessage"></span>
+            <button class="close-error" onclick="hideError()">×</button>
+        </div>
+
+        <!-- Info Section -->
+        <section class="info-section">
+            <h3>Why Backend-Only Encryption?</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>🔒 Secure Key Storage</h4>
+                    <p>Encryption keys (APP_KEY) are stored securely on the server and never exposed to the frontend.</p>
+                </div>
+                <div class="info-card">
+                    <h4>🛡️ Tamper Protection</h4>
+                    <p>Laravel's encryption includes MAC (Message Authentication Code) to detect any tampering.</p>
+                </div>
+                <div class="info-card">
+                    <h4>⚡ Rate Limiting</h4>
+                    <p>Endpoints are rate-limited to prevent brute-force attacks and abuse.</p>
+                </div>
+                <div class="info-card">
+                    <h4>📝 Audit Logging</h4>
+                    <p>All encryption/decryption attempts are logged for security monitoring.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../scripts/encryption-tool.js"></script>
+</body>
+</html>
