@@ -29,14 +29,42 @@ function verifyAdminAccess() {
     var token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
     
     if (!token) {
-        window.location.href = '/auth/templates/login.html';
+        window.location.href = '../../auth/templates/login.html';
         return false;
     }
     
-    var user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
-    if (user.role !== 'admin') {
-        alert('Access Denied: This tool is restricted to administrators only.');
-        window.location.href = '/admin/templates/dashboard.html';
+    // Check admin role using the same method as admin-sidebar.js
+    var userRole = localStorage.getItem('user_role');
+    
+    // Fallback: try getting role from user_data object
+    if (!userRole) {
+        var userDataString = localStorage.getItem('user_data');
+        if (userDataString) {
+            try {
+                var user = JSON.parse(userDataString);
+                userRole = user.role;
+            } catch (e) {
+                console.warn('Failed to parse user_data for role check');
+            }
+        }
+    }
+    
+    // Additional fallback: try 'user' key
+    if (!userRole) {
+        var userStr = localStorage.getItem('user') || sessionStorage.getItem('user');
+        if (userStr) {
+            try {
+                var userData = JSON.parse(userStr);
+                userRole = userData.role;
+            } catch (e) {
+                console.warn('Failed to parse user for role check');
+            }
+        }
+    }
+    
+    if (userRole !== 'admin') {
+        alert('Access Denied: This tool is restricted to administrators only.\n\nYour role: ' + (userRole || 'Unknown') + '\nRequired role: admin');
+        window.location.href = 'dashboard.html';
         return false;
     }
     
