@@ -18,9 +18,9 @@
  */
 
 // IMPORTANT: Update this URL to your actual Laravel backend URL
-// For production (Hostinger): https://your-laravel-domain.com/api
+// For production (Hostinger): https://itsolutions.muccsbblock1.com/cleaning_services/public/api
 // For development (Local): http://localhost:8000/api
-const API_BASE_URL = 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api'';
+const API_BASE_URL = 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api';
 
 /**
  * Verify admin authentication before allowing access
@@ -72,6 +72,11 @@ async function encryptData() {
         return;
     }
 
+    if (input.length > 1000) {
+        showError('Text must be 1000 characters or less');
+        return;
+    }
+
     // Clear previous results
     hideResult('encryptResult');
     hideError();
@@ -90,13 +95,21 @@ async function encryptData() {
             throw new Error(result.message || 'Encryption failed');
         }
 
+        if (!result.encrypted) {
+            throw new Error('No encrypted data received');
+        }
+
         // Display encrypted result
         document.getElementById('encryptedOutput').value = result.encrypted;
         showResult('encryptResult');
         
     } catch (error) {
         console.error('Encryption error:', error);
-        showError(error.message || 'Failed to encrypt data');
+        if (error.message.includes('Failed to fetch')) {
+            showError('Cannot connect to server. Please check your internet connection and API URL.');
+        } else {
+            showError(error.message || 'Failed to encrypt data');
+        }
     } finally {
         showLoading(false);
     }
@@ -110,6 +123,12 @@ async function decryptData() {
     
     if (!input) {
         showError('Please enter encrypted text');
+        return;
+    }
+
+    // Basic validation - encrypted strings should be base64 encoded
+    if (input.length < 20) {
+        showError('Invalid encrypted text format. Text too short.');
         return;
     }
 
@@ -131,13 +150,21 @@ async function decryptData() {
             throw new Error(result.message || 'Decryption failed');
         }
 
+        if (result.decrypted === undefined || result.decrypted === null) {
+            throw new Error('No decrypted data received');
+        }
+
         // Display decrypted result
         document.getElementById('decryptedOutput').value = result.decrypted;
         showResult('decryptResult');
         
     } catch (error) {
         console.error('Decryption error:', error);
-        showError(error.message || 'Failed to decrypt data');
+        if (error.message.includes('Failed to fetch')) {
+            showError('Cannot connect to server. Please check your internet connection and API URL.');
+        } else {
+            showError(error.message || 'Failed to decrypt data');
+        }
     } finally {
         showLoading(false);
     }
