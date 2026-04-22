@@ -3,123 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Encryption Tool - Admin Panel</title>
-    <link rel="stylesheet" href="../styles/encryption-tool.css">
+    <title>LEIRAD | Encryption Tool</title>
+    
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link href="../styles/encryption.css" rel="stylesheet">
 </head>
 <body>
-    <div class="encryption-container">
-        <header class="encryption-header">
-            <h1>Secure Encryption Tool</h1>
-            <p class="subtitle">Admin-only access | AES-256-CBC encryption powered by Laravel</p>
-        </header>
 
-        <div class="admin-badge">
-            <i class="icon">🔐</i>
-            <span>Administrator Access Required</span>
-        </div>
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="mobileOverlay"></div>
 
-        <div class="security-notice">
-            <strong>Security Notice:</strong> All encryption/decryption happens securely on the backend. 
-            Your data is never exposed in transit when using HTTPS. This tool is restricted to administrators only.
-        </div>
+    <div class="dashboard-container" id="dashboard">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <i class="ri-sparkling-2-fill"></i>
+                <span class="nav-text">LEIRAD. Admin</span>
+            </div>
 
-        <div class="encryption-grid">
-            <!-- Encryption Section -->
-            <section class="encryption-section">
-                <h2>Encrypt Data</h2>
-                <div class="form-group">
-                    <label for="encryptInput">Text to Encrypt</label>
-                    <textarea 
-                        id="encryptInput" 
-                        placeholder="Enter sensitive text to encrypt..." 
-                        maxlength="1000"
-                        rows="5"
-                    ></textarea>
-                    <span class="char-count" id="encryptCharCount">0/1000</span>
-                </div>
-                <button id="encryptBtn" class="btn btn-primary" onclick="encryptData()">
-                    Encrypt Data
-                </button>
-                <div id="encryptResult" class="result-box hidden">
-                    <div class="result-header">
-                        <span class="result-icon">✓</span>
-                        <span class="result-title">Encryption Successful</span>
-                    </div>
-                    <div class="result-content">
-                        <textarea id="encryptedOutput" readonly></textarea>
-                        <button class="btn btn-secondary" onclick="copyToClipboard('encryptedOutput')">
-                            Copy to Clipboard
-                        </button>
-                    </div>
-                </div>
-            </section>
+            <nav class="nav-menu">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="ri-dashboard-line"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="booking.html" class="nav-item">
+                    <i class="ri-calendar-check-line"></i>
+                    <span class="nav-text">Bookings</span>
+                </a>
+                <a href="cleaner.html" class="nav-item">
+                    <i class="ri-group-line"></i>
+                    <span class="nav-text">Cleaners</span>
+                </a>
+                <a href="users.html" class="nav-item">
+                    <i class="ri-user-settings-line"></i>
+                    <span class="nav-text">Users</span>
+                </a>
+                <a href="service.html" class="nav-item">
+                    <i class="ri-service-line"></i>
+                    <span class="nav-text">Services</span>
+                </a>
+                <a href="analytic.html" class="nav-item">
+                    <i class="ri-bar-chart-box-line"></i>
+                    <span class="nav-text">Analytics</span>
+                </a>
+                <a href="setting.html" class="nav-item">
+                    <i class="ri-settings-4-line"></i>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <a href="encryption.html" class="nav-item active">
+                    <i class="ri-lock-password-line"></i>
+                    <span class="nav-text">Encryption Tool</span>
+                </a>
+                <a href="#" class="nav-item" id="logoutSidebarBtn" style="color: #E53E3E;">
+                    <i class="ri-logout-box-r-line"></i>
+                    <span class="nav-text">Logout</span>
+                </a>
+            </nav>
 
-            <!-- Decryption Section -->
-            <section class="decryption-section">
-                <h2>Decrypt Data</h2>
-                <div class="form-group">
-                    <label for="decryptInput">Encrypted Text</label>
-                    <textarea 
-                        id="decryptInput" 
-                        placeholder="Paste encrypted text from database..." 
-                        rows="5"
-                    ></textarea>
-                </div>
-                <button id="decryptBtn" class="btn btn-primary" onclick="decryptData()">
-                    Decrypt Data
-                </button>
-                <div id="decryptResult" class="result-box hidden">
-                    <div class="result-header">
-                        <span class="result-icon">✓</span>
-                        <span class="result-title">Decryption Successful</span>
-                    </div>
-                    <div class="result-content">
-                        <textarea id="decryptedOutput" readonly></textarea>
-                        <button class="btn btn-secondary" onclick="copyToClipboard('decryptedOutput')">
-                            Copy to Clipboard
-                        </button>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- Loading Indicator -->
-        <div id="loading" class="loading-overlay hidden">
-            <div class="loading-spinner"></div>
-            <p>Processing your request...</p>
-        </div>
-
-        <!-- Error Message -->
-        <div id="error" class="error-box hidden">
-            <span class="error-icon">⚠</span>
-            <span id="errorMessage"></span>
-            <button class="close-error" onclick="hideError()">×</button>
-        </div>
-
-        <!-- Info Section -->
-        <section class="info-section">
-            <h3>Why Backend-Only Encryption?</h3>
-            <div class="info-grid">
-                <div class="info-card">
-                    <h4>🔒 Secure Key Storage</h4>
-                    <p>Encryption keys (APP_KEY) are stored securely on the server and never exposed to the frontend.</p>
-                </div>
-                <div class="info-card">
-                    <h4>🛡️ Tamper Protection</h4>
-                    <p>Laravel's encryption includes MAC (Message Authentication Code) to detect any tampering.</p>
-                </div>
-                <div class="info-card">
-                    <h4>⚡ Rate Limiting</h4>
-                    <p>Endpoints are rate-limited to prevent brute-force attacks and abuse.</p>
-                </div>
-                <div class="info-card">
-                    <h4>📝 Audit Logging</h4>
-                    <p>All encryption/decryption attempts are logged for security monitoring.</p>
+            <div class="user-profile">
+                <img src="../../assets/images/default-avatar.png" alt="Admin" class="user-img" id="userAvatar">
+                <div class="user-info nav-text">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-dark);" id="userName">Loading...</div>
+                    <div style="font-size: 0.75rem; color: var(--text-light);" id="userRole">...</div>
                 </div>
             </div>
-        </section>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            
+            <!-- HEADER -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="toggle-btn">
+                        <i class="ri-menu-2-line"></i>
+                    </button>
+                    <h2 class="header-title">Encryption Tool</h2>
+                </div>
+
+                <div class="header-actions">
+                    
+                    <!-- NOTIFICATION BELL -->
+                    <div class="icon-btn" id="notifBtn">
+                        <i class="ri-notification-3-line"></i>
+                        <span class="badge" id="notifCount">0</span>
+                        
+                        <!-- NOTIFICATION DROPDOWN -->
+                        <div class="notification-dropdown" id="notifDropdown">
+                            <div class="dropdown-header">
+                                <h6>Notifications</h6>
+                                <span class="mark-read">Mark all read</span>
+                            </div>
+                            <div class="dropdown-list" id="notifList">
+                                <div style="padding: 20px; text-align: center; color: var(--text-light);">No notifications</div>
+                            </div>
+                            <div class="dropdown-footer">
+                                <a href="#">View All Notifications</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- ENCRYPTION TOOL CONTENT -->
+            <div class="encryption-wrapper">
+                
+                <!-- Security Notice -->
+                <div class="security-notice-card">
+                    <div class="notice-icon">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+                    <div class="notice-content">
+                        <h4>Secure Encryption System</h4>
+                        <p>All encryption/decryption uses AES-256-CBC encryption powered by Laravel. Data is processed securely on the backend server and never exposed in transit when using HTTPS. This tool is restricted to administrators only.</p>
+                    </div>
+                </div>
+
+                <!-- Encryption Grid -->
+                <div class="encryption-grid">
+                    
+                    <!-- ENCRYPTION SECTION -->
+                    <div class="encryption-card">
+                        <div class="card-header">
+                            <div class="header-icon">
+                                <i class="ri-lock-line"></i>
+                            </div>
+                            <div>
+                                <h3>Encrypt Data</h3>
+                                <p>Convert plain text to encrypted format</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="encryptInput">Text to Encrypt</label>
+                                <textarea 
+                                    id="encryptInput" 
+                                    placeholder="Enter sensitive text to encrypt..."
+                                    maxlength="1000"
+                                    rows="5"
+                                ></textarea>
+                                <span class="char-count" id="encryptCharCount">0/1000</span>
+                            </div>
+
+                            <button id="encryptBtn" class="btn-primary" onclick="encryptData()">
+                                <i class="ri-lock-line"></i>
+                                <span>Encrypt Data</span>
+                            </button>
+
+                            <div id="encryptResult" class="result-box hidden">
+                                <div class="result-header">
+                                    <i class="ri-checkbox-circle-fill"></i>
+                                    <span>Encryption Successful</span>
+                                </div>
+                                <div class="result-content">
+                                    <textarea id="encryptedOutput" readonly></textarea>
+                                    <button class="btn-secondary" onclick="copyToClipboard('encryptedOutput')">
+                                        <i class="ri-file-copy-line"></i>
+                                        <span>Copy to Clipboard</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DECRYPTION SECTION -->
+                    <div class="encryption-card">
+                        <div class="card-header">
+                            <div class="header-icon">
+                                <i class="ri-lock-unlock-line"></i>
+                            </div>
+                            <div>
+                                <h3>Decrypt Data</h3>
+                                <p>Convert encrypted text back to plain text</p>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="decryptInput">Encrypted Text</label>
+                                <textarea 
+                                    id="decryptInput" 
+                                    placeholder="Paste encrypted text from database..."
+                                    rows="5"
+                                ></textarea>
+                            </div>
+
+                            <button id="decryptBtn" class="btn-primary" onclick="decryptData()">
+                                <i class="ri-lock-unlock-line"></i>
+                                <span>Decrypt Data</span>
+                            </button>
+
+                            <div id="decryptResult" class="result-box hidden">
+                                <div class="result-header">
+                                    <i class="ri-checkbox-circle-fill"></i>
+                                    <span>Decryption Successful</span>
+                                </div>
+                                <div class="result-content">
+                                    <textarea id="decryptedOutput" readonly></textarea>
+                                    <button class="btn-secondary" onclick="copyToClipboard('decryptedOutput')">
+                                        <i class="ri-file-copy-line"></i>
+                                        <span>Copy to Clipboard</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Loading Overlay -->
+                <div id="loading" class="loading-overlay hidden">
+                    <div class="loading-spinner">
+                        <i class="ri-loader-4-line"></i>
+                    </div>
+                    <p>Processing your request...</p>
+                </div>
+
+                <!-- Error Message -->
+                <div id="error" class="error-box hidden">
+                    <i class="ri-error-warning-line"></i>
+                    <span id="errorMessage"></span>
+                    <button class="close-error" onclick="hideError()">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="info-section">
+                    <h3>Why Backend-Only Encryption?</h3>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="ri-key-line"></i>
+                            </div>
+                            <h4>Secure Key Storage</h4>
+                            <p>Encryption keys (APP_KEY) are stored securely on the server and never exposed to the frontend.</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="ri-shield-check-line"></i>
+                            </div>
+                            <h4>Tamper Protection</h4>
+                            <p>Laravel's encryption includes MAC (Message Authentication Code) to detect any tampering.</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="ri-speed-line"></i>
+                            </div>
+                            <h4>Rate Limiting</h4>
+                            <p>Endpoints are rate-limited to prevent brute-force attacks and abuse (30/min encrypt, 20/min decrypt).</p>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">
+                                <i class="ri-file-list-3-line"></i>
+                            </div>
+                            <h4>Audit Logging</h4>
+                            <p>All encryption/decryption attempts are logged for security monitoring and compliance.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- Avatar Mixin -->
+    <script src="../../common/scripts/avatar-mixin.js"></script>
+    <!-- API Client -->
+    <script src="../../common/scripts/api-client.js"></script>
+    <!-- UI Utils -->
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Sidebar Logic -->
+    <script src="../scripts/admin-sidebar.js"></script>
+    <!-- Encryption Tool Logic -->
     <script src="../scripts/encryption-tool.js"></script>
 </body>
 </html>
