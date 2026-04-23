@@ -676,15 +676,35 @@ function renderServices() {
 
     // Render Main Grid
     if (visibleServices.length === 0) {
-        $('#all-services-grid').html('<div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 20px;">No services found.</div>');
+        const emptyHtml = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.3;">🧹</div>
+                <h3 style="color: var(--text-light); margin-bottom: 10px; font-weight: 600;">No Services Found</h3>
+                <p style="color: var(--text-light); font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.6;">
+                    ${searchQuery ? 'No services match your search. Try different keywords or clear the filter.' : 'We\'re currently updating our service offerings. Please check back soon.'}
+                </p>
+                ${searchQuery ? '<button class="btn-primary" style="margin-top: 20px;" onclick="clearSearch()"><i class="ri-close-line"></i> Clear Search</button>' : ''}
+            </div>
+        `;
+        $('#all-services-grid').html(emptyHtml);
+        $('#see-more-container').hide();
     } else {
         $('#all-services-grid').html(visibleServices.map(createCard).join(''));
     }
 }
 
 function renderCleaners(cleaners) {
-    if (!cleaners || !Array.isArray(cleaners)) {
-        $('#cleaners-grid').html('<div style="grid-column: 1/-1; text-align: center; color: var(--text-light); padding: 20px;">No cleaners available.</div>');
+    if (!cleaners || !Array.isArray(cleaners) || cleaners.length === 0) {
+        const emptyHtml = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.3;">👨‍🔧</div>
+                <h3 style="color: var(--text-light); margin-bottom: 10px; font-weight: 600;">No Professionals Available</h3>
+                <p style="color: var(--text-light); font-size: 0.95rem; max-width: 400px; margin: 0 auto; line-height: 1.6;">
+                    We're currently onboarding new cleaning professionals. Please check back soon or contact us for more information.
+                </p>
+            </div>
+        `;
+        $('#cleaners-grid').html(emptyHtml);
         return;
     }
     const html = cleaners.map(c => {
@@ -786,6 +806,32 @@ function initBookingTable() {
     let filteredBookings = bookings;
     if (currentBookingStatusFilter !== 'All') {
         filteredBookings = bookings.filter(booking => booking.raw_status === currentBookingStatusFilter);
+    }
+
+    // Handle empty state
+    if (!filteredBookings || filteredBookings.length === 0) {
+        const emptyHtml = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 60px 20px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.3;">📅</div>
+                    <h3 style="color: var(--text-light); margin-bottom: 10px; font-weight: 600;">No Bookings Found</h3>
+                    <p style="color: var(--text-light); font-size: 0.95rem; max-width: 400px; margin: 0 auto 20px; line-height: 1.6;">
+                        ${currentBookingStatusFilter !== 'All' ? 'No bookings with this status. Try a different filter or view all bookings.' : 'You haven\'t made any bookings yet. Book your first cleaning service today!'}
+                    </p>
+                    ${currentBookingStatusFilter === 'All' ? '<button class="btn-primary" onclick="navigate(\'services\')"><i class="ri-add-line"></i> Book a Service</button>' : '<button class="btn-secondary" onclick="filterBookings(\'All\', this)"><i class="ri-filter-line"></i> View All Bookings</button>'}
+                </td>
+            </tr>
+        `;
+        $('#history-table tbody').html(emptyHtml);
+        $('#booking-timeline').hide();
+        return;
+    }
+
+    // Show table, hide timeline on desktop
+    $('#history-table').show();
+    if (window.innerWidth <= 767) {
+        $('#history-table').hide();
+        $('#booking-timeline').show();
     }
 
     filteredBookings = [...filteredBookings].sort((a, b) => {
