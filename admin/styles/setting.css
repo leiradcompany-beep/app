@@ -131,17 +131,7 @@ body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hi
 /* --- SETTINGS STYLES --- */
 .settings-wrapper { display: flex; flex-direction: column; gap: 30px; }
 
-.settings-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; border-bottom: 1px solid var(--border-light); }
-.tab-btn { 
-    background: transparent; border: none; padding: 10px 20px; font-size: 1rem; color: var(--text-light); 
-    cursor: pointer; font-weight: 600; transition: var(--transition); border-bottom: 2px solid transparent; 
-    white-space: nowrap; 
-}
-.tab-btn:hover, .tab-btn.active { color: var(--primary); }
-.tab-btn.active { border-bottom-color: var(--primary); }
-
-.settings-panel { display: none; animation: fadeIn 0.4s ease; }
-.settings-panel.active { display: block; }
+.settings-panel { display: block; animation: fadeIn 0.4s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .settings-card { 
@@ -168,55 +158,6 @@ body { background-color: var(--bg-body); color: var(--text-dark); overflow-x: hi
 .upload-btn:hover { border-color: var(--primary); color: var(--primary); }
 .hint { font-size: 0.8rem; color: var(--text-light); margin-left: 10px; }
 
-/* --- OPERATING HOURS STYLES --- */
-.hours-row {
-    display: grid;
-    grid-template-columns: 120px 1fr 20px 1fr 60px;
-    gap: 15px;
-    align-items: center;
-    margin-bottom: 15px;
-    background: #FAFDFF;
-    padding: 10px 15px;
-    border-radius: 12px;
-    border: 1px solid transparent;
-    transition: var(--transition);
-}
-.hours-row:hover { border-color: var(--border-light); box-shadow: var(--shadow-sm); }
-.hours-row.disabled { opacity: 0.6; filter: grayscale(1); pointer-events: none; }
-
-.day-label { font-weight: 600; color: var(--text-dark); font-size: 0.95rem; }
-
-.time-picker-wrapper { position: relative; width: 100%; }
-.time-picker-input {
-    width: 100%;
-    padding: 12px 12px 12px 40px; 
-    border: 1px solid var(--border-light);
-    border-radius: 10px;
-    background: var(--bg-white);
-    color: var(--text-dark);
-    font-family: 'Manrope', sans-serif;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
-.time-picker-input:focus { border-color: var(--primary); background: white; }
-
-.clock-icon {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    color: var(--primary); font-size: 1.2rem; pointer-events: none;
-}
-
-.separator { color: var(--text-light); font-weight: 700; text-align: center; }
-
-/* Switch */
-.switch { position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #CBD5E0; transition: .4s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: var(--primary); }
-input:checked + .slider:before { transform: translateX(20px); }
-
 /* --- DRAWER OVERLAY --- */
 .drawer-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -231,16 +172,4 @@ input:checked + .slider:before { transform: translateX(20px); }
     .sidebar { position: fixed; left: -100%; width: 280px; transition: 0.3s; box-shadow: var(--shadow-sm); }
     .sidebar.mobile-active { left: 0; }
     .main-content { padding: 20px; }
-    
-    /* Mobile Hours Layout */
-    .hours-row {
-        grid-template-columns: 1fr auto;
-        grid-template-areas: "day switch" "start start" "sep sep" "end end";
-        gap: 10px;
-    }
-    .day-label { grid-area: day; }
-    .switch-wrapper { grid-area: switch; justify-self: end; }
-    .time-picker-wrapper:nth-of-type(1) { grid-area: start; }
-    .separator { grid-area: sep; display: none; } 
-    .time-picker-wrapper:nth-of-type(2) { grid-area: end; }
 }
