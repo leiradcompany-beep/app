@@ -94,28 +94,27 @@ protected $encryptedAttributes = [
 ];
 ```
 
-#### C. CleanerProfile Model
-- **File:** [CleanerProfile.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Models/CleanerProfile.php#L38-L42)
+#### C. Booking Table Encrypted Fields (Database Columns & Form Textfields)
+
+The `Booking` model also employs the `EncryptsAttributes` trait for sensitive data gathered during the booking process.
+
+- **File:** [Booking.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Models/Booking.php#L34-L38)
 - **Trait Used:** `use App\Traits\EncryptsAttributes;`
 
 **Encrypted Database Columns:**
-1. **`id_number`**
-   - **Frontend Textfields:** "ID Number" input during cleaner onboarding/registration.
-   - **Data Stored:** Government-issued identification number (highly sensitive).
-2. **`emergency_contact_name`**
-   - **Frontend Textfields:** "Emergency Contact Name" input.
-   - **Data Stored:** Emergency contact's full name.
-3. **`emergency_contact_phone`**
-   - **Frontend Textfields:** "Emergency Contact Phone" input.
-   - **Data Stored:** Emergency contact's phone number.
+1. **`phone_number`**
+   - **Frontend Textfields:** "Phone Number" input in the customer checkout/booking form.
+   - **Data Stored:** Contact number used specifically for the booked service.
+2. **`address`**
+   - **Frontend Textfields:** "Service Address" input in the customer checkout/booking form.
+   - **Data Stored:** The physical location where the cleaning service will be performed.
 
 **Code Snippet:**
 ```php
-// Backend/app/Models/CleanerProfile.php
+// Backend/app/Models/Booking.php
 protected $encryptedAttributes = [
-    'id_number',                // Government ID number (highly sensitive)
-    'emergency_contact_name',   // Emergency contact PII
-    'emergency_contact_phone',  // Emergency contact PII
+    'phone_number',  // Contact information
+    'address',       // Location data
 ];
 ```
 
