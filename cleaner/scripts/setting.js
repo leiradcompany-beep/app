@@ -23,6 +23,7 @@ $(document).ready(function() {
         formData.append('middleName', $('#inputMiddleName').val());
         formData.append('lastName', $('#inputLastName').val());
         formData.append('phone', $('#inputPhone').val());
+        formData.append('address', $('#inputAddress').val());
         
         const imageFile = $('#imageUpload')[0].files[0];
         if (imageFile) {
@@ -98,6 +99,7 @@ function loadProfileData() {
                 $('#inputMiddleName').val(p.middleName || '');
                 $('#inputLastName').val(p.lastName);
                 $('#inputPhone').val(p.phone);
+                $('#inputAddress').val(p.address || '');
                 $('#inputEmail').val(p.email);
                 
                 $('#profileName').text(`${p.firstName} ${p.lastName}`);
