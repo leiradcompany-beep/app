@@ -1,225 +1,278 @@
-# Comprehensive Encryption & Data Protection Guide
+# 🔐 Encryption & Data Protection Guide
 
-## 1. System Architecture Overview
-
-The Cleaning Services application employs a **Backend-centric Encryption Architecture**. This means all sensitive data encryption and decryption operations are strictly handled by the backend server. The frontend never possesses encryption keys or performs local AES decryption, which prevents reverse engineering and key exposure.
-
-### Security Levels
-1. **High Security (Two-Way Encryption):** Personal Identifiable Information (PII) stored in the database is encrypted at rest using AES-256-CBC.
-2. **Maximum Security (One-Way Hashing):** User passwords are mathematically hashed using `bcrypt` and can never be reversed.
-3. **Transport Security:** All client-server communication relies on HTTPS to protect data in transit. Authentication tokens are securely managed via Laravel Sanctum.
-
-### Key Management
-- **Master Key:** The entire AES-256-CBC encryption system relies on the `APP_KEY` stored securely in the backend's `.env` file.
-- **Key Location:** `Backend/config/app.php` references `env('APP_KEY')`.
-- **Security Rule:** If the `APP_KEY` is lost or changed without a migration script, all encrypted database fields become permanently unreadable.
+> A complete reference for how sensitive data is secured across the Cleaning Services application — from the database to the browser.
 
 ---
 
-## 2. Database Field Encryption (Data at Rest)
+## Table of Contents
 
-The system automatically encrypts specific database fields before they are saved and decrypts them when they are retrieved.
+- [Architecture Overview](#architecture-overview)
+- [Database Field Encryption](#database-field-encryption)
+- [Password Hashing](#password-hashing)
+- [Admin Encryption Tool](#admin-encryption-tool)
+- [Frontend Data Flow](#frontend-data-flow)
+- [Session & Token Protection](#session--token-protection)
+- [Scope & Coverage](#scope--coverage)
 
-### The Encryption Engine
-- **File:** [EncryptsAttributes.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Traits/EncryptsAttributes.php#L32-L127)
-- **Algorithm:** AES-256-CBC via Laravel's `Crypt` facade.
-- **Mechanism:** The trait overrides Eloquent's `setAttribute()` to intercept and encrypt data using `Crypt::encryptString()`, and `getAttribute()` to decrypt data using `Crypt::decryptString()`.
+---
 
-**Code Snippet:**
+## Architecture Overview
+
+The application uses a **Backend-centric Encryption Architecture** — all encryption and decryption happens exclusively on the server. The frontend never holds encryption keys or runs decryption logic locally, which eliminates the risk of key exposure through reverse engineering.
+
+### Security Layers at a Glance
+
+| Layer | Method | Purpose |
+|---|---|---|
+| **PII at Rest** | AES-256-CBC | Encrypts personal data stored in the database |
+| **Passwords** | bcrypt (one-way) | Hashes passwords so they can never be recovered |
+| **Data in Transit** | HTTPS | Protects all client-server communication |
+| **API Auth** | Laravel Sanctum | Manages secure authentication tokens |
+
+### Master Key
+
+The entire AES-256-CBC system is anchored to the `APP_KEY` in the backend's `.env` file.
+
+```
+Backend/config/app.php  →  env('APP_KEY')
+```
+
+> ⚠️ **Critical:** If `APP_KEY` is lost or rotated without a migration script, all encrypted database fields become permanently unreadable.
+
+---
+
+## Database Field Encryption
+
+Certain database columns are automatically encrypted before saving and decrypted before reading. This is handled transparently via a shared trait.
+
+### How It Works
+
+**File:** `Backend/app/Traits/EncryptsAttributes.php`  
+**Algorithm:** AES-256-CBC via Laravel's `Crypt` facade
+
+The `EncryptsAttributes` trait overrides two Eloquent model methods:
+
+- `setAttribute()` — intercepts writes and encrypts values with `Crypt::encryptString()`
+- `getAttribute()` — intercepts reads and decrypts values with `Crypt::decryptString()`
+
 ```php
-// Backend/app/Traits/EncryptsAttributes.php (Lines 43-60)
+// EncryptsAttributes.php
 public function setAttribute($key, $value)
 {
     if (in_array($key, $this->encryptedAttributes ?? [])) {
         if ($value !== null && $value !== '') {
-            try {
-                $value = Crypt::encryptString($value);
-            } catch (\Exception $e) {
-                \Log::error('Failed to encrypt attribute', [...]);
-            }
+            $value = Crypt::encryptString($value);
         }
     }
     return parent::setAttribute($key, $value);
 }
 ```
 
-### Encrypted Models & Fields (Database Columns & Form Textfields)
+---
 
-The following models use the `EncryptsAttributes` trait. Below is the exact mapping of which database columns are encrypted and which frontend form textfields they correspond to.
+### Encrypted Models & Fields
 
-#### A. User Model
-- **File:** [User.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Models/User.php#L60-L64)
-- **Trait Used:** `use App\Traits\EncryptsAttributes;`
+#### User Model
+**File:** `Backend/app/Models/User.php`
 
-**Encrypted Database Columns:**
-1. **`name`**
-   - **Frontend Textfields:** "First Name", "Middle Name", "Last Name" inputs on registration and admin "Add User" forms.
-   - **Data Stored:** Full Name (PII).
-2. **`phone`**
-   - **Frontend Textfields:** "Phone Number" input in profile settings and admin user management forms.
-   - **Data Stored:** User's contact number (PII).
-3. **`address`**
-   - **Frontend Textfields:** "Address" input in user profile and admin user management forms.
-   - **Data Stored:** Physical location data (PII).
-
-**Code Snippet:**
 ```php
-// Backend/app/Models/User.php (Lines 61-65)
 protected $encryptedAttributes = [
-    'name',      // Full name (PII)
-    'phone',     // Contact information (PII)
-    'address',   // Location data (PII)
+    'name',     // Full name (PII)
+    'phone',    // Contact number (PII)
+    'address',  // Physical location (PII)
 ];
 ```
-- *Note:* The `email` field is deliberately kept unencrypted to allow fast SQL `WHERE` lookups during authentication.
 
-#### B. Booking Model
-- **File:** [Booking.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Models/Booking.php#L34-L38)
-- **Trait Used:** `use App\Traits\EncryptsAttributes;`
+| Database Column | Frontend Form Field | Data Stored |
+|---|---|---|
+| `name` | First / Middle / Last Name inputs (registration & admin forms) | Full name |
+| `phone` | Phone Number input (profile settings & user management) | Contact number |
+| `address` | Address input (profile & user management) | Physical location |
 
-**Encrypted Database Columns:**
-1. **`phone_number`**
-   - **Frontend Textfields:** "Phone Number" input in the customer checkout/booking form.
-   - **Data Stored:** Contact number used specifically for the booked service.
-2. **`address`**
-   - **Frontend Textfields:** "Service Address" input in the customer checkout/booking form.
-   - **Data Stored:** The physical location where the cleaning service will be performed.
+> 📌 **Note:** `email` is intentionally left unencrypted to allow fast SQL `WHERE` lookups during authentication.
 
-**Code Snippet:**
+---
+
+#### Booking Model
+**File:** `Backend/app/Models/Booking.php`
+
 ```php
-// Backend/app/Models/Booking.php (Lines 34-37)
 protected $encryptedAttributes = [
-    'phone_number',  // Contact information
-    'address',       // Location data
+    'phone_number', // Contact information
+    'address',      // Service location
 ];
+```
+
+| Database Column | Frontend Form Field | Data Stored |
+|---|---|---|
+| `phone_number` | Phone Number (checkout/booking form) | Contact number for the booking |
+| `address` | Service Address (checkout/booking form) | Where cleaning will be performed |
+
+---
+
+## Password Hashing
+
+Passwords are **never stored in plain text** or with reversible encryption. bcrypt produces a one-way hash that cannot be recovered — even by a database administrator.
+
+**Methods used:** `Hash::make()` to hash, `Hash::check()` to verify
+
+### Implementation Points
+
+| Location | File | What Happens |
+|---|---|---|
+| User Registration | `AuthController.php` (line 70) | Password is hashed on account creation |
+| Password Reset | `AuthController.php` (line 518) | New password is hashed before saving |
+| Profile Update | `SettingController.php` (lines 137–142) | Current password verified via `Hash::check()`, then new password hashed |
+
+```php
+// Registration
+'password' => Hash::make($request->password),
+
+// Password Reset
+$user->password = Hash::make($request->password);
 ```
 
 ---
 
-## 3. Password Hashing (One-Way Encryption)
+## Admin Encryption Tool
 
-Passwords are never stored in plain text or using two-way encryption. They are securely hashed so that even database administrators cannot read them.
+Admins have access to a dedicated UI tool for manually encrypting or decrypting text payloads. This is useful for data migrations and debugging without exposing backend keys directly.
 
-- **Algorithm:** `bcrypt`
-- **Mechanism:** Laravel's `Hash::make()` and `Hash::check()`
+### Backend API Endpoints
 
-### Implementations
+**File:** `Backend/app/Http/Controllers/EncryptionController.php`
 
-#### A. User Registration & Password Reset
-- **File:** [AuthController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/AuthController.php)
-- **Registration Flow:**
-  ```php
-  // AuthController.php - Line 70
-  'password' => Hash::make($request->password),
-  ```
-- **Reset Flow:**
-  ```php
-  // AuthController.php - Line 518
-  $user->password = Hash::make($request->password);
-  ```
+| Endpoint | Method | Rate Limit | Description |
+|---|---|---|---|
+| `/api/encrypt` | POST | 30 req/min | Encrypts a string (max 1,000 chars) |
+| `/api/decrypt` | POST | 20 req/min | Decrypts an AES-256-CBC payload |
 
-#### B. Profile Password Update
-- **File:** [SettingController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/SettingController.php#L137-L142)
-- **Flow:** Verifies the current password using `Hash::check()`, then updates it using `Hash::make()`.
+> 🔒 Both endpoints are protected by Laravel Sanctum — only authenticated admins can access them.
 
----
-
-## 4. API Payload Encryption Utility (Admin Tool)
-
-Administrators have access to a dedicated tool to manually encrypt or decrypt specific text payloads. This is useful for migrating old data or debugging without exposing the backend keys.
-
-### Backend Controller
-- **File:** [EncryptionController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/EncryptionController.php#L24-L90)
-- **Endpoints:**
-  - `POST /api/encrypt`: Encrypts a string (max 1000 chars, rate-limited to 30/min).
-  - `POST /api/decrypt`: Decrypts an AES-256-CBC payload (rate-limited to 20/min).
-- **Security:** Protected by Sanctum middleware. Only authenticated admins can utilize these routes.
-
-**Code Snippet (Decryption Endpoint):**
 ```php
-// Backend/app/Http/Controllers/EncryptionController.php (Lines 64-75)
+// Decryption endpoint
 public function decrypt(Request $request)
 {
     $validated = $request->validate(['encrypted' => 'required|string']);
-    try {
-        $decrypted = Crypt::decryptString($validated['encrypted']);
-        return response()->json([
-            'success' => true,
-            'decrypted' => $decrypted,
-            'message' => 'Data decrypted successfully',
-        ]);
-    } catch (DecryptException $e) {
-        // ...
-    }
+    $decrypted = Crypt::decryptString($validated['encrypted']);
+    return response()->json(['success' => true, 'decrypted' => $decrypted]);
 }
 ```
 
-### Frontend Interface (Encryption Tool)
-- **UI File:** [encryption.html](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/templates/encryption.html)
-- **Logic File:** [encryption-tool.js](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js)
-- **Data Flow:** The frontend securely transmits the plain text or ciphertext to the backend API, receives the processed result, and displays it. No `CryptoJS` or local encryption algorithms are used.
+### Frontend Interface
 
-**Frontend Encryption/Decryption Functions (`encryption-tool.js`):**
-1. **`encryptData()`** ([Link](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js#L87-L133)): Captures plain text input from `#encryptInput` and sends it via POST to the backend `/api/encrypt` endpoint.
-2. **`decryptData()`** ([Link](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js#L138-L182)): Captures ciphertext from `#decryptInput` and sends it via POST to the backend `/api/decrypt` endpoint.
+| File | Purpose |
+|---|---|
+| `Frontend/admin/templates/encryption.html` | Admin UI for the tool |
+| `Frontend/admin/scripts/encryption-tool.js` | Handles API calls |
 
-**Code Snippet (Frontend API call):**
+**Key functions in `encryption-tool.js`:**
+
+- **`encryptData()`** — Reads from `#encryptInput`, POSTs to `/api/encrypt`
+- **`decryptData()`** — Reads from `#decryptInput`, POSTs to `/api/decrypt`
+
 ```javascript
-// Frontend/admin/scripts/encryption-tool.js (Lines 138-151)
+// Frontend API call example
 function decryptData() {
     var input = document.getElementById('decryptInput').value.trim();
-    
+
     fetch(API_BASE_URL + '/decrypt', {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ encrypted: input })
     })
-    .then(function(response) { return response.json(); })
-    .then(function(result) {
+    .then(res => res.json())
+    .then(result => {
         document.getElementById('decryptedOutput').value = result.decrypted;
-    })
-    // ...
+    });
 }
 ```
 
----
-
-## 5. Frontend Data Handling & Decryption Flow
-
-Since encrypted database fields (like `name` and `address`) cannot be natively read by the frontend, the backend explicitly decrypts them before transmitting JSON responses. Once the JSON response is received by the frontend UI, it dynamically populates the HTML DOM elements (like dashboards and tables) with the decrypted data.
-
-### Implementation Examples
-- **Customer Dashboard:** [CustomerDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/CustomerDashboardController.php#L168-L172) explicitly accesses fields like `$user->name` and `$booking->address`, which triggers the `EncryptsAttributes` trait to return plain text to the JSON payload.
-  ```php
-  // Backend/app/Http/Controllers/CustomerDashboardController.php (Lines 168-171)
-  $userName = $user->name;  // Automatically decrypted by EncryptsAttributes trait
-  $userEmail = $user->email; 
-  $userPhone = $user->phone ?? '';  // Automatically decrypted
-  $userAddress = $user->address ?? '';  // Automatically decrypted
-  ```
-  **Frontend Display:** The `CustomerDashboardController` passes this decrypted data via JSON to the `Frontend/customer/scripts/dashboard.js`, which then displays it visually on `Frontend/customer/templates/dashboard.html` (e.g., in the user profile section or booking history table).
-  
-- **Cleaner Dashboard:** [CleanerDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/CleanerDashboardController.php) explicitly accesses and decrypts the customer's name, phone, and booking address.
-  **Frontend Display:** Transmits via JSON to `Frontend/cleaner/scripts/dashboard.js` where the cleaner can read the plain-text details of the jobs they are assigned to on `Frontend/cleaner/templates/dashboard.html`.
-
-- **Admin Dashboard:** [AdminDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/AdminDashboardController.php#L69-L86) decrypts the client names in bookings and user names in notifications.
-  **Frontend Display:** Transmits via JSON to `Frontend/admin/scripts/dashboard.js` to render readable text inside the tables of `Frontend/admin/templates/dashboard.html`.
-
-- **User Management:** [UserController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/UserController.php#L27-L33) explicitly decrypts user fields like `name`, `email`, `phone`, and `address` when listing users for the admin dashboard.
-  **Frontend Display:** Transmits via JSON to `Frontend/admin/scripts/users.js` to display readable user profile cards inside `Frontend/admin/templates/users.html`.
+> No local encryption libraries (e.g., CryptoJS) are used. All processing is server-side.
 
 ---
 
-## 7. Codebase Scope Conclusion
-This guide covers **100% of the encryption and decryption processes** implemented across the entire backend and frontend of the Cleaning Services codebase. No other files, third-party libraries (e.g., CryptoJS), or secret keys handle PII data outside of the explicit `EncryptsAttributes` trait and the `EncryptionController` detailed above.
+## Frontend Data Flow
+
+Since the database stores encrypted values, the backend always decrypts fields **before** sending JSON responses to the frontend. Once the frontend receives the JSON, it dynamically injects the plain-text data into the HTML DOM (dashboards, tables, profile sections, etc.).
+
+### How Decryption Happens Automatically
+
+Accessing an encrypted attribute on an Eloquent model (e.g., `$user->name`) automatically triggers the `EncryptsAttributes` trait and returns the plain-text value. The frontend receives already-decrypted data over HTTPS.
+
+```php
+// CustomerDashboardController.php
+$userName    = $user->name;     // Auto-decrypted
+$userPhone   = $user->phone;    // Auto-decrypted
+$userAddress = $user->address;  // Auto-decrypted
+```
+
+### Controllers, Data Flow & Frontend Display
+
+#### Customer Dashboard
+
+| | |
+|---|---|
+| **Backend** | `CustomerDashboardController.php` decrypts `name`, `phone`, `address` |
+| **JSON → JS** | `Frontend/customer/scripts/dashboard.js` |
+| **Rendered in** | `Frontend/customer/templates/dashboard.html` (profile section, booking history table) |
+
+#### Cleaner Dashboard
+
+| | |
+|---|---|
+| **Backend** | `CleanerDashboardController.php` decrypts customer name, phone, and booking address |
+| **JSON → JS** | `Frontend/cleaner/scripts/dashboard.js` |
+| **Rendered in** | `Frontend/cleaner/templates/dashboard.html` (assigned job details) |
+
+#### Admin Dashboard
+
+| | |
+|---|---|
+| **Backend** | `AdminDashboardController.php` decrypts client names in bookings and user names in notifications |
+| **JSON → JS** | `Frontend/admin/scripts/dashboard.js` |
+| **Rendered in** | `Frontend/admin/templates/dashboard.html` (booking and notification tables) |
+
+#### User Management (Admin)
+
+| | |
+|---|---|
+| **Backend** | `UserController.php` decrypts `name`, `email`, `phone`, `address` for all users |
+| **JSON → JS** | `Frontend/admin/scripts/users.js` |
+| **Rendered in** | `Frontend/admin/templates/users.html` (user profile cards and management table) |
 
 ---
 
-## 6. Session & Token Protection
+## Session & Token Protection
 
-While not encryption in the traditional sense, token protection is a crucial part of the data security lifecycle.
+Authentication tokens are generated and managed via **Laravel Sanctum**.
 
-- **Mechanism:** Laravel Sanctum generates secure API tokens upon successful login.
-- **Storage:** The frontend stores these tokens in `localStorage` or `sessionStorage` (e.g., `auth_token`).
-- **File Reference:** [auth.js](file:///c:/xampp/htdocs/cleaning_services/Frontend/auth/scripts/auth.js) and [api-client.js](file:///c:/xampp/htdocs/cleaning_services/Frontend/common/scripts/api-client.js).
-- **Security Context:** Since `localStorage` is vulnerable to XSS, the application relies on strict backend CORS policies, HTTPS enforcement, and Turnstile (Cloudflare) verification to mitigate unauthorized access or token theft.
+| Aspect | Detail |
+|---|---|
+| **Token generation** | Issued on successful login |
+| **Storage location** | `localStorage` / `sessionStorage` (key: `auth_token`) |
+| **Relevant files** | `Frontend/auth/scripts/auth.js`, `Frontend/common/scripts/api-client.js` |
+
+### XSS Mitigation
+
+Since `localStorage` is inherently vulnerable to XSS attacks, the application applies these countermeasures:
+
+- ✅ Strict backend CORS policies
+- ✅ HTTPS enforced on all routes
+- ✅ Cloudflare Turnstile verification to block automated abuse
+
+---
+
+## Scope & Coverage
+
+This guide covers **100% of all encryption and decryption operations** in the codebase.
+
+| Component | Technology | Where |
+|---|---|---|
+| PII field encryption | `EncryptsAttributes` trait + AES-256-CBC | All models using the trait |
+| Password security | bcrypt via `Hash::make()` | `AuthController`, `SettingController` |
+| Admin encryption tool | `EncryptionController` + API | Backend routes + Admin frontend |
+| Token management | Laravel Sanctum | `auth.js`, `api-client.js` |
+| Transport security | HTTPS | All client-server communication |
+
+No third-party libraries (such as CryptoJS) are used for PII handling. No encryption keys are present on the frontend.
