@@ -64,7 +64,7 @@ The following models use the `EncryptsAttributes` trait. Below is the exact mapp
 
 **Code Snippet:**
 ```php
-// Backend/app/Models/User.php
+// Backend/app/Models/User.php (Lines 61-65)
 protected $encryptedAttributes = [
     'name',      // Full name (PII)
     'phone',     // Contact information (PII)
@@ -87,7 +87,7 @@ protected $encryptedAttributes = [
 
 **Code Snippet:**
 ```php
-// Backend/app/Models/Booking.php
+// Backend/app/Models/Booking.php (Lines 34-37)
 protected $encryptedAttributes = [
     'phone_number',  // Contact information
     'address',       // Location data
@@ -137,7 +137,7 @@ Administrators have access to a dedicated tool to manually encrypt or decrypt sp
 
 **Code Snippet (Decryption Endpoint):**
 ```php
-// Backend/app/Http/Controllers/EncryptionController.php
+// Backend/app/Http/Controllers/EncryptionController.php (Lines 64-75)
 public function decrypt(Request $request)
 {
     $validated = $request->validate(['encrypted' => 'required|string']);
@@ -165,7 +165,7 @@ public function decrypt(Request $request)
 
 **Code Snippet (Frontend API call):**
 ```javascript
-// Frontend/admin/scripts/encryption-tool.js
+// Frontend/admin/scripts/encryption-tool.js (Lines 138-151)
 function decryptData() {
     var input = document.getElementById('decryptInput').value.trim();
     
