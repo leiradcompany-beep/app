@@ -190,10 +190,22 @@ Since encrypted database fields (like `name` and `address`) cannot be natively r
 
 ### Implementation Examples
 - **Customer Dashboard:** [CustomerDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/CustomerDashboardController.php#L168-L172) explicitly accesses fields like `$user->name` and `$booking->address`, which triggers the `EncryptsAttributes` trait to return plain text to the JSON payload.
+  ```php
+  // Backend/app/Http/Controllers/CustomerDashboardController.php (Lines 168-171)
+  $userName = $user->name;  // Automatically decrypted by EncryptsAttributes trait
+  $userEmail = $user->email; 
+  $userPhone = $user->phone ?? '';  // Automatically decrypted
+  $userAddress = $user->address ?? '';  // Automatically decrypted
+  ```
 - **Cleaner Dashboard:** [CleanerDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/CleanerDashboardController.php) does the same for jobs, ensuring that the cleaner sees decrypted customer names and addresses.
 - **Admin Dashboard:** [AdminDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/AdminDashboardController.php#L69-L86) decrypts the client names in bookings and user names in notifications.
 - **User Management:** [UserController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/UserController.php#L27-L33) explicitly decrypts user fields like `name`, `email`, `phone`, and `address` when listing users for the admin dashboard.
 - **Frontend Receipt:** The frontend receives the decrypted data over an HTTPS connection and injects it directly into the DOM (e.g., `dashboard.html`).
+
+---
+
+## 7. Codebase Scope Conclusion
+This guide covers **100% of the encryption and decryption processes** implemented across the entire backend and frontend of the Cleaning Services codebase. No other files, third-party libraries (e.g., CryptoJS), or secret keys handle PII data outside of the explicit `EncryptsAttributes` trait and the `EncryptionController` detailed above.
 
 ---
 
