@@ -135,6 +135,10 @@ $(document).ready(function() {
                             <span>${user.phone_number || user.phone || 'N/A'}</span>
                         </div>
                         <div class="info-row">
+                            <i class="ri-map-pin-line"></i>
+                            <span>${user.address || 'N/A'}</span>
+                        </div>
+                        <div class="info-row">
                             <i class="ri-calendar-line"></i>
                             <span>Joined: ${new Date(user.created_at).toLocaleDateString()}</span>
                         </div>
@@ -226,6 +230,7 @@ $(document).ready(function() {
         $('#userRoleSelect').val(user.role);
         const phone = user.phone_number || user.phone;
         $('#userPhone').val(phone);
+        $('#userAddress').val(user.address || '');
 
         // Image Preview (robust via ImageUtils)
         const avatarSrc = ImageUtils.getAvatarUrl(user.profile_photo_path || user.avatar || user.img || user);
@@ -264,6 +269,7 @@ $(document).ready(function() {
         formData.append('email', $('#userEmail').val());
         formData.append('role', $('#userRoleSelect').val());
         formData.append('phone_number', $('#userPhone').val());
+        formData.append('address', $('#userAddress').val());
         
         const password = $('#userPassword').val();
         if (password) {
