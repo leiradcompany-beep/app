@@ -95,17 +95,6 @@ protected $encryptedAttributes = [
 
 ---
 
-#### CleanerProfile Model
-`Backend/app/Models/CleanerProfile.php` (Lines 38–42)
-
-```php
-protected $encryptedAttributes = [
-    'id_number',                // Government ID (highly sensitive)
-    'emergency_contact_name',   // Emergency contact PII
-    'emergency_contact_phone',  // Emergency contact PII
-];
-```
-
 ---
 
 ## 3. Password Hashing (One-Way)
