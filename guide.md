@@ -94,30 +94,6 @@ protected $encryptedAttributes = [
 ];
 ```
 
-#### C. Booking Table Encrypted Fields (Database Columns & Form Textfields)
-
-The `Booking` model also employs the `EncryptsAttributes` trait for sensitive data gathered during the booking process.
-
-- **File:** [Booking.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Models/Booking.php#L34-L38)
-- **Trait Used:** `use App\Traits\EncryptsAttributes;`
-
-**Encrypted Database Columns:**
-1. **`phone_number`**
-   - **Frontend Textfields:** "Phone Number" input in the customer checkout/booking form.
-   - **Data Stored:** Contact number used specifically for the booked service.
-2. **`address`**
-   - **Frontend Textfields:** "Service Address" input in the customer checkout/booking form.
-   - **Data Stored:** The physical location where the cleaning service will be performed.
-
-**Code Snippet:**
-```php
-// Backend/app/Models/Booking.php
-protected $encryptedAttributes = [
-    'phone_number',  // Contact information
-    'address',       // Location data
-];
-```
-
 ---
 
 ## 3. Password Hashing (One-Way Encryption)
@@ -161,7 +137,7 @@ Administrators have access to a dedicated tool to manually encrypt or decrypt sp
 
 **Code Snippet (Decryption Endpoint):**
 ```php
-// Backend/app/Http/Controllers/EncryptionController.php (Lines 64-75)
+// Backend/app/Http/Controllers/EncryptionController.php
 public function decrypt(Request $request)
 {
     $validated = $request->validate(['encrypted' => 'required|string']);
@@ -178,14 +154,18 @@ public function decrypt(Request $request)
 }
 ```
 
-### Frontend Interface
+### Frontend Interface (Encryption Tool)
 - **UI File:** [encryption.html](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/templates/encryption.html)
 - **Logic File:** [encryption-tool.js](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js)
 - **Data Flow:** The frontend securely transmits the plain text or ciphertext to the backend API, receives the processed result, and displays it. No `CryptoJS` or local encryption algorithms are used.
 
+**Frontend Encryption/Decryption Functions (`encryption-tool.js`):**
+1. **`encryptData()`** ([Link](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js#L87-L133)): Captures plain text input from `#encryptInput` and sends it via POST to the backend `/api/encrypt` endpoint.
+2. **`decryptData()`** ([Link](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js#L138-L182)): Captures ciphertext from `#decryptInput` and sends it via POST to the backend `/api/decrypt` endpoint.
+
 **Code Snippet (Frontend API call):**
 ```javascript
-// Frontend/admin/scripts/encryption-tool.js (Lines 141-155)
+// Frontend/admin/scripts/encryption-tool.js
 function decryptData() {
     var input = document.getElementById('decryptInput').value.trim();
     
