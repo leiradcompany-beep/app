@@ -1610,19 +1610,8 @@ function saveProfile(e) {
     const newPasswordVal = ($('#inp-new-password').val() || '').toString().trim();
     const wantsPasswordUpdate = currentPasswordVal.length > 0 || newPasswordVal.length > 0;
 
-    const token = localStorage.getItem('auth_token');
-    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'http://127.0.0.1:8000/api'
-        : 'https://itsolutions.muccsbblock1.com/cleaning_services/public/api';
-
-    $.ajax({
-        url: `${API_BASE_URL}/settings/profile`,
-        type: 'POST',
-        data: formData,
-        headers: { 'Authorization': `Bearer ${token}` },
-        processData: false,
-        contentType: false,
-        success: function (response) {
+    ApiClient.postFormData('/settings/profile', formData)
+        .then(function (response) {
             UiUtils.showToast('Profile updated successfully', 'success');
 
             // Update UI with new avatar if returned
@@ -1651,11 +1640,15 @@ function saveProfile(e) {
             }
 
             loadDashboardData();
-        },
-        error: function (xhr) {
-            UiUtils.showToast('Failed to update profile', 'error');
-        },
-        complete: function () {
+        })
+        .catch(function (xhr) {
+            let msg = 'Failed to update profile';
+            if (xhr && xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            UiUtils.showToast(msg, 'error');
+        })
+        .finally(function () {
             if (!wantsPasswordUpdate) {
                 UiUtils.setBtnLoading(btn, false, 'Save Changes');
                 return;
@@ -1704,8 +1697,7 @@ function saveProfile(e) {
                 .finally(function () {
                     UiUtils.setBtnLoading(btn, false, 'Save Changes');
                 });
-        }
-    });
+        });
 }
 
 // --- FILTER DRAWER LOGIC ---
