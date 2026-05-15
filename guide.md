@@ -69,7 +69,39 @@ public function getAttribute($key)
 ### How the Core Connects to the Codebase
 1. **The Models:** Models like `User.php` or `Booking.php` simply add `use EncryptsAttributes;` and define which columns to protect.
 2. **The Database (Encryption):** When the backend runs `$user->save()`, the core trait intercepts it, encrypts the data using AES-256-CBC, and safely stores the ciphertext in MySQL.
+   
+   **Code Snippet: Storing Data (Encryption via Controller)**
+   ```php
+   // Backend/app/Http/Controllers/UserController.php
+   // When this runs, 'name', 'phone', and 'address' are automatically encrypted by the trait before hitting the database
+   $user = User::create([
+       'name' => $validated['name'],
+       'email' => $validated['email'],
+       'password' => Hash::make($validated['password']),
+       'phone' => $validated['phone'] ?? null,
+       'address' => $validated['address'] ?? null,
+   ]);
+   ```
+
 3. **The Frontend (Decryption):** When a backend controller does `$user->name`, the core trait intercepts the request, grabs the ciphertext from MySQL, decrypts it, and returns the readable text. This readable text is then bundled into a JSON response and sent to the frontend UI templates (like `dashboard.html`) for display.
+
+   **Code Snippet: Fetching Data (Decryption before Frontend Display)**
+   ```php
+   // Backend/app/Http/Controllers/CustomerDashboardController.php
+   // By explicitly calling the properties, the trait automatically decrypts the MySQL ciphertext into plain text
+   $userName = $user->name;  
+   $userPhone = $user->phone ?? '';  
+   $userAddress = $user->address ?? '';  
+   
+   // Bundling the now-decrypted data to send to the frontend UI
+   $userData = [
+       'firstName' => $firstName,
+       'lastName' => $lastName,
+       'phone' => $userPhone,
+       'address' => $userAddress,
+   ];
+   return response()->json(['success' => true, 'data' => ['user' => $userData]]);
+   ```
 
 ### Encrypted Models & Fields (Database Columns & Form Textfields)
 
@@ -163,9 +195,24 @@ Administrators have access to a dedicated tool to manually encrypt or decrypt sp
   - `POST /api/decrypt`: Decrypts an AES-256-CBC payload (rate-limited to 20/min).
 - **Security:** Protected by Sanctum middleware. Only authenticated admins can utilize these routes.
 
-**Code Snippet (Decryption Endpoint):**
+**Code Snippet (Backend Controller: Encrypt and Decrypt Endpoints):**
 ```php
-// Backend/app/Http/Controllers/EncryptionController.php (Lines 64-75)
+// Backend/app/Http/Controllers/EncryptionController.php
+public function encrypt(Request $request)
+{
+    $validated = $request->validate(['data' => 'required|string|max:1000']);
+    try {
+        $encrypted = Crypt::encryptString($validated['data']);
+        return response()->json([
+            'success' => true,
+            'encrypted' => $encrypted,
+            'message' => 'Data encrypted successfully',
+        ]);
+    } catch (Exception $e) {
+        // ...
+    }
+}
+
 public function decrypt(Request $request)
 {
     $validated = $request->validate(['encrypted' => 'required|string']);
@@ -191,9 +238,27 @@ public function decrypt(Request $request)
 1. **`encryptData()`** ([Link](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js#L87-L133)): Captures plain text input from `#encryptInput` and sends it via POST to the backend `/api/encrypt` endpoint.
 2. **`decryptData()`** ([Link](file:///c:/xampp/htdocs/cleaning_services/Frontend/admin/scripts/encryption-tool.js#L138-L182)): Captures ciphertext from `#decryptInput` and sends it via POST to the backend `/api/decrypt` endpoint.
 
-**Code Snippet (Frontend API call):**
+**Code Snippet (Frontend API call for Encrypt and Decrypt):**
 ```javascript
-// Frontend/admin/scripts/encryption-tool.js (Lines 138-151)
+// Frontend/admin/scripts/encryption-tool.js
+
+// 1. Send Plain Text to Backend for Encryption
+function encryptData() {
+    var input = document.getElementById('encryptInput').value.trim();
+    
+    fetch(API_BASE_URL + '/encrypt', {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ data: input })
+    })
+    .then(function(response) { return response.json(); })
+    .then(function(result) {
+        document.getElementById('encryptedOutput').value = result.encrypted;
+    })
+    // ...
+}
+
+// 2. Send Ciphertext to Backend for Decryption
 function decryptData() {
     var input = document.getElementById('decryptInput').value.trim();
     
@@ -218,13 +283,6 @@ Since encrypted database fields (like `name` and `address`) cannot be natively r
 
 ### Implementation Examples
 - **Customer Dashboard:** [CustomerDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/CustomerDashboardController.php#L168-L172) explicitly accesses fields like `$user->name` and `$booking->address`, which triggers the `EncryptsAttributes` trait to return plain text to the JSON payload.
-  ```php
-  // Backend/app/Http/Controllers/CustomerDashboardController.php (Lines 168-171)
-  $userName = $user->name;  // Automatically decrypted by EncryptsAttributes trait
-  $userEmail = $user->email; 
-  $userPhone = $user->phone ?? '';  // Automatically decrypted
-  $userAddress = $user->address ?? '';  // Automatically decrypted
-  ```
   **Frontend Display:** The `CustomerDashboardController` passes this decrypted data via JSON to the `Frontend/customer/scripts/dashboard.js`, which then displays it visually on `Frontend/customer/templates/dashboard.html` (e.g., in the user profile section or booking history table).
   
 - **Cleaner Dashboard:** [CleanerDashboardController.php](file:///c:/xampp/htdocs/cleaning_services/Backend/app/Http/Controllers/CleanerDashboardController.php) explicitly accesses and decrypts the customer's name, phone, and booking address.
