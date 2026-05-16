@@ -192,11 +192,16 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label for="decryptAppKey">App Key (Required for Security)</label>
-                                <input 
-                                    type="password" 
-                                    id="decryptAppKey" 
-                                    placeholder="Enter application key..."
-                                >
+                                <div class="password-input-wrapper">
+                                    <input 
+                                        type="password" 
+                                        id="decryptAppKey" 
+                                        placeholder="Enter application key..."
+                                    >
+                                    <button type="button" class="toggle-password-btn" id="toggleAppKey" title="Show App Key">
+                                        <i class="ri-eye-line"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="decryptInput">Encrypted Text</label>
