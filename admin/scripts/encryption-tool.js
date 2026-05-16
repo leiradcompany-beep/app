@@ -312,6 +312,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Toggle App Key visibility
+    var toggleAppKeyBtn = document.getElementById('toggleAppKey');
+    var decryptAppKeyInput = document.getElementById('decryptAppKey');
+
+    if (toggleAppKeyBtn && decryptAppKeyInput) {
+        toggleAppKeyBtn.addEventListener('click', function() {
+            var type = decryptAppKeyInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            decryptAppKeyInput.setAttribute('type', type);
+            
+            // Toggle icon
+            var icon = this.querySelector('i');
+            if (type === 'text') {
+                icon.classList.remove('ri-eye-line');
+                icon.classList.add('ri-eye-off-line');
+                this.setAttribute('title', 'Hide App Key');
+            } else {
+                icon.classList.remove('ri-eye-off-line');
+                icon.classList.add('ri-eye-line');
+                this.setAttribute('title', 'Show App Key');
+            }
+        });
+    }
 });
 
 /**
