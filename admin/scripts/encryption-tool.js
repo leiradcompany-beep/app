@@ -138,6 +138,12 @@ function encryptData() {
  */
 function decryptData() {
     var input = document.getElementById('decryptInput').value.trim();
+    var appKey = document.getElementById('decryptAppKey').value.trim();
+    
+    if (!appKey) {
+        showError('Please enter the App Key for security verification');
+        return;
+    }
     
     if (!input) {
         showError('Please enter encrypted text');
@@ -156,7 +162,10 @@ function decryptData() {
     fetch(API_BASE_URL + '/decrypt', {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ encrypted: input })
+        body: JSON.stringify({ 
+            encrypted: input,
+            app_key: appKey
+        })
     })
     .then(function(response) {
         return response.json();
