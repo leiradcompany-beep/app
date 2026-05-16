@@ -235,17 +235,22 @@ function fallbackCopyToClipboard(textarea) {
  */
 function showTemporaryMessage(message, type) {
     if (!type) type = 'success';
-    var messageEl = document.createElement('div');
-    messageEl.className = 'temp-message ' + type;
-    messageEl.textContent = message;
-    var bgColor = type === 'success' ? '#4CAF50' : '#f44336';
-    messageEl.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 12px 24px; background: ' + bgColor + '; color: white; border-radius: 4px; z-index: 10000;';
     
-    document.body.appendChild(messageEl);
-    
-    setTimeout(function() {
-        messageEl.remove();
-    }, 2000);
+    if (typeof UiUtils !== 'undefined' && UiUtils.showToast) {
+        UiUtils.showToast(message, type);
+    } else {
+        var messageEl = document.createElement('div');
+        messageEl.className = 'temp-message ' + type;
+        messageEl.textContent = message;
+        var bgColor = type === 'success' ? '#4CAF50' : '#f44336';
+        messageEl.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 12px 24px; background: ' + bgColor + '; color: white; border-radius: 4px; z-index: 10000;';
+        
+        document.body.appendChild(messageEl);
+        
+        setTimeout(function() {
+            messageEl.remove();
+        }, 2000);
+    }
 }
 
 /**
@@ -261,20 +266,29 @@ function showLoading(show) {
 }
 
 function showError(message) {
-    var errorEl = document.getElementById('error');
-    var errorMessageEl = document.getElementById('errorMessage');
-    
-    errorMessageEl.textContent = message;
-    errorEl.classList.remove('hidden');
-    
-    setTimeout(function() {
-        hideError();
-    }, 5000);
+    if (typeof UiUtils !== 'undefined' && UiUtils.showToast) {
+        UiUtils.showToast(message, 'error');
+    } else {
+        var errorEl = document.getElementById('error');
+        if (errorEl) {
+            var errorMessageEl = document.getElementById('errorMessage');
+            errorMessageEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            
+            setTimeout(function() {
+                hideError();
+            }, 5000);
+        } else {
+            alert(message);
+        }
+    }
 }
 
 function hideError() {
     var errorEl = document.getElementById('error');
-    errorEl.classList.add('hidden');
+    if (errorEl) {
+        errorEl.classList.add('hidden');
+    }
 }
 
 function showResult(elementId) {
