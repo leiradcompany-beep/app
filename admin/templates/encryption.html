@@ -14,7 +14,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link href="../styles/encryption.css?v=1.1" rel="stylesheet">
+    <link href="../styles/encryption.css?v=1.2" rel="stylesheet">
 </head>
 <body>
 
@@ -145,21 +145,23 @@
                         </div>
 
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="encryptInput">Text to Encrypt</label>
-                                <textarea 
-                                    id="encryptInput" 
-                                    placeholder="Enter sensitive text to encrypt..."
-                                    maxlength="1000"
-                                    rows="5"
-                                ></textarea>
-                                <span class="char-count" id="encryptCharCount">0/1000</span>
-                            </div>
+                            <form onsubmit="event.preventDefault();">
+                                <div class="form-group">
+                                    <label for="encryptInput">Text to Encrypt</label>
+                                    <textarea 
+                                        id="encryptInput" 
+                                        placeholder="Enter sensitive text to encrypt..."
+                                        maxlength="1000"
+                                        rows="5"
+                                    ></textarea>
+                                    <span class="char-count" id="encryptCharCount">0/1000</span>
+                                </div>
 
-                            <button id="encryptBtn" class="btn-primary" onclick="encryptData()">
-                                <i class="ri-lock-line"></i>
-                                <span>Encrypt Data</span>
-                            </button>
+                                <button type="button" id="encryptBtn" class="btn-primary" onclick="encryptData()">
+                                    <i class="ri-lock-line"></i>
+                                    <span>Encrypt Data</span>
+                                </button>
+                            </form>
 
                             <div id="encryptResult" class="result-box hidden">
                                 <div class="result-header">
@@ -190,32 +192,35 @@
                         </div>
 
                         <div class="card-body">
-                            <div class="form-group">
-                                <label for="decryptAppKey">App Key (Required for Security)</label>
-                                <div class="password-input-wrapper">
-                                    <input 
-                                        type="password" 
-                                        id="decryptAppKey" 
-                                        placeholder="Enter application key..."
-                                    >
-                                    <button type="button" class="toggle-password-btn" id="toggleAppKey" title="Show App Key">
-                                        <i class="ri-eye-line"></i>
-                                    </button>
+                            <form onsubmit="event.preventDefault();">
+                                <div class="form-group">
+                                    <label for="decryptAppKey">App Key (Required for Security)</label>
+                                    <div class="password-input-wrapper">
+                                        <input 
+                                            type="password" 
+                                            id="decryptAppKey" 
+                                            autocomplete="current-password"
+                                            placeholder="Enter application key..."
+                                        >
+                                        <button type="button" class="toggle-password-btn" id="toggleAppKey" title="Show App Key">
+                                            <i class="ri-eye-line"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="decryptInput">Encrypted Text</label>
-                                <textarea 
-                                    id="decryptInput" 
-                                    placeholder="Paste encrypted text from database..."
-                                    rows="5"
-                                ></textarea>
-                            </div>
+                                <div class="form-group">
+                                    <label for="decryptInput">Encrypted Text</label>
+                                    <textarea 
+                                        id="decryptInput" 
+                                        placeholder="Paste encrypted text from database..."
+                                        rows="5"
+                                    ></textarea>
+                                </div>
 
-                            <button id="decryptBtn" class="btn-primary" onclick="decryptData()">
-                                <i class="ri-lock-unlock-line"></i>
-                                <span>Decrypt Data</span>
-                            </button>
+                                <button type="button" id="decryptBtn" class="btn-primary" onclick="decryptData()">
+                                    <i class="ri-lock-unlock-line"></i>
+                                    <span>Decrypt Data</span>
+                                </button>
+                            </form>
 
                             <div id="decryptResult" class="result-box hidden">
                                 <div class="result-header">
@@ -298,6 +303,6 @@
     <!-- Sidebar Logic -->
     <script src="../scripts/admin-sidebar.js"></script>
     <!-- Encryption Tool Logic -->
-    <script src="../scripts/encryption-tool.js?v=1.1"></script>
+    <script src="../scripts/encryption-tool.js?v=1.2"></script>
 </body>
 </html>
