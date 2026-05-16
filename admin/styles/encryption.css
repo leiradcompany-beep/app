@@ -122,27 +122,34 @@
     font-size: 0.9rem;
 }
 
-.form-group textarea {
+.form-group textarea,
+.form-group input {
     width: 100%;
     padding: 14px 16px;
     border: 2px solid var(--border-light);
     border-radius: var(--radius-md);
-    font-family: 'Manrope', monospace;
+    font-family: 'Manrope', sans-serif;
     font-size: 0.9rem;
-    resize: vertical;
     transition: var(--transition);
     background: var(--bg-body);
     color: var(--text-dark);
 }
 
-.form-group textarea:focus {
+.form-group textarea {
+    font-family: 'Manrope', monospace;
+    resize: vertical;
+}
+
+.form-group textarea:focus,
+.form-group input:focus {
     outline: none;
     border-color: var(--primary);
     background: white;
     box-shadow: 0 0 0 3px rgba(44, 122, 123, 0.1);
 }
 
-.form-group textarea::placeholder {
+.form-group textarea::placeholder,
+.form-group input::placeholder {
     color: var(--text-light);
 }
 
