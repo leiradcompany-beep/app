@@ -13,6 +13,12 @@
    - [Frontend Logic](#frontend-logic)
    - [Backend Logic](#backend-logic)
 5. [Models Using Encryption](#5-models-using-encryption)
+6. [Password Hashing Implementation (bcrypt)](#6-password-hashing-implementation-bcrypt)
+   - [6.1 Creating/Hashing Passwords](#61-creatinghashing-passwords)
+   - [6.2 Verifying Passwords (Login)](#62-verifying-passwords-login)
+   - [6.3 Changing Passwords (Settings)](#63-changing-passwords-settings)
+   - [6.4 Other Locations Using Password Hashing](#64-other-locations-using-password-hashing)
+   - [6.5 Summary Table](#65-summary-table)
 
 ---
 
@@ -579,9 +585,114 @@ This ties them directly into the encryption/decryption engine described in Secti
 
 ---
 
+# 6. Password Hashing Implementation (bcrypt)
+
+Passwords are **never encrypted** (two-way) but instead **hashed** (one-way) using Laravel's built-in `Hash` facade with the bcrypt algorithm. This ensures passwords cannot be reversed, only verified.
+
+> 🔑 **Key Distinction:** AES-256-CBC encryption (Sections 1–5) is two-way — data can be encrypted and decrypted. Bcrypt hashing is one-way — passwords are hashed and can only be verified, never reversed.
+
+---
+
+## 6.1 Creating/Hashing Passwords
+
+| Property | Value |
+|----------|-------|
+| **File** | `Backend/app/Http/Controllers/AuthController.php` |
+| **Line** | 70 |
+
+```php
+$user = User::create([
+    'name'       => $request->name,
+    'email'      => $request->email,
+    'password'   => Hash::make($request->password),  // <-- HASHING HERE
+    'role'       => $request->role,
+    'avatar'     => '/storage/uploads/avatars/default-avatar.png',
+    'otp'        => $otp,
+    'otp_expires_at' => Carbon::now()->addMinutes(10),
+]);
+```
+
+---
+
+## 6.2 Verifying Passwords (Login)
+
+| Property | Value |
+|----------|-------|
+| **File** | `Backend/app/Http/Controllers/AuthController.php` |
+| **Line** | 282 |
+
+```php
+// Find user by email (plaintext)
+$user = User::where('email', $request->email)->first();
+
+if (!$user || !Hash::check($request->password, $user->password)) {  // <-- VERIFICATION HERE
+    return response()->json([
+        'success' => false,
+        'message' => 'Invalid login details'
+    ], 401);
+}
+```
+
+---
+
+## 6.3 Changing Passwords (Settings)
+
+| Property | Value |
+|----------|-------|
+| **File** | `Backend/app/Http/Controllers/SettingController.php` |
+| **Lines** | 142 – 147 |
+
+```php
+if (!Hash::check($request->currentPassword, $user->password)) {  // <-- VERIFY CURRENT
+    return response()->json([
+        'success' => false,
+        'message' => 'Incorrect current password'
+    ], 400);
+}
+
+$user->password = Hash::make($request->newPassword);  // <-- HASH NEW PASSWORD
+$user->save();
+```
+
+---
+
+## 6.4 Other Locations Using Password Hashing
+
+| File | Line | Purpose |
+|------|------|---------|
+| `Backend/app/Http/Controllers/UserController.php` | 75 | Creating new user with hashed password |
+| `Backend/app/Http/Controllers/UserController.php` | 153 | Updating user password with hash |
+| `Backend/app/Http/Controllers/CleanerController.php` | 165 | Creating cleaner with hashed password |
+| `Backend/app/Http/Controllers/BookingController.php` | 584 | Creating walk-in customer with auto-generated hashed password |
+| `Backend/database/seeders/DatabaseSeeder.php` | 116, 133, 150, 167, 184, 201, 218 | Seeding test users with hashed passwords |
+| `Backend/database/factories/UserFactory.php` | 30 | Factory default hashed password |
+
+---
+
+## 6.5 Summary Table
+
+| Operation | Method | File Example | Line Example |
+|-----------|--------|--------------|--------------|
+| Create Password | `Hash::make($password)` | `AuthController.php` | 70 |
+| Verify Password | `Hash::check($plain, $hash)` | `AuthController.php` | 282 |
+| Change Password | Both `make` + `check` | `SettingController.php` | 142 – 147 |
+
+---
+
 # ✅ Summary
 
-This system implements centralized encryption using Laravel's built-in `Crypt` facade and the AES-256-CBC encryption algorithm.
+This system implements a two-pronged data protection strategy:
+
+### AES-256-CBC Encryption (Two-Way)
+Used for sensitive personal data (names, phone numbers, addresses). Data is encrypted before database storage and decrypted server-side on retrieval. The frontend never handles any encryption keys or logic.
+
+### Bcrypt Hashing (One-Way)
+Used exclusively for passwords. Passwords are hashed on creation and verified using `Hash::check()` on login. They can never be reversed or decrypted.
+
+| Protection Type | Algorithm | Used For | Reversible |
+|----------------|-----------|----------|------------|
+| Encryption | AES-256-CBC | PII (name, phone, address) | ✅ Yes (server-side only) |
+| Hashing | bcrypt | Passwords | ❌ No |
 
 The architecture ensures that:
 
@@ -589,10 +700,11 @@ The architecture ensures that:
 - Plain text is never permanently stored in MySQL
 - Decryption only occurs securely on the backend
 - Frontend applications never access encryption keys
+- Passwords are one-way hashed and can never be reversed
 - Tampering and invalid payloads are detected safely
 - The Laravel `APP_KEY` acts as the root cryptographic secret
 
-This creates a secure end-to-end encryption workflow across the entire Cleaning Services platform.
+This creates a secure end-to-end data protection workflow across the entire Cleaning Services platform.
 
 ---
 
