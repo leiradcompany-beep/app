@@ -39,6 +39,8 @@
                 <a href="#home" class="active">Home</a>
                 <a href="#services">Services</a>
                 <a href="#process">How it Works</a>
+                <a href="#team">Cleaners</a>
+                <a href="#community">Community</a>
                 <a href="#reviews">Reviews</a>
             </nav>
 
@@ -62,6 +64,8 @@
         <a href="#home" onclick="toggleMenu()">Home</a>
         <a href="#services" onclick="toggleMenu()">Services</a>
         <a href="#process" onclick="toggleMenu()">Process</a>
+        <a href="#team" onclick="toggleMenu()">Cleaners</a>
+        <a href="#community" onclick="toggleMenu()">Community</a>
         <a href="#reviews" onclick="toggleMenu()">Reviews</a>
         <a href="../../auth/templates/login.html" class="btn-primary">Book Now</a>
     </div>
@@ -244,7 +248,9 @@
             <div class="app-store-grid">
                 <div class="app-store-card">
                     <div style="display:flex; align-items:center; gap:14px;">
-                        <img class="app-logo" src="https://defhdpdtclecmlsnqcvz.supabase.co/storage/v1/object/public/default_avatar/1718a076e29822051df8bcf8b5ce1124.png" alt="Android">
+                        <div class="app-logo" style="display: flex; align-items: center; justify-content: center; font-size: 28px; color: #3DDC84;">
+                            <i class="ri-android-fill"></i>
+                        </div>
                         <div class="app-info">
                             <div class="app-title">Android App</div>
                             <div class="app-desc">Install the APK</div>
@@ -255,7 +261,9 @@
 
                 <div class="app-store-card">
                     <div style="display:flex; align-items:center; gap:14px;">
-                        <img class="app-logo" src="https://defhdpdtclecmlsnqcvz.supabase.co/storage/v1/object/public/default_avatar/ios-icon-logo-software-phone-app.png" alt="iOS">
+                        <div class="app-logo" style="display: flex; align-items: center; justify-content: center; font-size: 28px; color: #000000;">
+                            <i class="ri-apple-fill"></i>
+                        </div>
                         <div class="app-info">
                             <div class="app-title">iOS App</div>
                             <div class="app-desc">Download the IPA</div>
@@ -268,7 +276,7 @@
     </section>
 
     <!-- TEAM SECTION -->
-    <section class="section-padding">
+    <section class="section-padding" id="team">
         <div class="container">
             <div class="section-header">
                 <span class="section-subtitle">Meet the Team</span>
@@ -289,7 +297,7 @@
         </div>
     </section>
 
-    <section class="section-padding">
+    <section class="section-padding" id="community">
         <div class="container">
             <div class="section-header text-center" style="max-width: 100%;">
                 <span class="section-subtitle">Community</span>
