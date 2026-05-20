@@ -673,21 +673,41 @@
         subscribeBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Subscribing...';
         subscribeBtn.disabled = true;
 
-        // Simulate API call
-        setTimeout(function() {
-            UiUtils.showToast('Thank you for subscribing! You will receive our latest updates at ' + email, 'success');
-            
-            // Reset form
-            emailInput.value = '';
+        // API call to backend
+        fetch(getApiBaseUrl() + '/newsletter/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                'cf-turnstile-response': window.turnstileToken
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                UiUtils.showToast(data.message || 'Thank you for subscribing! You will receive our latest updates at ' + email, 'success');
+                // Reset form
+                emailInput.value = '';
+            } else {
+                UiUtils.showToast(data.message || 'An error occurred. Please try again.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Subscription error:', error);
+            UiUtils.showToast('Network error. Please try again later.', 'error');
+        })
+        .finally(() => {
             subscribeBtn.innerHTML = originalBtnText;
             subscribeBtn.disabled = false;
-            
             // Reset Turnstile
             if (window.turnstile) {
                 window.turnstile.reset();
             }
             window.turnstileToken = null;
-        }, 2000);
+        });
     });
 
     // Add CSS animation for loading spinner
