@@ -249,12 +249,16 @@ function renderCleaners() {
         const card = document.createElement('div');
         card.className = 'team-card';
         card.innerHTML = `
-            <img src="${cleaner.img}" alt="${cleaner.name}" loading="lazy" decoding="async" onerror="this.src='../../assets/images/default-avatar.png'; this.style.objectFit='cover'; this.style.backgroundColor='#f8fafc';">
+            <img src="${cleaner.img}" alt="${cleaner.name}" loading="lazy" decoding="async" class="team-img" onerror="this.src='../../assets/images/default-avatar.png'; this.style.objectFit='cover';">
             <div class="team-info">
-                <h3 style="font-size:1.4rem; margin-bottom:5px;">${cleaner.name}</h3>
-                <p style="color:var(--accent); font-weight:600; font-size:0.9rem; text-transform:uppercase;">${cleaner.role}</p>
-                ${cleaner.rating_count && cleaner.rating_count > 0 && cleaner.rating ? `<div style="margin:6px 0; display:flex; align-items:center; gap:8px;">${getStarsHtml(cleaner.rating)}<span style="color:var(--text-light); font-size:0.9rem;">${parseFloat(cleaner.rating).toFixed(1)} (${cleaner.rating_count})</span></div>` : `<div style="margin:6px 0; color:var(--text-light); font-size:0.9rem;">Not yet rated</div>`}
-                <p style="margin-top:10px; font-size:0.9rem; opacity:0.9;">${cleaner.desc}</p>
+                <div class="team-info-header">
+                    <h3 class="team-name">${cleaner.name}</h3>
+                    <p class="team-role">${cleaner.role}</p>
+                </div>
+                <div class="team-info-body">
+                    ${cleaner.rating_count && cleaner.rating_count > 0 && cleaner.rating ? `<div class="team-rating">${getStarsHtml(cleaner.rating)}<span class="rating-text">${parseFloat(cleaner.rating).toFixed(1)} (${cleaner.rating_count})</span></div>` : `<div class="team-rating"><span class="rating-text">Not yet rated</span></div>`}
+                    <p class="team-desc">${cleaner.desc}</p>
+                </div>
             </div>
         `;
         teamGrid.appendChild(card);
@@ -538,6 +542,23 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchServices();
     fetchCleaners();
     fetchPublicStats();
+
+    // Smooth scrolling and prevent hash in URL
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                e.preventDefault();
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
     const prev = document.getElementById('teamPrevBtn');
     const next = document.getElementById('teamNextBtn');
     if (prev) prev.addEventListener('click', prevTeamSlide);
@@ -555,7 +576,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const onHero = rect.bottom > headerHeight;
         header.classList.toggle('header--on-hero', onHero);
     }
+
+    function updateActiveNavLink() {
+        const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const sections = ['home', 'services', 'process', 'team', 'community', 'reviews'].map(id => document.getElementById(id)).filter(Boolean);
+
+        let currentSectionId = 'home';
+        
+        for (const section of sections) {
+            const sectionTop = section.offsetTop;
+            // Adjust offset for fixed header (approx 120px)
+            if (scrollPosition >= sectionTop - 120) {
+                currentSectionId = section.id;
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSectionId}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+
     updateHeaderState();
-    document.addEventListener('scroll', updateHeaderState, { passive: true });
+    updateActiveNavLink();
+    
+    document.addEventListener('scroll', () => {
+        updateHeaderState();
+        updateActiveNavLink();
+    }, { passive: true });
+    
     window.addEventListener('resize', updateHeaderState);
 });
