@@ -3,205 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leirad Services | Initializing</title>
+    <title>Leirad Services | Welcome</title>
     
-    <!-- Font: 'Outfit' for a clean, modern, and professional look -->
+    <!-- Font: 'Outfit' for a clean, modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. DESIGN TOKENS --- */
         :root {
-            /* Backgrounds: Clean, Corporate, Light */
-            --bg-primary: #ffffff;
-            --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            
-            /* Accents: Professional Blues indicating cleanliness and trust */
-            --accent-primary: #0284c7;   /* Deep Trust Blue */
-            --accent-secondary: #38bdf8; /* Clean Light Blue */
-            
-            /* Typography */
-            --text-primary: #0f172a;     /* Slate 900 */
-            --text-secondary: #64748b;   /* Slate 500 */
-            --text-muted: #94a3b8;       /* Slate 400 */
-            
-            /* Animation Physics */
-            --ease-professional: cubic-bezier(0.25, 1, 0.5, 1);
+            --primary-color: #ffffff;
+            --secondary-color: #e2e8f0;
+            --accent-color: #3b82f6; /* Modern Soft Blue */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* --- 2. RESET & LAYOUT --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-primary);
-            background-image: var(--bg-gradient);
             height: 100vh;
             width: 100vw;
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-primary);
-            transition: opacity 0.6s ease-out;
+            background-color: #0f172a; /* Deep Slate fallback */
+            color: var(--primary-color);
+            position: relative;
         }
 
-        /* --- 3. CONTENT WRAPPER --- */
-        .content-layer {
+        /* Subtle Ken Burns zoom effect on the background */
+        .bg-layer {
+            position: absolute;
+            inset: -5%; /* Slightly larger to allow scaling without showing edges */
+            background: url('assets/images/splash.png') no-repeat center center / cover;
+            animation: kenBurns 10s ease-out forwards;
+            z-index: 1;
+        }
+
+        /* Gradient overlay for text contrast and depth */
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.6) 100%);
+            z-index: 2;
+        }
+
+        .content-container {
             position: relative;
+            z-index: 10;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            width: 100%;
-            max-width: 600px;
             padding: 2rem;
         }
 
-        /* --- 4. BRANDING ELEMENTS --- */
-        .brand-icon {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1.5rem;
-            color: var(--accent-primary);
-            opacity: 0;
-            transform: scale(0.8);
-            animation: fadeUp 1s var(--ease-professional) forwards;
-        }
-
-        .brand-title {
-            font-size: 3.5rem;
+        /* Cinematic blur-up reveal for text */
+        .logo-text {
+            font-size: 4.5rem;
             font-weight: 700;
-            line-height: 1.1;
             letter-spacing: -0.02em;
             margin-bottom: 0.5rem;
-            color: var(--text-primary);
-            
             opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1s var(--ease-professional) 0.2s forwards;
+            transform: translateY(30px);
+            animation: revealUp 1.2s var(--ease-out-expo) 0.2s forwards;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .tagline {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            font-weight: 400;
-            letter-spacing: 0.1em;
-            margin-bottom: 3rem;
-            
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: var(--secondary-color);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 4rem;
             opacity: 0;
-            transform: translateY(15px);
-            animation: fadeUp 1s var(--ease-professional) 0.4s forwards;
+            transform: translateY(20px);
+            animation: revealUp 1.2s var(--ease-out-expo) 0.4s forwards;
         }
 
-        /* --- 5. PROFESSIONAL LOADER --- */
         .loader-wrapper {
-            width: 100%;
-            max-width: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             opacity: 0;
-            animation: fadeIn 1s ease 0.6s forwards;
+            animation: fadeIn 1s var(--ease-out-expo) 0.8s forwards;
         }
 
-        .progress-track {
-            width: 100%;
-            height: 4px;
-            background-color: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
+        /* Sleek, glowing modern loader */
+        .modern-loader {
+            width: 48px;
+            height: 48px;
             position: relative;
+            margin-bottom: 1.5rem;
         }
 
-        .progress-bar {
+        .modern-loader::before, 
+        .modern-loader::after {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 4px;
-            /* Matches the totalLoadTime in JS */
-            animation: fillProgress 3.6s ease-in-out forwards;
+            border-radius: 50%;
+            inset: 0;
         }
 
-        .status-text {
-            margin-top: 15px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
+        .modern-loader::before {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modern-loader::after {
+            border: 2px solid transparent;
+            border-top-color: var(--accent-color);
+            border-right-color: rgba(59, 130, 246, 0.3);
+            animation: spin 1.2s cubic-bezier(0.6, 0.2, 0.4, 0.8) infinite;
+            filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
+        }
+
+        .loading-text {
+            font-size: 0.875rem;
             font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--secondary-color);
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        /* --- 6. ANIMATIONS --- */
-        @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+        /* Keyframes */
+        @keyframes kenBurns {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
         }
 
-        @keyframes fadeIn { 
-            to { opacity: 1; } 
+        @keyframes revealUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+                filter: blur(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
         }
 
-        @keyframes fillProgress {
-            0% { width: 0%; }
-            20% { width: 35%; }
-            60% { width: 65%; }
-            100% { width: 100%; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* EXIT: Smooth Fade Out instead of dramatic zoom */
-        .exit-active {
-            opacity: 0 !important;
-            pointer-events: none;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* Mobile Adjustments */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+        }
+
+        /* Smooth Exit Transition */
+        body.exit-active .bg-layer,
+        body.exit-active .overlay {
+            transition: opacity 0.8s ease-in-out;
+            opacity: 0;
+        }
+
+        body.exit-active .content-container {
+            animation: fadeOutUp 0.8s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes fadeOutUp {
+            from { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
+            to { 
+                opacity: 0; 
+                transform: translateY(-40px) scale(0.98); 
+                filter: blur(4px); 
+            }
+        }
+
+        /* Mobile Responsiveness */
         @media (max-width: 768px) {
-            .brand-icon { width: 48px; height: 48px; }
-            .brand-title { font-size: 2.5rem; }
-            .tagline { font-size: 0.95rem; }
+            .logo-text {
+                font-size: 3rem;
+            }
+            .tagline {
+                font-size: 1rem;
+                margin-bottom: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="content-layer">
-        
-        <!-- Elegant SVG Icon (Abstract Sparkle/Leaf representing Cleanliness) -->
-        <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 2l2.4 7.6 7.6 2.4-7.6 2.4L12 22l-2.4-7.6-7.6-2.4 7.6-2.4L12 2z"/>
-        </svg>
+    <!-- Background Layers -->
+    <div class="bg-layer"></div>
+    <div class="overlay"></div>
 
-        <h1 class="brand-title">Leirad Services</h1>
+    <!-- Content -->
+    <div class="content-container">
+        <h1 class="logo-text">Leirad Services</h1>
         <p class="tagline">Smart Cleaning. Pure Living.</p>
 
-        <!-- Professional Linear Loader -->
         <div class="loader-wrapper">
-            <div class="progress-track">
-                <div class="progress-bar"></div>
-            </div>
-            <div class="status-text">Initializing Dashboard...</div>
+            <div class="modern-loader"></div>
+            <div class="loading-text">Loading...</div>
         </div>
-
     </div>
 
     <script>
         // Configuration
         const redirectUrl = "landing/templates/index.html";
-        const totalLoadTime = 4000; // 4 seconds total viewing time
+        const totalLoadTime = 3000; // 3 seconds
 
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const body = document.body;
-                
-                // Trigger the smooth fade-out exit animation
-                body.classList.add('exit-active');
+                // Trigger the exit animations
+                document.body.classList.add('exit-active');
 
-                // Redirect when fade out completes
+                // Redirect precisely when animation finishes
                 setTimeout(() => {
                     window.location.href = redirectUrl;
-                }, 600); // Wait 600ms for the CSS transition to finish
+                }, 800); 
 
             }, totalLoadTime);
         });
