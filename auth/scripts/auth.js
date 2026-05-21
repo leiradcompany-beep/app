@@ -572,7 +572,7 @@ function startOtpCountdown() {
 // Attach OTP Listeners
 $(document).ready(function () {
     // If on verify-otp page, start countdown automatically
-    if (window.location.pathname.toLowerCase().endsWith('verify-otp.html')) {
+    if (window.location.pathname.toLowerCase().includes('verify-otp')) {
         startOtpCountdown();
         // Also attach submit event for verify-otp form
         $('#verifyEmailForm').on('submit', handleVerifyOtp);
