@@ -512,6 +512,9 @@ $(document).ready(function () {
         const idText = cleaner.valid_id_type ? (idMap[cleaner.valid_id_type] || cleaner.valid_id_type) : 'Not Specified';
         $('#reviewIdType').text(idText);
 
+        const idNumberText = cleaner.id_number || 'Not Specified';
+        $('#reviewIdNumber').text(idNumberText);
+
         $('#idReviewOverlay').addClass('active');
         $('#idReviewModal').fadeIn(200);
     };
