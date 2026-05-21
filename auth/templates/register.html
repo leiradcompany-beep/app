@@ -469,10 +469,18 @@
                 var el1 = document.getElementById('cf-turnstile-register-customer');
                 var el2 = document.getElementById('cf-turnstile-register-cleaner');
                 if (!el1 || !el2) return;
-                // Avoid auto-render by using a neutral class; render manually
+                // Render manually
                 function render() {
                     if (window.turnstile && typeof key === 'string') {
                         try {
+                            if (window.trustedTypes && window.trustedTypes.createPolicy) {
+                                // Ignore trusted type issues for Turnstile script
+                                window.trustedTypes.createPolicy('default', {
+                                    createHTML: (string) => string,
+                                    createScriptURL: (string) => string,
+                                    createScript: (string) => string,
+                                });
+                            }
                             window.turnstile.render(el1, { sitekey: key, theme: 'light' });
                             window.turnstile.render(el2, { sitekey: key, theme: 'light' });
                         } catch (e) {
