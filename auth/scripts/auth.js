@@ -10,6 +10,13 @@ const getApiBaseUrl = () => {
 const API_BASE_URL = getApiBaseUrl();
 
 
+// Global variables for OTP handling
+let pendingVerificationEmail = null;
+let pendingVerificationRole = null;
+let pendingVerificationExpiresAt = null;
+let resetFlowEmail = null;
+let resetFlowExpiresAt = null;
+
 // Toggle Password Visibility
 function togglePw(inputId = 'password', iconId = 'toggleIcon') {
     const input = document.getElementById(inputId);
@@ -448,7 +455,7 @@ function handleVerifyOtp(e) {
         return;
     }
 
-    const expiresAt = Number(pendingVerificationExpiresAt);
+    const expiresAt = Number(pendingVerificationExpiresAt) || Number(sessionStorage.getItem('pendingVerificationExpiresAt'));
     if (expiresAt && Date.now() > expiresAt) {
         UiUtils.showToast('OTP expired. Please resend a new code.', 'error');
         return;
@@ -484,7 +491,7 @@ function handleVerifyOtp(e) {
 
                 // Redirect to login page
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = 'login.html?verified=1';
                 }, role === 'cleaner' ? 3000 : 1500);
             } else {
                 UiUtils.showToast(response.message || 'Verification failed', 'error');
@@ -567,6 +574,8 @@ $(document).ready(function () {
     // If on verify-otp page, start countdown automatically
     if (window.location.pathname.toLowerCase().endsWith('verify-otp.html')) {
         startOtpCountdown();
+        // Also attach submit event for verify-otp form
+        $('#verifyEmailForm').on('submit', handleVerifyOtp);
     }
 
     $('#verifyOtpBtn').click(handleVerifyOtp);
@@ -607,7 +616,7 @@ $(document).ready(function () {
     const qOtp = params.get('otp');
     const path = window.location.pathname.toLowerCase();
     if (autoVerify === '1' && qEmail && qOtp) {
-        if (path.endsWith('register.html')) {
+        if (path.endsWith('register.html') || path.endsWith('verify-otp.html')) {
             UiUtils.showToast('Verifying your email...', 'info');
             $.ajax({
                 url: `${API_BASE_URL}/verify-otp`,
