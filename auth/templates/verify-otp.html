@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Verify Email | LEIRAD Services</title>
+
+    <!-- Google Fonts: Manrope -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../auth/styles/auth.css">
+</head>
+
+<body>
+
+    <div class="auth-container">
+
+        <!-- LEFT: VISUAL SIDE -->
+        <div class="visual-side">
+            <!-- Background Image -->
+            <img src="../asset/register.gif" alt="Verify Email" class="bg-image">
+
+            <div class="visual-content">
+                <a href="index.html" class="brand-logo">
+                    <i class="ri-sparkling-2-fill" style="color: var(--accent);"></i> LEIRAD
+                </a>
+            </div>
+
+            <div class="visual-content">
+                <div class="testimonial-card">
+                    <i class="ri-shield-check-fill quote-icon"></i>
+                    <p class="quote-text">"Security is our priority. Verifying your email helps us keep your account safe and ensures you receive important updates."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: FORM SIDE -->
+        <div class="form-side">
+            <div class="form-content">
+                <div id="otpWrapper">
+                    <div class="form-header">
+                        <h1 class="form-title">Verify Your Email</h1>
+                        <p class="form-subtitle">We have sent a 6-digit code to your email. Please enter it below to verify your account.</p>
+                    </div>
+
+                    <form id="verifyEmailForm" onsubmit="handleVerifyOtp(event)">
+                        <div class="input-group">
+                            <label class="label">OTP Code</label>
+                            <div class="input-wrapper">
+                                <input type="tel" class="input" id="otpInput" placeholder="• • • • • •" maxlength="6" inputmode="numeric" pattern="[0-9]*"
+                                    style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit" id="verifyOtpBtnSubmit">
+                            Verify Email <i class="ri-check-line"></i>
+                        </button>
+                        <p id="otpCountdown" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-light);"></p>
+                        <p style="margin-top: 10px; font-size: 0.9rem;">Didn't receive code? <a href="#" id="resendOtpLink" class="link">Resend</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Image Utils -->
+    <script src="../../common/scripts/image-utils.js"></script>
+    <!-- UI Utils -->
+    <script src="../../common/scripts/ui-utils.js"></script>
+    <!-- Auth Script -->
+    <script src="../scripts/auth.js"></script>
+    
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.keyCode === 123)) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>
