@@ -227,8 +227,15 @@ function handleRegister(e) {
     }
     
     // Combine address fields into a single 'address' field
-    if (data.street && data.city && data.province && data.zip_code && data.country) {
-        data.address = `${data.street}, ${data.city}, ${data.province}, ${data.country} ${data.zip_code}`;
+    const street = data.street ? data.street.trim() : '';
+    const city = data.city ? data.city.trim() : '';
+    const province = data.province ? data.province.trim() : '';
+    const zip = data.zip_code ? data.zip_code.trim() : '';
+    const country = data.country ? data.country.trim() : '';
+
+    const addressParts = [street, city, province, country, zip].filter(part => part !== '');
+    if (addressParts.length > 0) {
+        data.address = addressParts.join(', ');
         formData.append('address', data.address);
     }
     
