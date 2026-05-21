@@ -142,10 +142,18 @@
                 if(!key || key === '') return;
                 var el = document.getElementById('cf-turnstile');
                 if (!el) return;
-                // Avoid auto-render by not using cf-turnstile class; render manually
+                // Render manually
                 function render(){
                     if(window.turnstile && typeof key === 'string'){
                         try {
+                            if (window.trustedTypes && window.trustedTypes.createPolicy) {
+                                // Ignore trusted type issues for Turnstile script
+                                window.trustedTypes.createPolicy('default', {
+                                    createHTML: (string) => string,
+                                    createScriptURL: (string) => string,
+                                    createScript: (string) => string,
+                                });
+                            }
                             window.turnstile.render(el, { sitekey: key, theme: 'light' });
                         } catch (e) {
                             console.error('Turnstile render error', e);
