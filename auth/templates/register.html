@@ -493,30 +493,7 @@
         </div>
     </div>
 
-    <!-- OTP Modal (Styled via auth.css) -->
-    <div id="otpModal" class="modal-overlay">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div class="modal-title">Verify Your Email</div>
-                <div id="otpCloseBtn" class="modal-close" aria-label="Close"><i class="ri-close-line"></i></div>
-            </div>
-            <div class="modal-body">
-                <p>We have sent a 6-digit code to your email. Please enter it below to verify your account.</p>
-                <div class="input-group" style="margin: 16px 0;">
-                    <label class="label">OTP Code</label>
-                    <div class="input-wrapper">
-                        <input type="tel" id="otpInput" class="input" placeholder="• • • • • •" maxlength="6"
-                            inputmode="numeric" pattern="[0-9]*"
-                            style="text-align: center; letter-spacing: 5px; font-size: 1.3rem;">
-                    </div>
-                </div>
-                <button id="verifyOtpBtn" class="btn-submit">Verify OTP</button>
-                <p id="otpCountdown" style="margin-top: 8px; font-size: 0.9rem; color: var(--text-light);"></p>
-                <p style="margin-top: 10px; font-size: 0.9rem;">Didn't receive code? <a href="#" id="resendOtpLink"
-                        class="link">Resend</a></p>
-            </div>
-        </div>
-    </div>
+    <!-- OTP Modal removed in favor of verify-otp.html redirect -->
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
