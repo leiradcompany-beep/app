@@ -225,10 +225,15 @@ function handleRegister(e) {
         data.name = `${data.first_name} ${data.middle_name ? data.middle_name + ' ' : ''}${data.last_name}`;
         formData.append('name', data.name); // Append to FormData as well
     }
+    
+    // Explicitly append phone and address so they are included in the FormData
+    if (data.phone) formData.append('phone', data.phone);
+    if (data.address) formData.append('address', data.address);
 
     if (role === 'cleaner') {
         // Use FormData for file uploads
         formData.append('cf_turnstile_token', cfToken);
+        if (data.id_number) formData.append('id_number', data.id_number);
         ajaxSettings.data = formData;
         ajaxSettings.contentType = false; // Required for FormData
         ajaxSettings.processData = false; // Required for FormData
