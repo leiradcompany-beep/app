@@ -114,7 +114,7 @@
                                 <label class="label">Phone Number <span class="required">*</span></label>
                                 <div class="input-wrapper">
                                     <input type="tel" class="input" name="phone" placeholder="e.g. 09123456789" required
-                                        autocomplete="tel">
+                                        autocomplete="tel" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);">
                                     <i class="ri-phone-line icon"></i>
                                 </div>
                             </div>
@@ -225,7 +225,7 @@
                                 <label class="label">Phone Number <span class="required">*</span></label>
                                 <div class="input-wrapper">
                                     <input type="tel" class="input" name="phone" placeholder="e.g. 09123456789" required
-                                        autocomplete="tel">
+                                        autocomplete="tel" maxlength="11" pattern="[0-9]{11}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);">
                                     <i class="ri-phone-line icon"></i>
                                 </div>
                             </div>
