@@ -667,13 +667,9 @@
 
         // Success - Submit the form
         const subscribeBtn = document.getElementById('subscribeBtn');
-        const originalBtnText = subscribeBtn.innerHTML;
         
-        // Use the same spinner design as login/register
-        subscribeBtn.innerHTML = '<span class="loading-spinner"></span> <span class="btn-text">Subscribing...</span>';
-        subscribeBtn.disabled = true;
-        subscribeBtn.style.opacity = "0.9";
-        subscribeBtn.style.cursor = "not-allowed";
+        // Use the exact same UI utility as login/register for the loading state
+        UiUtils.setBtnLoading(subscribeBtn, true, 'Subscribing...');
 
         // API call to backend
         fetch(getApiBaseUrl() + '/newsletter/subscribe', {
@@ -702,8 +698,7 @@
             UiUtils.showToast('Network error. Please try again later.', 'error');
         })
         .finally(() => {
-            subscribeBtn.innerHTML = originalBtnText;
-            subscribeBtn.disabled = false;
+            UiUtils.setBtnLoading(subscribeBtn, false);
             // Reset Turnstile
             if (window.turnstile) {
                 window.turnstile.reset();
@@ -711,27 +706,6 @@
             window.turnstileToken = null;
         });
     });
-
-    // Add CSS animation for loading spinner
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes ri-spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .loading-spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: ri-spin 0.8s linear infinite;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-    `;
-    document.head.appendChild(style);
     </script>
 </body>
 
