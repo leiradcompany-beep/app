@@ -193,11 +193,16 @@ function handleRegister(e) {
         success: function (response) {
             if (response.success) {
                 UiUtils.showToast('Please verify your email', 'info');
-                $('#otpModal').addClass('active').show();
-                pendingVerificationEmail = data.email;
-                pendingVerificationRole = role;
-                pendingVerificationExpiresAt = Date.now() + 10 * 60 * 1000;
-                startOtpCountdown();
+                
+                // Save data to sessionStorage for the verify-otp page
+                sessionStorage.setItem('pendingVerificationEmail', data.email);
+                sessionStorage.setItem('pendingVerificationRole', role);
+                sessionStorage.setItem('pendingVerificationExpiresAt', Date.now() + 10 * 60 * 1000);
+                
+                // Redirect to verify-otp page
+                setTimeout(() => {
+                    window.location.href = `verify-otp.html?email=${encodeURIComponent(data.email)}`;
+                }, 800);
             } else {
                 UiUtils.showToast(response.message || 'Registration failed', 'error');
                 UiUtils.setBtnLoading(btn, false);
@@ -428,13 +433,15 @@ $(document).ready(function () {
 });
 
 // OTP Handling
-function handleVerifyOtp() {
+function handleVerifyOtp(e) {
+    if (e && e.preventDefault) e.preventDefault();
     const otp = $('#otpInput').val();
-    let email = pendingVerificationEmail;
+    let email = pendingVerificationEmail || sessionStorage.getItem('pendingVerificationEmail');
+    
     if (!email) {
-        email = $('#customerRegisterForm input[name="email"]').val() || $('#cleanerRegisterForm input[name="email"]').val() || '';
+        email = $('#customerRegisterForm input[name="email"]').val() || $('#cleanerRegisterForm input[name="email"]').val() || new URLSearchParams(window.location.search).get('email') || '';
     }
-    const btn = $('#verifyOtpBtn');
+    const btn = $('#verifyOtpBtn, #verifyOtpBtnSubmit');
 
     if (!otp || otp.length !== 6) {
         UiUtils.showToast('Please enter a valid 6-digit OTP', 'warning');
@@ -459,7 +466,7 @@ function handleVerifyOtp() {
         data: JSON.stringify({ email, otp }),
         success: function (response) {
             if (response.success) {
-                const role = pendingVerificationRole;
+                const role = pendingVerificationRole || sessionStorage.getItem('pendingVerificationRole');
                 let msg = 'Email verified successfully! Please login.';
 
                 if (role === 'cleaner') {
@@ -470,6 +477,9 @@ function handleVerifyOtp() {
                 pendingVerificationEmail = null;
                 pendingVerificationRole = null;
                 pendingVerificationExpiresAt = null;
+                sessionStorage.removeItem('pendingVerificationEmail');
+                sessionStorage.removeItem('pendingVerificationRole');
+                sessionStorage.removeItem('pendingVerificationExpiresAt');
                 $('#otpModal').hide();
 
                 // Redirect to login page
@@ -489,10 +499,13 @@ function handleVerifyOtp() {
 }
 
 function handleResendOtp(e) {
-    e.preventDefault();
-    const email = pendingVerificationEmail || $('#customerRegisterForm input[name="email"]').val() || $('#cleanerRegisterForm input[name="email"]').val() || '';
+    if (e && e.preventDefault) e.preventDefault();
+    const email = pendingVerificationEmail || sessionStorage.getItem('pendingVerificationEmail') || $('#customerRegisterForm input[name="email"]').val() || $('#cleanerRegisterForm input[name="email"]').val() || new URLSearchParams(window.location.search).get('email') || '';
 
-    if (!email) return;
+    if (!email) {
+        UiUtils.showToast('Could not determine email to resend OTP', 'error');
+        return;
+    }
 
     $.ajax({
         url: `${API_BASE_URL}/resend-otp`,
@@ -504,7 +517,9 @@ function handleResendOtp(e) {
         data: JSON.stringify({ email }),
         success: function (response) {
             UiUtils.showToast('OTP resent successfully', 'success');
-            pendingVerificationExpiresAt = Date.now() + 10 * 60 * 1000;
+            const newExpiry = Date.now() + 10 * 60 * 1000;
+            pendingVerificationExpiresAt = newExpiry;
+            sessionStorage.setItem('pendingVerificationExpiresAt', newExpiry);
             startOtpCountdown();
         },
         error: function (xhr) {
@@ -526,9 +541,12 @@ function startOtpCountdown() {
         clearInterval(otpTimerRef);
         otpTimerRef = null;
     }
-    const expiresAt = Number(pendingVerificationExpiresAt);
+    let expiresAt = Number(pendingVerificationExpiresAt);
+    if (!expiresAt) {
+        expiresAt = Number(sessionStorage.getItem('pendingVerificationExpiresAt'));
+    }
     const countdownEl = $('#otpCountdown');
-    const verifyBtn = $('#verifyOtpBtn');
+    const verifyBtn = $('#verifyOtpBtn, #verifyOtpBtnSubmit');
     if (!expiresAt || !countdownEl.length) return;
     verifyBtn.prop('disabled', false);
     otpTimerRef = setInterval(() => {
@@ -546,6 +564,11 @@ function startOtpCountdown() {
 
 // Attach OTP Listeners
 $(document).ready(function () {
+    // If on verify-otp page, start countdown automatically
+    if (window.location.pathname.toLowerCase().endsWith('verify-otp.html')) {
+        startOtpCountdown();
+    }
+
     $('#verifyOtpBtn').click(handleVerifyOtp);
     $('#resendOtpLink').click(handleResendOtp);
     $('#otpCloseBtn').on('click', function () { $('#otpModal').removeClass('active').hide(); });
