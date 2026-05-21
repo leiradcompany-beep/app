@@ -669,9 +669,11 @@
         const subscribeBtn = document.getElementById('subscribeBtn');
         const originalBtnText = subscribeBtn.innerHTML;
         
-        // Show loading state
-        subscribeBtn.innerHTML = '<i class="ri-loader-4-line ri-spin"></i> Subscribing...';
+        // Use the same spinner design as login/register
+        subscribeBtn.innerHTML = '<span class="loading-spinner"></span> <span class="btn-text">Subscribing...</span>';
         subscribeBtn.disabled = true;
+        subscribeBtn.style.opacity = "0.9";
+        subscribeBtn.style.cursor = "not-allowed";
 
         // API call to backend
         fetch(getApiBaseUrl() + '/newsletter/subscribe', {
@@ -717,9 +719,16 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        .ri-spin {
-            animation: ri-spin 1s linear infinite;
+        .loading-spinner {
             display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: ri-spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
         }
     `;
     document.head.appendChild(style);
