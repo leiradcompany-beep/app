@@ -226,9 +226,14 @@ function handleRegister(e) {
         formData.append('name', data.name); // Append to FormData as well
     }
     
-    // Explicitly append phone and address so they are included in the FormData
+    // Combine address fields into a single 'address' field
+    if (data.street && data.city && data.province && data.zip_code && data.country) {
+        data.address = `${data.street}, ${data.city}, ${data.province}, ${data.country} ${data.zip_code}`;
+        formData.append('address', data.address);
+    }
+    
+    // Explicitly append phone so they are included in the FormData
     if (data.phone) formData.append('phone', data.phone);
-    if (data.address) formData.append('address', data.address);
 
     if (role === 'cleaner') {
         // Use FormData for file uploads
