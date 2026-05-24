@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="description" content="Careers at LEIRAD Home Cleaning Services.">
+    <meta name="theme-color" content="#2C7A7B">
+    <title>Careers | LEIRAD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/landing.css">
+    <style>
+        .legal-header {
+            padding: 140px 0 60px;
+            background: var(--primary-light);
+            text-align: center;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .legal-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+        .legal-header p {
+            color: var(--text-body);
+            font-size: 1.1rem;
+        }
+        .legal-content {
+            padding: 60px 24px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            box-shadow: var(--shadow-sm);
+            border-radius: var(--radius-lg);
+            transform: translateY(-30px);
+        }
+        .legal-content h2 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            margin: 40px 0 16px;
+            font-weight: 700;
+        }
+        .legal-content h2:first-child {
+            margin-top: 0;
+        }
+        .legal-content p {
+            color: var(--text-body);
+            margin-bottom: 16px;
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+        .legal-content ul {
+            list-style: disc;
+            margin-left: 24px;
+            margin-bottom: 24px;
+            color: var(--text-body);
+            line-height: 1.8;
+        }
+        .legal-content li {
+            margin-bottom: 8px;
+        }
+        .legal-content strong {
+            color: var(--text-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <header id="header" style="background: var(--bg-white); box-shadow: var(--shadow-sm);">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="ri-sparkling-2-fill"></i> LEIRAD
+            </a>
+            <nav class="nav-links">
+                <a href="index.html#home">Home</a>
+                <a href="index.html#services">Services</a>
+                <a href="index.html#process">How it Works</a>
+                <a href="index.html#team">Cleaners</a>
+                <a href="index.html#reviews">Reviews</a>
+            </nav>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <a href="../../auth/templates/login.html" class="btn-primary header-cta">
+                    <span>Book Now</span> <i class="ri-arrow-right-line"></i>
+                </a>
+                <button class="mobile-toggle" onclick="toggleMenu()" aria-label="Open menu">
+                    <i class="ri-menu-3-line"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-nav" id="mobileNav">
+        <button class="close-modal" style="top:30px; right:30px; font-size:2rem;" onclick="toggleMenu()">&times;</button>
+        <a href="index.html#home" onclick="toggleMenu()">Home</a>
+        <a href="index.html#services" onclick="toggleMenu()">Services</a>
+        <a href="index.html#process" onclick="toggleMenu()">Process</a>
+        <a href="index.html#team" onclick="toggleMenu()">Cleaners</a>
+        <a href="index.html#reviews" onclick="toggleMenu()">Reviews</a>
+        <a href="../../auth/templates/login.html" class="btn-primary">Book Now</a>
+    </div>
+
+    <!-- LEGAL HEADER -->
+    <section class="legal-header">
+        <div class="container">
+            <h1>Careers</h1>
+            <p>Join the LEIRAD Team</p>
+        </div>
+    </section>
+
+    <!-- LEGAL CONTENT -->
+    <section class="container">
+        <div class="legal-content">
+            <h2>Why Work With Us?</h2>
+            <p>At LEIRAD, we believe our employees are our greatest asset. We offer competitive pay, flexible schedules, and a supportive work environment where you can thrive and grow.</p>
+            
+            <h2>Open Positions</h2>
+            <ul>
+                <li><strong>Professional House Cleaner:</strong> We are always looking for detail-oriented, reliable cleaners to join our growing team. Experience is preferred but not required; we provide comprehensive training.</li>
+                <li><strong>Customer Support Representative:</strong> Help our clients with bookings, inquiries, and ensure they have a seamless experience with LEIRAD.</li>
+            </ul>
+
+            <h2>Benefits</h2>
+            <ul>
+                <li>Competitive hourly rates plus tips</li>
+                <li>Flexible working hours</li>
+                <li>Provided cleaning supplies and equipment</li>
+                <li>Opportunities for advancement</li>
+                <li>A positive and respectful team culture</li>
+            </ul>
+
+            <h2>How to Apply</h2>
+            <p>If you're interested in joining our team, please send your resume and a brief introduction to <strong>leiradcompany@gmail.com</strong>.</p>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="ri-sparkling-2-fill"></i>
+                        <span class="logo-text">LEIRAD</span>
+                    </div>
+                    <p class="footer-text">Elevating home hygiene standards with sustainable practices and expert care. Your trusted partner for pristine living.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-icon" aria-label="Follow us on Instagram"><i class="ri-instagram-line"></i></a>
+                        <a href="#" class="social-icon" aria-label="Follow us on Facebook"><i class="ri-facebook-fill"></i></a>
+                        <a href="#" class="social-icon" aria-label="Follow us on Twitter"><i class="ri-twitter-x-line"></i></a>
+                        <a href="#" class="social-icon" aria-label="Follow us on LinkedIn"><i class="ri-linkedin-fill"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="index.html#home" class="footer-link"><i class="ri-home-4-line"></i> Home</a></li>
+                        <li><a href="index.html#services" class="footer-link"><i class="ri-service-line"></i> Services</a></li>
+                        <li><a href="index.html#process" class="footer-link"><i class="ri-flow-chart"></i> How It Works</a></li>
+                        <li><a href="index.html#team" class="footer-link"><i class="ri-team-line"></i> Our Cleaners</a></li>
+                        <li><a href="index.html#reviews" class="footer-link"><i class="ri-star-line"></i> Reviews</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5 class="footer-title">Company</h5>
+                    <ul class="footer-links">
+                        <li><a href="about-us.html" class="footer-link"><i class="ri-information-line"></i> About Us</a></li>
+                        <li><a href="careers.html" class="footer-link"><i class="ri-briefcase-line"></i> Careers</a></li>
+                        <li><a href="blog.html" class="footer-link"><i class="ri-newspaper-line"></i> Blog</a></li>
+                        <li><a href="privacy-policy.html" class="footer-link"><i class="ri-shield-keyhole-line"></i> Privacy Policy</a></li>
+                        <li><a href="terms-of-service.html" class="footer-link"><i class="ri-file-text-line"></i> Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h5 class="footer-title">Contact Us</h5>
+                    <ul class="footer-links">
+                        <li class="contact-item"><i class="ri-map-pin-2-line"></i><div><span class="contact-label">Address</span><span class="contact-value">Bitoon, Ozamiz City, 7200 Philippines</span></div></li>
+                        <li class="contact-item"><i class="ri-phone-line"></i><div><span class="contact-label">Phone</span><span class="contact-value">+63 981 624 9065</span></div></li>
+                        <li class="contact-item"><i class="ri-mail-line"></i><div><span class="contact-label">Email</span><span class="contact-value">leiradcompany@gmail.com</span></div></li>
+                        <li class="contact-item"><i class="ri-time-line"></i><div><span class="contact-label">Business Hours</span><span class="contact-value">Mon-Sun: 8:00 AM - 8:00 PM</span></div></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="copyright">
+                    <p>&copy; 2023 LEIRAD Home Services. All Rights Reserved. <span class="copyright-divider">|</span> Designed for Excellence.</p>
+                </div>
+                <div class="footer-legal">
+                    <a href="privacy-policy.html" class="legal-link">Privacy Policy</a>
+                    <span class="legal-divider">•</span>
+                    <a href="terms-of-service.html" class="legal-link">Terms of Service</a>
+                    <span class="legal-divider">•</span>
+                    <a href="cookie-policy.html" class="legal-link">Cookie Policy</a>
+                    <span class="legal-divider">•</span>
+                    <a href="accessibility.html" class="legal-link">Accessibility</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const nav = document.getElementById('mobileNav');
+            const toggleBtn = document.querySelector('.mobile-toggle');
+            nav.classList.toggle('active');
+            const isExpanded = nav.classList.contains('active');
+            toggleBtn.setAttribute('aria-expanded', isExpanded);
+        }
+    </script>
+</body>
+</html>
