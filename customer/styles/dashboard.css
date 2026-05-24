@@ -3272,18 +3272,26 @@ table.dataTable tbody td {
     /* Small overview tables styling for mobile */
     .mini-table {
         width: 100% !important;
-        display: table !important; /* Force display since .table-wrapper table might be hidden elsewhere */
+        display: table !important;
         border-collapse: collapse;
         background: white;
         border-radius: 12px;
         overflow: hidden;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow-sm);
     }
 
     .mini-table td {
-        padding: 14px 16px !important;
-        font-size: 0.9rem;
+        padding: 16px 20px !important;
+        font-size: 0.95rem;
         border-bottom: 1px solid var(--border-light);
+        white-space: normal; /* Allow text wrapping for service names on small screens */
+    }
+
+    .mini-table .table-service-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .mini-table tr:last-child td {
