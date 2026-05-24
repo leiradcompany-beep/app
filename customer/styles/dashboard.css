@@ -1292,6 +1292,20 @@ table.dataTable tbody td {
     position: relative;
 }
 
+.cancel-modal h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+}
+
+.cancel-modal p {
+    color: var(--text-body);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
 .modal-close-btn {
     position: absolute;
     top: 20px;
@@ -1321,7 +1335,7 @@ table.dataTable tbody td {
     justify-content: center;
     font-size: 2.5rem;
     margin: 0 auto 25px;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
 }
 
 .modal-icon.danger {
@@ -1372,6 +1386,7 @@ table.dataTable tbody td {
     .modal-actions-row {
         flex-direction: column-reverse;
         gap: 12px;
+        margin-top: auto;
     }
 
     .modal-actions-row button {
@@ -1780,7 +1795,7 @@ table.dataTable tbody td {
     }
 
     /* Fullscreen Modal on Mobile - Drawer Style (Slide from Right) */
-    .modal-content {
+    .modal-content, .modal-content.cancel-modal {
         width: 100%;
         height: 100%;
         max-width: none;
@@ -1795,7 +1810,9 @@ table.dataTable tbody td {
     }
 
     .modal.open .modal-content,
-    .modal.active .modal-content {
+    .modal.active .modal-content,
+    .modal.open .modal-content.cancel-modal,
+    .modal.active .modal-content.cancel-modal {
         transform: translateX(0);
     }
 
@@ -2198,9 +2215,23 @@ table.dataTable tbody td {
 }
 
 .btn-outline {
-    background: var(--white);
+    background: var(--bg-white);
     border: 1px solid var(--border-light);
     color: var(--text-dark);
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-outline:hover {
+    background: #F8FAFC;
+    border-color: #CBD5E0;
 }
 
 .btn-action.cancel {
