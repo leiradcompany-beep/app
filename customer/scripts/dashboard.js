@@ -281,10 +281,14 @@ function initDashboard(data) {
 }
 
 function renderRecentHistory(bookings) {
-    // Sort by ID descending (assuming higher ID = newer) or use a date field if reliable
-    // Assuming 'bookings' comes sorted by date DESC from backend, but let's ensure slicing top 5
-    const recent = bookings.slice(0, 5);
-    const tbody = $('#overview table tbody');
+    // Show all bookings as requested by user, sorted by date (newest first)
+    const recent = [...bookings].sort((a, b) => {
+        const dateA = new Date(a.date + (a.time ? ' ' + a.time : ''));
+        const dateB = new Date(b.date + (b.time ? ' ' + b.time : ''));
+        return dateB - dateA;
+    });
+
+    const tbody = $('#overview .mini-table tbody');
     tbody.empty();
 
     if (recent.length === 0) {
