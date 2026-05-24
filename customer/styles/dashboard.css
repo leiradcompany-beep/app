@@ -1592,12 +1592,17 @@ table.dataTable tbody td {
     }
 
     .services-toolbar {
-        flex-direction: column;
-        gap: 15px;
+        flex-direction: row;
+        gap: 12px;
+        padding: 12px;
+        align-items: center;
+        background: var(--bg-white);
+        border-radius: 16px;
     }
 
     .search-wrapper {
-        max-width: 100%;
+        flex: 1;
+        max-width: none;
     }
 
     .filter-container {
@@ -2680,9 +2685,9 @@ table.dataTable tbody td {
         transition: transform 0.3s ease;
     }
 
-    /* Adjust main content for bottom nav */
+    /* Adjust main content for bottom nav - Increase padding to prevent overlap */
     .main-content {
-        padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+        padding-bottom: calc(100px + env(safe-area-inset-bottom, 30px));
     }
 
     /* Bottom nav item */
@@ -2781,10 +2786,10 @@ table.dataTable tbody td {
 
     /* Icon buttons */
     .icon-btn {
-        min-width: 48px !important;
-        min-height: 48px !important;
-        width: 48px;
-        height: 48px;
+        min-width: 52px !important;
+        min-height: 52px !important;
+        width: 52px;
+        height: 52px;
         font-size: 1.3rem;
     }
 
@@ -2798,12 +2803,18 @@ table.dataTable tbody td {
     }
 
     /* Form inputs */
-    .form-input,
-    .search-input {
+    .form-input {
         min-height: 52px;
         padding: 14px 20px;
         font-size: 1rem;
         border-radius: 12px;
+    }
+
+    .search-input {
+        min-height: 52px;
+        padding: 14px 20px 14px 50px;
+        font-size: 1rem;
+        border-radius: 50px;
     }
 
     /* Cleaner card buttons */
@@ -3248,9 +3259,35 @@ table.dataTable tbody td {
    =================================== */
 @media (max-width: 767px) {
 
-    /* Hide desktop table */
-    .table-wrapper table {
+    /* Hide desktop history table ONLY - small overview tables should remain visible */
+    #history-table {
         display: none !important;
+    }
+
+    .table-wrapper:has(#history-table) {
+        border: none;
+        box-shadow: none;
+    }
+
+    /* Small overview tables styling for mobile */
+    .mini-table {
+        width: 100% !important;
+        display: table !important; /* Force display since .table-wrapper table might be hidden elsewhere */
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .mini-table td {
+        padding: 14px 16px !important;
+        font-size: 0.9rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .mini-table tr:last-child td {
+        border-bottom: none;
     }
 
     /* Show mobile timeline */
